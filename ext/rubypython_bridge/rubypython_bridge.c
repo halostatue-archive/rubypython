@@ -1,6 +1,6 @@
-#include "rbpython.h"
+#include "rubypython_bridge.h"
 
-VALUE mRubyPython;
+VALUE mRubyPythonBridge;
 extern VALUE cRubyPyObject;
 extern VALUE cRubyPyModule;
 extern VALUE cRubyPyClass;
@@ -44,24 +44,42 @@ static VALUE rp_python_block(VALUE self)
 	
 }
 
+
+
 /*
-* The top level module for Ruby Python bridge functions.
+* call-seq: start()
+*
+* Starts the python interpreter
+* 	RubyPython.start
+*/
+VALUE rp_start(VALUE self)
+{
+	int here;
+	SAFE_START(here);
+	if(here) return Qtrue;
+	return Qfalse;
+}
+
+VALUE rp_stop(VALUE self)
+{
+	return Qnil;
+}
+
+/*
+* Module containing an interface to the the python interpreter.
 *
 */
-void Init_RubyPython()
+void Init_RubyPythonBridge()
 {
-	mRubyPython=rb_define_module("RubyPython");
-	rb_define_module_function(mRubyPython,"func_with_module",func_with_module,-2);
-	rb_define_module_function(mRubyPython,"import_module",rp_import_module,1); 
-	rb_define_module_function(mRubyPython,"start",python_start,0); // in: bridge.c
-	rb_define_module_function(mRubyPython,"stop",python_stop,0);  // in: bridge.c
-	rb_define_module_function(mRubyPython,"run",rp_python_block,0);
+	mRubyPythonBridge=rb_define_module("RubyPythonBridge");
+	rb_define_module_function(mRubyPythonBridge,"func_with_module",func_with_module,-2);
+	rb_define_module_function(mRubyPythonBridge,"import_module",rp_import_module,1); 
+	rb_define_module_function(mRubyPythonBridge,"start",rp_start,0);
+	rb_define_module_function(mRubyPythonBridge,"stop",rp_stop,0);
+	rb_define_module_function(mRubyPythonBridge,"run",rp_python_block,0);
 	
 	rb_define_module_function(mRubyPython,"import",rp_import,1);
-}
-void Init_rbpython()
-{	
-	Init_RubyPtyhon();
+	
 	Init_RubyPyObject();
 	Init_RubyPyModule();
 	Init_RubyPyClass();

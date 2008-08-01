@@ -2,7 +2,7 @@
 
 VALUE ePythonError;
 
-void rp_pythonerror()
+void rp_pythonerror(PyObject* PyError)
 {
 	rb_raise(ePythonError);
 	PyErr_Clear();

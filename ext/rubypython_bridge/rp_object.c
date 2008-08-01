@@ -1,4 +1,4 @@
-#include "rbpy_object.h"
+#include "rp_object.h"
 
 extern VALUE mRubyPython; // in: rbpython.c
 
@@ -6,22 +6,35 @@ VALUE cRubyPyObject;
 VALUE cRubyPyModule;
 VALUE cRubyPyClass;
 
-void rbpyobj_mark(PObj* self)
+void rp_obj_mark(PObj* self)
 {}
 
-void rbpyobj_free(PObj* self)
+void rp_obj_free(PObj* self)
 {
 	if(Py_IsInitialized())
 	{
 		Py_XDECREF(self->pObject);
 	}
+	free(self)
 }
 
-VALUE rbpyobj_alloc(VALUE klass)
+VALUE rp_obj_free_pobj(VALUE self)
+{
+	PObj *cself;
+	Data_Get_Struct(self,PObj,cself);
+	if(Py_IsInitialized())
+	{
+		Py_XDECREF(cself->pObject);
+		return true;
+	}
+	return false;
+}
+
+VALUE rp_obj_alloc(VALUE klass)
 {
 	PObj* self=ALLOC(PObj);
 	self->pObject=NULL;
-	return Data_Wrap_Struct(klass,rbpyobj_mark,rbpyobj_free,self);
+	return Data_Wrap_Struct(klass,rp_obj_mark,rp_obj_free,self);
 }
 
 VALUE pymod_init(VALUE self,VALUE mname)
@@ -131,7 +144,8 @@ VALUE pymod_delegate(VALUE self,VALUE args)
 void Init_RubyPyObject()
 {
 	cRubyPyObject=rb_define_class_under(mRubyPython,"RubyPyObject",rb_cObject);
-	rb_define_alloc_func(cRubyPyObject,rbpyobj_alloc);
+	rb_define_alloc_func(cRubyPyObject,rp_obj_alloc);
+	rb_define_method(cRubyPyObject,"free_pobj",rp_obj_free_pobj,0)
 	
 }
 

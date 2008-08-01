@@ -1,4 +1,4 @@
-require "rubypython"
+require "rbpython"
 p RubyPython.func_with_module("cPickle","loads","(dp1\nS'a'\nS'n'\ns(I1\nS'2'\ntp2\nI4\ns.")
 RubyPython.start
 CPickle=RubyPython.import("cPickle")

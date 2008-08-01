@@ -1,6 +1,6 @@
 #include "rbpy_object.h"
 
-extern VALUE mRubyPython;
+extern VALUE mRubyPython; // in: rbpython.c
 
 VALUE cRubyPyObject;
 VALUE cRubyPyModule;
@@ -133,9 +133,17 @@ void Init_RubyPyObject()
 	cRubyPyObject=rb_define_class_under(mRubyPython,"RubyPyObject",rb_cObject);
 	rb_define_alloc_func(cRubyPyObject,rbpyobj_alloc);
 	
+}
+
+void Init_RubyPyModule()
+{
 	cRubyPyModule=rb_define_class_under(mRubyPython,"RubyPyModule",cRubyPyObject);
 	rb_define_method(cRubyPyModule,"initialize",pymod_init,1);
 	rb_define_method(cRubyPyModule,"method_missing",pymod_delegate,-2);
-	
+	rb_define_method(cRubyPyModule,"const_missing",pymod_classdelegate,1);	
+}
+
+void Init_RubyPyClass()
+{
 	cRubyPyClass=rb_define_class_under(mRubyPython,"RubyPyClass",cRubyPyObject);
 }

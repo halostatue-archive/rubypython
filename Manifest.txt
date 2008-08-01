@@ -13,6 +13,10 @@ ext/rbpython/config.h
 ext/rbpython/extconf.rb
 ext/rbpython/ptor.c
 ext/rbpython/ptor.h
+ext/rbpython/rbpy_error.c
+ext/rbpython/rbpy_error.h
+ext/rbpython/rbpy_object.c
+ext/rbpython/rbpy_object.h
 ext/rbpython/rbpython.c
 ext/rbpython/rbpython.h
 ext/rbpython/rtop.c

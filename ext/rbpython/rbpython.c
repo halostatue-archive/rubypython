@@ -25,19 +25,44 @@ static VALUE rp_import_module(VALUE self,VALUE module)
 
 
 
+/*
+* call-seq: import(modname)
+* 
+* imports a python file_module using the interpreter and returns ruby wrapper
+
+*/
 static VALUE rp_import(VALUE self,VALUE mname)
 {
 	return rb_class_new_instance(1,&mname,cRubyPyModule);
 }
 
-void Init_rbpython()
+static VALUE rp_python_block(VALUE self)
+{
+	rb_funcall(self,rb_intern("start"),0);
+	rb_obj_instance_eval(0,NULL,self);
+	rb_funcall(self,rb_intern("stop"),0);
+	
+}
+
+/*
+* The top level module for Ruby Python bridge functions.
+*
+*/
+void Init_RubyPython()
 {
 	mRubyPython=rb_define_module("RubyPython");
 	rb_define_module_function(mRubyPython,"func_with_module",func_with_module,-2);
-	rb_define_module_function(mRubyPython,"import_module",rp_import_module,1);
-	rb_define_module_function(mRubyPython,"start",python_start,0);
-	rb_define_module_function(mRubyPython,"stop",python_stop,0);
-	rb_define_module_function(mRubyPython,"import",rp_import,1);
+	rb_define_module_function(mRubyPython,"import_module",rp_import_module,1); 
+	rb_define_module_function(mRubyPython,"start",python_start,0); // in: bridge.c
+	rb_define_module_function(mRubyPython,"stop",python_stop,0);  // in: bridge.c
+	rb_define_module_function(mRubyPython,"run",rp_python_block,0);
 	
+	rb_define_module_function(mRubyPython,"import",rp_import,1);
+}
+void Init_rbpython()
+{	
+	Init_RubyPtyhon();
 	Init_RubyPyObject();
+	Init_RubyPyModule();
+	Init_RubyPyClass();
 }

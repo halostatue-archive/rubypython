@@ -27,7 +27,20 @@ void safe_end(int here)
 {
 	SAFE_END(here);
 }
+/*
+Document-Class: RubyPython
+Wrapper for python interpreter
 
+*/
+
+
+/*
+* Document-Method: start
+* call-seg: start()
+*
+* Starts the python interpreter
+* 	RubyPython.start
+*/
 VALUE python_start(VALUE self)
 {
 	int here;

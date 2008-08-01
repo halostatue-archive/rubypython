@@ -1,27 +1,35 @@
 = rubypython
 
-* FIX (url)
+* htp://rubypython.rubyforge.org
 
 == DESCRIPTION:
 
-FIX (describe your package)
+	RubyPython is a a C bridge between ruby and python with a ruby interface.
 
 == FEATURES/PROBLEMS:
 
-* FIX (list of features or problems)
+	Features:
+	* Can handle simple conversion of Python builtin types to ruby builtin types and vice versa
+	* Can import python module
+	* Can execute arbitrary methods on imported modules and return the result
+	
+	Problems:
+	* Issues dealing with classes and instances
+	* Issues with the run method
 
 == SYNOPSIS:
-
-  FIX (code sample of usage)
-
+	RubyPython.start
+	cPickle=RubyPython.import("cPickle")
+	p cPickle.dumps("RubyPython is awesome!")
+	RubyPython.stop
+	
 == REQUIREMENTS:
 
-* FIX (list of requirements)
 
 == INSTALL:
 
-* FIX (sudo gem install, anything else)
-
+	sudo gem install rubypython
+	
 == LICENSE:
 
 (The MIT License)

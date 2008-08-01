@@ -1,10 +1,10 @@
 require 'rubypython/version'
 
-AUTHOR = 'Zach Raines'  # can also be an array of Authors
-EMAIL = "FIXME email"
+AUTHOR = 'Zach Raines'  
+EMAIL = "achatesavc+rubypython@gmail.com"
 DESCRIPTION = "A bridge between ruby and python"
-GEM_NAME = 'rubypython' # what ppl will type to install your gem
-RUBYFORGE_PROJECT = 'rubypython' # The unix name for your project
+GEM_NAME = 'rubypython' 
+RUBYFORGE_PROJECT = 'rubypython' 
 HOMEPATH = "http://#{RUBYFORGE_PROJECT}.rubyforge.org"
 DOWNLOAD_PATH = "http://rubyforge.org/projects/#{RUBYFORGE_PROJECT}"
 EXTRA_DEPENDENCIES = [
@@ -13,7 +13,7 @@ EXTRA_DEPENDENCIES = [
 
 @config_file = "~/.rubyforge/user-config.yml"
 @config = nil
-RUBYFORGE_USERNAME = "unknown"
+RUBYFORGE_USERNAME = "sentient6"
 def rubyforge_username
   unless @config
     begin

@@ -199,6 +199,8 @@ VALUE rp_newmod_delegate(VALUE self,VALUE args)
 	return rObj;
 	
 }
+
+// A wrapper around generic Python object, allowing them to passed around in ruby
 inline void Init_RubyPyObject()
 {
 	cRubyPyObject=rb_define_class_under(mRubyPythonBridge,"RubyPyObject",rb_cObject);
@@ -207,6 +209,7 @@ inline void Init_RubyPyObject()
 	
 }
 
+// A wrapper for Python Modules to allow importing from within ruby
 inline void Init_RubyPyModule()
 {
 	cRubyPyModule=rb_define_class_under(mRubyPythonBridge,"RubyPyModule",cRubyPyObject);
@@ -215,6 +218,7 @@ inline void Init_RubyPyModule()
 	rb_define_method(cRubyPyModule,"const_missing",rp_mod_classdelegate,1);	
 }
 
+// :nodoc:
 inline void Init_RubyPyClass()
 {
 	cRubyPyClass=rb_define_class_under(mRubyPythonBridge,"RubyPyClass",cRubyPyObject);

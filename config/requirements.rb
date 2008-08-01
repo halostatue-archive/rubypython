@@ -13,3 +13,4 @@ require 'rubygems'
 end
 
 $:.unshift(File.join(File.dirname(__FILE__), %w[.. lib]))
+$:.unshift(File.join(File.dirname(__FILE__), %w[.. ext rubypython_bridge]))

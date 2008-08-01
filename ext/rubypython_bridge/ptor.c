@@ -1,6 +1,5 @@
 #include "ptor.h"
 
-
 VALUE ptor_string(PyObject* pString)
 {
 	if(!PyString_Check(pString)) return Qnil;
@@ -48,7 +47,7 @@ VALUE ptor_long(PyObject* pNum)
 	cNum=PyLong_AsLong(pNum);
 	if(PyErr_ExceptionMatches(PyExc_OverflowError))
 	{
-		PyErr_Clear();
+		raise_PyError();
 		return Qnil;
 	}
 	rNum=INT2NUM(cNum);
@@ -142,6 +141,10 @@ VALUE ptor_obj(PyObject* pObj)
 		Py_DECREF(pObj);
 		return rObj;
 	}
+	// if(PyFunction_Check(pObj)||PyMethod_Check(pObj))
+	// {
+	// 	return rp_obj_from_pyobject(pObj);
+	// }
 	if(pObj==Py_True)
 	{
 		Py_DECREF(Py_True);
@@ -156,7 +159,7 @@ VALUE ptor_obj(PyObject* pObj)
 	{
 		return Qnil;
 	}
-	
+	// return rp_cla_from_class(pObj);	
 	PyObject* pRepr;
 	pRepr=PyObject_Repr(pObj);
 	Py_XDECREF(pObj);

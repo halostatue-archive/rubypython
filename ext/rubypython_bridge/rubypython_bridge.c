@@ -13,7 +13,7 @@ static VALUE func_with_module(VALUE self, VALUE args)
 	module=rb_ary_shift(args);
 	func=rb_ary_shift(args);
 	return_val=rp_call_func_with_module_name(module,func,args);
-	safe_end(started_here);
+	safe_stop(started_here);
 	return return_val;
 }
 
@@ -54,22 +54,33 @@ static VALUE rp_python_block(VALUE self)
 */
 VALUE rp_start(VALUE self)
 {
-	int here;
-	SAFE_START(here);
-	if(here) return Qtrue;
-	return Qfalse;
+	if(Py_IsInitialized())
+	{
+		return Qfalse;
+	}
+	Py_Initialize();
+	return Qtrue;
 }
 
 VALUE rp_stop(VALUE self)
 {
-	return Qnil;
+	
+	if(Py_IsInitialized())
+	{
+		Py_Finalize();
+		return Qtrue;
+	}
+	return Qfalse;
+	
 }
 
 /*
+* Document-Module: RubyPythonBridge
 * Module containing an interface to the the python interpreter.
 *
 */
-void Init_RubyPythonBridge()
+
+void Init_rubypython_bridge()
 {
 	mRubyPythonBridge=rb_define_module("RubyPythonBridge");
 	rb_define_module_function(mRubyPythonBridge,"func_with_module",func_with_module,-2);
@@ -77,9 +88,7 @@ void Init_RubyPythonBridge()
 	rb_define_module_function(mRubyPythonBridge,"start",rp_start,0);
 	rb_define_module_function(mRubyPythonBridge,"stop",rp_stop,0);
 	rb_define_module_function(mRubyPythonBridge,"run",rp_python_block,0);
-	
-	rb_define_module_function(mRubyPython,"import",rp_import,1);
-	
+	rb_define_module_function(mRubyPythonBridge,"import",rp_import,1);
 	Init_RubyPyObject();
 	Init_RubyPyModule();
 	Init_RubyPyClass();

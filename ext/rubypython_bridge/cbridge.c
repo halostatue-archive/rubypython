@@ -23,7 +23,7 @@ int safe_start()
 	return here;
 }
 
-void safe_end(int here)
+void safe_stop(int here)
 {
 	SAFE_END(here);
 }

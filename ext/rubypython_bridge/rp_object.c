@@ -1,6 +1,7 @@
 #include "rp_object.h"
+#include "stdio.h"
 
-extern VALUE mRubyPython; // in: rbpython.c
+extern VALUE mRubyPythonBridge;
 
 VALUE cRubyPyObject;
 VALUE cRubyPyModule;
@@ -15,7 +16,7 @@ void rp_obj_free(PObj* self)
 	{
 		Py_XDECREF(self->pObject);
 	}
-	free(self)
+	free(self);
 }
 
 VALUE rp_obj_free_pobj(VALUE self)
@@ -25,9 +26,10 @@ VALUE rp_obj_free_pobj(VALUE self)
 	if(Py_IsInitialized())
 	{
 		Py_XDECREF(cself->pObject);
-		return true;
+		cself->pObject=NULL;
+		return Qtrue;
 	}
-	return false;
+	return Qfalse;
 }
 
 VALUE rp_obj_alloc(VALUE klass)
@@ -37,18 +39,27 @@ VALUE rp_obj_alloc(VALUE klass)
 	return Data_Wrap_Struct(klass,rp_obj_mark,rp_obj_free,self);
 }
 
-VALUE pymod_init(VALUE self,VALUE mname)
+VALUE rp_mod_init(VALUE self,VALUE mname)
 {
 	PObj* cself;
 	Data_Get_Struct(self,PObj,cself);
 	cself->pObject=rp_get_module(mname);
-	VALUE pClasses;
-	pClasses=pymod_getclasses(cself->pObject);
-	rb_iv_set(self,"@pclasses",pClasses);
+	// VALUE pClasses;
+	// pClasses=rp_mod_getclasses(cself->pObject);
+	// rb_iv_set(self,"@pclasses",pClasses);
 	return self;
 }
 
-VALUE pymod_getclasses(PyObject *pModule)
+VALUE rp_obj_from_pyobject(PyObject *pObj)
+{
+	PObj* self;
+	VALUE rObj=rb_class_new_instance(0,NULL,cRubyPyObject);
+	Data_Get_Struct(rObj,PObj,self);
+	self->pObject=pObj;
+	return rObj;
+}
+
+VALUE rp_mod_getclasses(PyObject *pModule)
 {
 	Py_ssize_t pos=0;
 	PyObject *pModuleDict,*pModuleValues,*pKey,*pVal;
@@ -57,27 +68,24 @@ VALUE pymod_getclasses(PyObject *pModule)
 	pModuleDict=PyModule_GetDict(pModule);
 	while(PyDict_Next(pModule,&pos,&pKey,&pVal))
 	{
+		printf("Hello?\n");
 		if(PyType_Check(pVal))
 		{
 			Py_XINCREF(pVal);
-			rb_hash_aset(rClassHash,ptor_string(pKey),pycla_from_class(pVal));
+			rb_hash_aset(rClassHash,ptor_string(pKey),rp_cla_from_class(pVal));
 		}
 	}
 	return rClassHash;
 }
 
-VALUE pymod_classdelegate(VALUE self, VALUE klass)
+VALUE rp_mod_classdelegate(VALUE self, VALUE klass)
 {
 	VALUE rClasses=rb_iv_get(self,"@pclasses");
-	if(FALSE_P(funccal(rClasses,rb_intern("member?"),1,klass)))
-	{
-		return super(1,&klass);
-	}
 	VALUE rClass=rb_hash_aref(rClasses,klass);
 	return rClass;
 }
 
-VALUE pycla_from_class(PyObject *pClass)
+VALUE rp_cla_from_class(PyObject *pClass)
 {
 	PObj* self;
 	VALUE rClass=rb_class_new_instance(0,NULL,cRubyPyClass);
@@ -86,7 +94,7 @@ VALUE pycla_from_class(PyObject *pClass)
 	return rClass;
 }
 
-VALUE rp_pymod_call_func(VALUE self,VALUE func_name,VALUE args)
+VALUE rp_mod_call_func(VALUE self,VALUE func_name,VALUE args)
 {
 	PObj *cself;
 	Data_Get_Struct(self,PObj,cself);
@@ -102,62 +110,112 @@ VALUE rp_pymod_call_func(VALUE self,VALUE func_name,VALUE args)
 	
 }
 
-int pymod_has_func(VALUE self,VALUE func_name)
+int rp_has_attr(VALUE self,VALUE func_name)
 {
 	PObj *cself;
 	VALUE rName;
 	Data_Get_Struct(self,PObj,cself);
 	rName=rb_funcall(func_name,rb_intern("to_s"),0);
-	
 	if(PyObject_HasAttrString(cself->pObject,STR2CSTR(rName))) return 1;
 	return 0;
 }
 
-VALUE pymod_delegate(VALUE self,VALUE args)
+VALUE rp_mod_delegate(VALUE self,VALUE args)
 {
-	VALUE mname,name_string;
+	VALUE name,name_string,rClasses;
 	PObj* cself;
 	
-	if(!pymod_has_func(self,rb_ary_entry(args,0)))
+	if(!rp_has_attr(self,rb_ary_entry(args,0)))
 	{
 		
-		int i=0;
-		VALUE *rSuperArgs,*Arg;
-		int num_args;
-		num_args=RARRAY(args)->len;
-		rSuperArgs=ALLOC_N(VALUE,num_args);
-		Arg=rSuperArgs;
-		for(i=0;i<num_args;i++)
-		{
-			*Arg=rb_ary_entry(args,i);
-			Arg=Arg+sizeof(VALUE);
-		}
-		return rb_call_super(num_args,rSuperArgs);
+		int argc;
+		argc=RARRAY(args)->len;
+		VALUE *argv;
+		argv=ALLOC_N(VALUE,argc);
+		MEMCPY(argv,RARRAY(args)->ptr,VALUE,argc);
+		return rb_call_super(argc,argv);
 	}
-	mname=rb_ary_shift(args);
 	
-	name_string=rb_funcall(mname,rb_intern("to_s"),0);
+	name=rb_ary_shift(args);
+	name_string=rb_funcall(name,rb_intern("to_s"),0);
 	
-	return rp_pymod_call_func(self,name_string,args);
+	// rClasses=rb_iv_get(self,"@pclasses");
+	// if(rb_funcall(rClasses,rb_intern("member?"),1,name))
+	// {
+	// 	return rp_mod_classdelegate(self,name_string);
+	// }	
+	
+	return rp_mod_call_func(self,name_string,args);
 }
 
-void Init_RubyPyObject()
+VALUE rp_newmod_init(VALUE self, VALUE mname)
 {
-	cRubyPyObject=rb_define_class_under(mRubyPython,"RubyPyObject",rb_cObject);
+	PObj* cself;
+	Data_Get_Struct(self,PObj,cself);
+	cself->pObject=rp_get_module(mname);
+	VALUE rDict;
+	PyObject *pModuleDict;
+	pModuleDict=PyModule_GetDict(cself->pObject);
+	Py_XINCREF(pModuleDict);
+	rDict=ptor_obj(pModuleDict);
+	rb_iv_set(self,"@pdict",rDict);
+	return self;
+}
+
+int rp_is_func(VALUE pObj)
+{
+	PObj* self;
+	Data_Get_Struct(pObj,PObj,self);
+	Py_XINCREF(self->pObject);
+	return (PyFunction_Check(self->pObject)||PyMethod_Check(self->pObject));
+}
+VALUE rp_newmod_delegate(VALUE self,VALUE args)
+{
+	VALUE name,name_string,rDict;
+	PObj* cself;
+	
+	if(!rp_has_attr(self,rb_ary_entry(args,0)))
+	{
+		int argc;
+		
+		VALUE *argv;
+		argc=RARRAY(args)->len;
+		argv=ALLOC_N(VALUE,argc);
+		MEMCPY(argv,RARRAY(args)->ptr,VALUE,argc);
+		return rb_call_super(argc,argv);
+	}
+	name=rb_ary_shift(args);
+	name_string=rb_funcall(name,rb_intern("to_s"),0);
+	
+	
+	rDict=rb_iv_get(self,"@pdict");
+	VALUE rObj=rb_hash_aref(rDict,name_string);
+	if(rp_is_func(rObj))
+	{
+		PObj *pFunc;
+		Data_Get_Struct(rObj,PObj,pFunc);
+		return rp_call_func(pFunc->pObject,args);
+	}
+	return rObj;
+	
+}
+inline void Init_RubyPyObject()
+{
+	cRubyPyObject=rb_define_class_under(mRubyPythonBridge,"RubyPyObject",rb_cObject);
 	rb_define_alloc_func(cRubyPyObject,rp_obj_alloc);
-	rb_define_method(cRubyPyObject,"free_pobj",rp_obj_free_pobj,0)
+	rb_define_method(cRubyPyObject,"free_pobj",rp_obj_free_pobj,0);
 	
 }
 
-void Init_RubyPyModule()
+inline void Init_RubyPyModule()
 {
-	cRubyPyModule=rb_define_class_under(mRubyPython,"RubyPyModule",cRubyPyObject);
-	rb_define_method(cRubyPyModule,"initialize",pymod_init,1);
-	rb_define_method(cRubyPyModule,"method_missing",pymod_delegate,-2);
-	rb_define_method(cRubyPyModule,"const_missing",pymod_classdelegate,1);	
+	cRubyPyModule=rb_define_class_under(mRubyPythonBridge,"RubyPyModule",cRubyPyObject);
+	rb_define_method(cRubyPyModule,"initialize",rp_mod_init,1);
+	rb_define_method(cRubyPyModule,"method_missing",rp_mod_delegate,-2);
+	rb_define_method(cRubyPyModule,"const_missing",rp_mod_classdelegate,1);	
 }
 
-void Init_RubyPyClass()
+inline void Init_RubyPyClass()
 {
-	cRubyPyClass=rb_define_class_under(mRubyPython,"RubyPyClass",cRubyPyObject);
+	cRubyPyClass=rb_define_class_under(mRubyPythonBridge,"RubyPyClass",cRubyPyObject);
 }

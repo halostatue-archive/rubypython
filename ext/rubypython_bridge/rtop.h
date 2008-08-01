@@ -1,5 +1,9 @@
 #include "config.h"
 
+#ifndef _RP_ERROR_H_
+#include "rp_error.h"
+#endif
+
 #ifndef _RTOP_H_
 #define _RTOP_H_
 PyObject* rtop_string(VALUE rString);
@@ -12,7 +16,6 @@ PyObject* rtop_float(VALUE rNum);
 PyObject* rtop_false(void);
 PyObject* rtop_true(void);
 PyObject* rtop_symbol(VALUE rSymbol);
-
 
 PyObject* rtop_obj(VALUE rObj,int is_key);
 

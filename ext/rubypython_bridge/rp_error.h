@@ -1,8 +1,8 @@
 #include "config.h"
 
-#ifndef _RBPY_ERROR_H_
-#define _RBPY_ERROR_H_
+#ifndef _RP_ERROR_H_
+#define _RP_ERROR_H_
 
 void rp_pythonerror();
 
-#endif /* _RBPY_ERROR_H_ */
+#endif /* _RP_ERROR_H_ */

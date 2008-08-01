@@ -10,23 +10,3 @@ checked program was:
 
 --------------------
 
-find_header: checking for python2.5/Python.h... -------------------- yes
-
-"/usr/bin/cpp-4.0 -I. -I/opt/local/lib/ruby/1.8/i686-darwin9 -I. -I/opt/local/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE  -I/opt/local/include -O2  -fno-common -pipe -fno-common    conftest.c -o conftest.i"
-checked program was:
-/* begin */
-1: #include <python2.5/Python.h>
-/* end */
-
---------------------
-
-find_header: checking for ruby.h... -------------------- yes
-
-"/usr/bin/cpp-4.0 -I. -I/opt/local/lib/ruby/1.8/i686-darwin9 -I. -I/opt/local/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE  -I/opt/local/include -O2  -fno-common -pipe -fno-common    conftest.c -o conftest.i"
-checked program was:
-/* begin */
-1: #include <ruby.h>
-/* end */
-
---------------------
-

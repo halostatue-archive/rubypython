@@ -1,0 +1,4 @@
+.autotest
+*.o
+*.bundle
+*.so

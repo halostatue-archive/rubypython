@@ -18,7 +18,7 @@ require 'rubypython_bridge'
 #   RubyPython.stop
 #   
 # The other method is preferable if one wants a simpler approach. This other method is to use
-# +RubyPython.run+. +run+ takes a block which is evaluated in the scope of the RubyPython module.
+# <tt>RubyPython.run</tt>. _run_ takes a block which is evaluated in the scope of the RubyPython module.
 # In addition, the interpreter is started before the block is run and halted at its completion.
 # This allows one to do something like the following:
 #   RubyPython.run do
@@ -26,14 +26,27 @@ require 'rubypython_bridge'
 #     puts CPickle.dumps "RubyPython is still awesome!"
 #   end
 # 
-
 module RubyPython
   extend RubyPythonBridge
-  def self.start()
+  
+  # RubyPython.start
+  # 
+  # Used to started the python interpreter. Delegates to RubyPythonBridge
+  # 
+  #   RubyPython.start
+  #   --Some python code--
+  #   RubyPython.stop
+  #   
+  # Also see, _stop_
+  def self.start() # true||false
     RubyPythonBridge.start
   end
   
-  def self.stop()
+  
+  # RubyPython.stop
+  # 
+  # Used to end the python session. Adds some cleanup on top of RubyPythonBridge.stop
+  def self.stop() #=> true,false
     ObjectSpace.each_object(RubyPythonBridge::RubyPyObject) do |o|
       o.free_pobj
     end

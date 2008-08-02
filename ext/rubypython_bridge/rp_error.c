@@ -12,6 +12,11 @@ void rp_pythonerror()
 	rb_raise(ePythonError,"%s:(%s)\n",STR2CSTR(ptor_obj(pTypeName)),STR2CSTR(ptor_obj(pValue)));
 	Py_XDECREF(pTraceback);
 }
+
+/*
+Used to pass error information back into Ruby should an error occur in the embedded Python
+interpreter.
+*/
 void Init_RubyPyError()
 {
 	ePythonError=rb_define_class("PythonError",rb_eException);

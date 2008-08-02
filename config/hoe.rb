@@ -34,7 +34,7 @@ end
 REV = nil
 # UNCOMMENT IF REQUIRED:
 # REV = YAML.load(`svn info`)['Revision']
-VERS = Rubypython::VERSION::STRING + (REV ? ".#{REV}" : "")
+VERS = RubyPython::VERSION::STRING + (REV ? ".#{REV}" : "")
 RDOC_OPTS = ['--quiet', '--title', 'rubypython documentation',
     "--opname", "index.html",
     "--line-numbers",

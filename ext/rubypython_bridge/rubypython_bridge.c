@@ -85,7 +85,7 @@ VALUE rp_stop(VALUE self)
 void Init_rubypython_bridge()
 {
 	mRubyPythonBridge=rb_define_module("RubyPythonBridge");
-	rb_define_module_function(mRubyPythonBridge,"func_with_module",func_with_module,-2);
+	rb_define_module_function(mRubyPythonBridge,"func",func_with_module,-2);
 	rb_define_module_function(mRubyPythonBridge,"import_module",rp_import_module,1); 
 	rb_define_module_function(mRubyPythonBridge,"start",rp_start,0);
 	rb_define_module_function(mRubyPythonBridge,"stop",rp_stop,0);

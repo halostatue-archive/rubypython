@@ -6,7 +6,7 @@ require "rubypython_bridge.so"
 class TestRubypythonBridgeExtn < Test::Unit::TestCase
   
   def test_func_with_module
-    pickle_return=RubyPythonBridge.func_with_module("cPickle","loads","(dp1\nS'a'\nS'n'\ns(I1\nS'2'\ntp2\nI4\ns.")
+    pickle_return=RubyPythonBridge.func("cPickle","loads","(dp1\nS'a'\nS'n'\ns(I1\nS'2'\ntp2\nI4\ns.")
     assert_equal(pickle_return,{"a"=>"n", [1, "2"]=>4})
   end
   

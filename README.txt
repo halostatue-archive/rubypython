@@ -10,11 +10,11 @@
 
 	Features:
 	* Can handle simple conversion of Python builtin types to ruby builtin types and vice versa
-	* Can import python module
+	* Can import python modules
 	* Can execute arbitrary methods on imported modules and return the result
+	* Python objects can be treated as Ruby objects!
 	
 	Problems:
-	* Issues dealing with classes and instances
 	* Issues with the run method
 
 == SYNOPSIS:
@@ -34,7 +34,7 @@
 
 (The MIT License)
 
-Copyright (c) 2008 FIXME full name
+Copyright (c) 2008 Zach Raines
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the

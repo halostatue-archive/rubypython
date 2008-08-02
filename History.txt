@@ -1,6 +1,15 @@
+== 0.2.0 2008-08-02
+* 3 major enhancements
+	* RubyPython can now effectively convert or wrap most types from Python.
+	* Errors in the Python interpreter are relayed to Ruby errors.
+	* Less seg faults by mass.
+* Bug Fixes
+	* RubyPython.run did not work correctly. This is fixed now.
+	* Cleanup in RubyPython.stop fixes some issues in RubyPythonBridge.stop
+
 == 0.1.0 2008-08-01
 * A lot of major enhancements
-	*Too many to name. Hey I'm still developing
+	* Too many to name. Hey I'm still developing
 
 == 0.0.1 2008-07-30
 

@@ -1,3 +1,4 @@
+.autotest
 History.txt
 License.txt
 Manifest.txt
@@ -22,7 +23,6 @@ ext/rubypython_bridge/rubypython_bridge.c
 ext/rubypython_bridge/rubypython_bridge.h
 ext/rubypython_bridge/test.rb
 lib/rubypython.rb
-lib/rubypython/pythonfunction.rb
 lib/rubypython/version.rb
 script/console
 script/destroy
@@ -31,6 +31,7 @@ script/txt2html
 setup.rb
 tasks/deployment.rake
 tasks/environment.rake
+tasks/extconf.rake
 tasks/extconf/rubypython_bridge.rake
 tasks/website.rake
 test/test_helper.rb

@@ -13,18 +13,24 @@ void rp_obj_mark(PObj* self)
 
 void rp_obj_free(PObj* self)
 {
-	if(Py_IsInitialized())
+	if(Py_IsInitialized()&&self->pObject)
 	{
 		Py_XDECREF(self->pObject);
 	}
 	free(self);
 }
 
+
+/*
+Decreases the reference count on the object wrapped by this instance.
+This is used for cleanup in RubyPython.stop. RubyPyObject instance automatically
+decrease the reference count on their associated objects before they are garbage collected.
+*/
 VALUE rp_obj_free_pobj(VALUE self)
 {
 	PObj *cself;
 	Data_Get_Struct(self,PObj,cself);
-	if(Py_IsInitialized())
+	if(Py_IsInitialized()&&cself->pObject)
 	{
 		Py_XDECREF(cself->pObject);
 		cself->pObject=NULL;
@@ -48,6 +54,10 @@ PyObject* rp_obj_pobject(VALUE self)
 	return cself->pObject;
 }
 
+/*
+Returns the name of the Python object which this instance wraps.
+
+*/
 VALUE rp_obj_name(VALUE self)
 {
 	if(Py_IsInitialized())
@@ -115,7 +125,7 @@ int rp_has_attr(VALUE self,VALUE func_name)
 	return 0;
 }
 
-
+//:nodoc:
 VALUE rp_mod_init(VALUE self, VALUE mname)
 {
 	PObj* cself;
@@ -138,6 +148,8 @@ int rp_is_func(VALUE pObj)
 	Py_XINCREF(self->pObject);
 	return (PyFunction_Check(self->pObject)||PyMethod_Check(self->pObject));
 }
+
+//:nodoc:
 VALUE rp_mod_delegate(VALUE self,VALUE args)
 {
 	VALUE name,name_string,rDict,result;
@@ -168,7 +180,13 @@ VALUE rp_mod_delegate(VALUE self,VALUE args)
 	
 }
 
-// A wrapper around generic Python object, allowing them to passed around in ruby
+/*
+A wrapper class for Python objects that allows them to manipulated from within ruby.
+
+Important wrapper functionality is found in the RubyPyModule, RubyPyClass, and RubyPyFunction
+classes which wrap Python objects of similar names.
+
+*/
 inline void Init_RubyPyObject()
 {
 	cRubyPyObject=rb_define_class_under(mRubyPythonBridge,"RubyPyObject",rb_cObject);
@@ -178,7 +196,15 @@ inline void Init_RubyPyObject()
 	
 }
 
-// A wrapper for Python Modules to allow importing from within ruby
+
+/*
+A wrapper class for Python Modules.
+
+Methods calls are delegated to the equivalent Python methods/functions. Attribute references
+return either the equivalent attribute converted to a native Ruby type, or wrapped reference 
+to a Python object. RubyPyModule instances should be created through the use of RubyPython.import.
+
+*/
 inline void Init_RubyPyModule()
 {
 	cRubyPyModule=rb_define_class_under(mRubyPythonBridge,"RubyPyModule",cRubyPyObject);
@@ -186,12 +212,25 @@ inline void Init_RubyPyModule()
 	rb_define_method(cRubyPyModule,"method_missing",rp_mod_delegate,-2);
 }
 
-// :nodoc:
+/*
+A wrapper class for Python classes and instances.
+
+This allows objects which cannot easily be converted to native Ruby types to still be accessible
+from within ruby. Most users need not concern themselves with anything about this class except
+its existence.
+
+*/
 inline void Init_RubyPyClass()
 {
 	cRubyPyClass=rb_define_class_under(mRubyPythonBridge,"RubyPyClass",cRubyPyObject);
 }
 
+/*
+A wrapper class for Python functions and methods.
+
+This is used internally to aid RubyPyClass in delegating method calls.
+
+*/
 void Init_RubyPyFunction()
 {
 	cRubyPyFunction=rb_define_class_under(mRubyPythonBridge,"RubyPyFunction",cRubyPyObject);

@@ -8,8 +8,8 @@ class TestRubypython < Test::Unit::TestCase
   def test_simple
     assert RubyPython.start
     assert RubyPython.import "urllib"
-    assert RubyPython.stop
-    assert !RubyPython.stop
+    assert(RubyPython.stop)
+    assert(!RubyPython.stop)
   end
   
   def test_delegation
@@ -43,5 +43,15 @@ class TestRubypython < Test::Unit::TestCase
       RubyPython.import "slasdfj"
     end
     RubyPython.stop
+  end
+  
+  def test_run_method
+    unpickled=nil
+    RubyPython.run do
+      cPickle=import "cPickle"
+      unpickled=cPickle.loads("(dp1\nS'a'\nS'n'\ns(I1\nS'2'\ntp2\nI4\ns.")
+    end
+    assert_equal(unpickled,{"a"=>"n", [1, "2"]=>4})
+    assert(!RubyPython.stop)
   end
 end

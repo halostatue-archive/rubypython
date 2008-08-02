@@ -130,6 +130,7 @@ VALUE rp_mod_init(VALUE self, VALUE mname)
 	return self;
 }
 
+//Not completely accurate
 int rp_is_func(VALUE pObj)
 {
 	PObj* self;

@@ -36,4 +36,12 @@ class TestRubypython < Test::Unit::TestCase
     RubyPython.import "urllib"
     RubyPython.stop
   end
+  
+  def test_handle_error
+    RubyPython.start
+    assert_raise PythonError do
+      RubyPython.import "slasdfj"
+    end
+    RubyPython.stop
+  end
 end

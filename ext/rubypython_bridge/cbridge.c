@@ -53,13 +53,28 @@ VALUE rp_call_func_with_module_name(VALUE module,VALUE name,VALUE args)
 	pModuleName=rtop_obj(module,0);
 	pModule=PyImport_Import(pModuleName);
 	Py_XDECREF(pModuleName);
+	if(PyErr_Occurred())
+	{
+		rp_pythonerror();
+		return Qnil;
+	}
+	
 	
 	pFunc=PyObject_GetAttrString(pModule,func_name);
 	
 	pArgs=rtop_obj(rArgs,1);
 	
-	
 	pReturn=PyObject_CallObject(pFunc,pArgs);
+	
+	if(PyErr_Occurred())
+	{
+		Py_XDECREF(pReturn);
+		Py_XDECREF(pArgs);
+		Py_XDECREF(pFunc);
+		Py_XDECREF(pModule);
+		rp_pythonerror();
+		return Qnil;
+	}
 	
 	rReturn=ptor_obj(pReturn);
 	
@@ -75,10 +90,17 @@ PyObject* rp_get_module(VALUE mname)
 	{
 		mname=rb_str_new2("__builtins__");
 	}
+	printf("here\n");
 	PyObject *pModule,*pModuleName;
 	pModuleName=rtop_string(mname);
 	pModule=PyImport_Import(pModuleName);
 	Py_XDECREF(pModuleName);
+	if(PyErr_Occurred())
+	{
+		Py_XDECREF(pModule);
+		rp_pythonerror();
+		return Py_None;
+	}
 	return pModule;
 }
 
@@ -86,6 +108,12 @@ PyObject* rp_get_func_with_module(PyObject* pModule,VALUE name)
 {
 	PyObject *pFunc;
 	pFunc=PyObject_GetAttrString(pModule,STR2CSTR(name));
+	if(PyErr_Occurred())
+	{
+		Py_XDECREF(pFunc);
+		rp_pythonerror();
+		return Py_None;
+	}
 	return pFunc;
 }
 
@@ -104,6 +132,14 @@ VALUE rp_call_func(PyObject* pFunc, VALUE args)
 	}
 	pArgs=rtop_obj(rArgs,1);
 	pReturn=PyObject_CallObject(pFunc,pArgs);
+	
+	if(PyErr_Occurred())
+	{
+		Py_XDECREF(pArgs);
+		Py_XDECREF(pReturn);
+		rp_pythonerror();
+		return Qnil;
+	}
 	rReturn=ptor_obj(pReturn);
 	
 	Py_XDECREF(pArgs);

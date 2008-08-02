@@ -1,6 +1,7 @@
 #include "config.h"
 #include "ptor.h"
 #include "rtop.h"
+#include "rp_error.h"
 
 #ifndef _BRIDGE_H_
 #define _BRIDGE_H_

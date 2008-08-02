@@ -1,5 +1,10 @@
 require 'rubypython_bridge.so'
 
+class RubyPythonBridge::RubyPyObject
+  def inspect
+    "<#{self.class}:  #{__name}>"
+  end
+end
 # 
 # This module provides the direct user interface for the RubyPython extension.
 # 
@@ -10,7 +15,7 @@ require 'rubypython_bridge.so'
 # It is important to remember that the Python Interpreter must be started before the bridge
 # is functional. This may be done by two methods. One is to use the +start+ function.
 # This will start the embedded interpreter. If this approach is used, the user should
-# remember to call +RubyPython.stop+ when they are finished with python.
+# remember to call RubyPython.stop when they are finished with python.
 # Example:
 #   RubyPython.start
 #   CPickle=RubyPython.import "cPickle"
@@ -28,14 +33,6 @@ require 'rubypython_bridge.so'
 # 
 module RubyPython
   
-  class RubyPythonBridge::RubyPyObject
-    def inspect
-      "<#{self.class}:  #{__name}>"
-    end
-  end
-  
-  # RubyPython.start
-  # 
   # Used to started the python interpreter. Delegates to RubyPythonBridge
   # 
   #   RubyPython.start
@@ -48,8 +45,7 @@ module RubyPython
   end
   
   
-  # RubyPython.stop
-  # 
+
   # Used to end the python session. Adds some cleanup on top of RubyPythonBridge.stop
   def self.stop() #=> true,false
     ObjectSpace.each_object(RubyPythonBridge::RubyPyObject) do |o|
@@ -58,11 +54,18 @@ module RubyPython
     RubyPythonBridge.stop
   end
   
-  # RubyPython.import(modname)
-  # 
-  # Import the python module +modname+ and return it wrapped as a ruby object
+  # Import the python module +mod+ and return it wrapped as a ruby object
   def self.import(mod)
     RubyPythonBridge.import(mod)
+  end
+  
+  # Handles the setup and cleanup involved with using the interpreter for you.
+  # Note that all Python object will be effectively scope to within the block
+  # as the embedded interpreter will be halted at its end.
+  def self.run
+    start
+    yield
+    stop
   end
 
 end

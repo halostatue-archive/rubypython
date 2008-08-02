@@ -28,7 +28,7 @@ static VALUE rp_import_module(VALUE self,VALUE module)
 /*
 * call-seq: import(modname)
 * 
-* imports a python file_module using the interpreter and returns ruby wrapper
+* imports a python file_module using the interpreter and returns a ruby wrapper
 
 */
 static VALUE rp_import(VALUE self,VALUE mname)
@@ -50,7 +50,7 @@ static VALUE rp_python_block(VALUE self)
 * call-seq: start()
 *
 * Starts the python interpreter
-* 	RubyPython.start
+* 	RubyPythonBridge.start
 */
 VALUE rp_start(VALUE self)
 {

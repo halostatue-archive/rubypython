@@ -63,7 +63,7 @@ VALUE rp_obj_name(VALUE self)
 	pObject=rp_obj_pobject(self);
 	return ptor_obj(PyObject_GetAttrString(pObject,"__name__"));		
 	}
-	return rb_string_new2("__FREED__");
+	return rb_str_new2("__FREED__");
 
 }
 

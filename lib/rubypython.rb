@@ -10,7 +10,8 @@ end
 # 
 # The majority of the functionality lies in the _RubyPythonBridge_ module, which is provided
 # by the C extension. However, the end user should only worry about dealing with the RubyPython
-# module as that is designed for user interaction.
+# module as that is designed for user interaction. Furthermore the RubyPythonBridge is somewhat
+# bad with memory management and using it directly may result in some strange crashes.
 #   
 # It is important to remember that the Python Interpreter must be started before the bridge
 # is functional. This may be done by two methods. One is to use the +start+ function.

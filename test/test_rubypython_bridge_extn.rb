@@ -28,10 +28,4 @@ class TestRubypythonBridgeExtn < Test::Unit::TestCase
     assert(RubyPythonBridge.stop)
   end
   
-  def test_two_imports
-    RubyPythonBridge.start
-    RubyPythonBridge.import "urllib"
-    RubyPythonBridge.import "cPickle"
-    RubyPythonBridge.stop
-  end
 end

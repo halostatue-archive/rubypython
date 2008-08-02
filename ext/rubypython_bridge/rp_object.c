@@ -40,13 +40,6 @@ VALUE rp_obj_alloc(VALUE klass)
 	return Data_Wrap_Struct(klass,rp_obj_mark,rp_obj_free,self);
 }
 
-VALUE rp_mod_init(VALUE self,VALUE mname)
-{
-	PObj* cself;
-	Data_Get_Struct(self,PObj,cself);
-	cself->pObject=rp_get_module(mname);
-	return self;
-}
 
 PyObject* rp_obj_pobject(VALUE self)
 {
@@ -76,31 +69,6 @@ VALUE rp_obj_from_pyobject(PyObject *pObj)
 	return rObj;
 }
 
-VALUE rp_mod_getclasses(PyObject *pModule)
-{
-	Py_ssize_t pos=0;
-	PyObject *pModuleDict,*pModuleValues,*pKey,*pVal;
-	VALUE rClassHash;
-	rClassHash=rb_hash_new();
-	pModuleDict=PyModule_GetDict(pModule);
-	while(PyDict_Next(pModule,&pos,&pKey,&pVal))
-	{
-		printf("Hello?\n");
-		if(PyType_Check(pVal))
-		{
-			Py_XINCREF(pVal);
-			rb_hash_aset(rClassHash,ptor_string(pKey),rp_cla_from_class(pVal));
-		}
-	}
-	return rClassHash;
-}
-
-VALUE rp_mod_classdelegate(VALUE self, VALUE klass)
-{
-	VALUE rClasses=rb_iv_get(self,"@pclasses");
-	VALUE rClass=rb_hash_aref(rClasses,klass);
-	return rClass;
-}
 
 VALUE rp_cla_from_class(PyObject *pClass)
 {
@@ -147,35 +115,8 @@ int rp_has_attr(VALUE self,VALUE func_name)
 	return 0;
 }
 
-VALUE rp_mod_delegate(VALUE self,VALUE args)
-{
-	VALUE name,name_string,rClasses;
-	PObj* cself;
-	
-	if(!rp_has_attr(self,rb_ary_entry(args,0)))
-	{
-		
-		int argc;
-		argc=RARRAY(args)->len;
-		VALUE *argv;
-		argv=ALLOC_N(VALUE,argc);
-		MEMCPY(argv,RARRAY(args)->ptr,VALUE,argc);
-		return rb_call_super(argc,argv);
-	}
-	
-	name=rb_ary_shift(args);
-	name_string=rb_funcall(name,rb_intern("to_s"),0);
-	
-	// rClasses=rb_iv_get(self,"@pclasses");
-	// if(rb_funcall(rClasses,rb_intern("member?"),1,name))
-	// {
-	// 	return rp_mod_classdelegate(self,name_string);
-	// }	
-	
-	return rp_mod_call_func(self,name_string,args);
-}
 
-VALUE rp_newmod_init(VALUE self, VALUE mname)
+VALUE rp_mod_init(VALUE self, VALUE mname)
 {
 	PObj* cself;
 	Data_Get_Struct(self,PObj,cself);
@@ -196,7 +137,7 @@ int rp_is_func(VALUE pObj)
 	Py_XINCREF(self->pObject);
 	return (PyFunction_Check(self->pObject)||PyMethod_Check(self->pObject));
 }
-VALUE rp_newmod_delegate(VALUE self,VALUE args)
+VALUE rp_mod_delegate(VALUE self,VALUE args)
 {
 	VALUE name,name_string,rDict,result;
 	PObj *pDict;
@@ -240,9 +181,8 @@ inline void Init_RubyPyObject()
 inline void Init_RubyPyModule()
 {
 	cRubyPyModule=rb_define_class_under(mRubyPythonBridge,"RubyPyModule",cRubyPyObject);
-	rb_define_method(cRubyPyModule,"initialize",rp_newmod_init,1);
-	rb_define_method(cRubyPyModule,"method_missing",rp_newmod_delegate,-2);
-	rb_define_method(cRubyPyModule,"const_missing",rp_mod_classdelegate,1);	
+	rb_define_method(cRubyPyModule,"initialize",rp_mod_init,1);
+	rb_define_method(cRubyPyModule,"method_missing",rp_mod_delegate,-2);
 }
 
 // :nodoc:

@@ -54,6 +54,8 @@ static VALUE rp_python_block(VALUE self)
 */
 VALUE rp_start(VALUE self)
 {
+	
+	printf("WARK\n");
 	if(Py_IsInitialized())
 	{
 		return Qfalse;

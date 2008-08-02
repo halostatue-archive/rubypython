@@ -92,4 +92,5 @@ void Init_rubypython_bridge()
 	Init_RubyPyObject();
 	Init_RubyPyModule();
 	Init_RubyPyClass();
+	Init_RubyPyFunction();
 }

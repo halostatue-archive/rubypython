@@ -24,6 +24,8 @@ VALUE ptor_tuple(PyObject* pTuple);
 
 VALUE ptor_dict(PyObject* pDict);
 
+VALUE ptor_obj_no_destruct(PyObject *pObj);
+
 
 
 #endif /* _PTOR_H_ */

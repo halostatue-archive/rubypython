@@ -94,7 +94,65 @@ VALUE ptor_dict(PyObject* pDict)
 	}
 	return rHash;
 }
+VALUE ptor_obj_no_destruct(PyObject *pObj)
+{
+	VALUE rObj;
+	if(PyObject_TypeCheck(pObj,&PyString_Type))
+	{
+		rObj=ptor_string(pObj);
+		return rObj;
+	}
+	
+	if(PyObject_TypeCheck(pObj,&PyList_Type))
+	{
+		rObj=ptor_list(pObj);
+		return rObj;
+	}
+	if(PyObject_TypeCheck(pObj,&PyInt_Type))
+	{
+		rObj=ptor_int(pObj);
+		return rObj;
+	}
+	if(PyObject_TypeCheck(pObj,&PyLong_Type))
+	{
+		rObj=ptor_long(pObj);
+		return rObj;
+	}
+	if(PyObject_TypeCheck(pObj,&PyFloat_Type))
+	{
+		rObj=ptor_float(pObj);
+		return rObj;
+	}
+	if(PyObject_TypeCheck(pObj,&PyTuple_Type))
+	{
+		rObj=ptor_tuple(pObj);
+		return rObj;
+	}
+	if(PyObject_TypeCheck(pObj,&PyDict_Type))
+	{
+		rObj=ptor_dict(pObj);
+		return rObj;
+	}
 
+	if(pObj==Py_True)
+	{
+		return Qtrue;
+	}
+	if(pObj==Py_False)
+	{
+		return Qfalse;
+	}
+	if(pObj==Py_None)
+	{
+		return Qnil;
+	}
+	if(PyFunction_Check(pObj)||PyMethod_Check(pObj)||!PyObject_HasAttrString(pObj,"__dict__"))
+	{
+		rObj=rp_func_from_function(pObj);
+		return rObj;
+	}	
+	return rp_cla_from_class(pObj);
+}
 VALUE ptor_obj(PyObject* pObj)
 {
 	VALUE rObj;
@@ -141,10 +199,7 @@ VALUE ptor_obj(PyObject* pObj)
 		Py_DECREF(pObj);
 		return rObj;
 	}
-	// if(PyFunction_Check(pObj)||PyMethod_Check(pObj))
-	// {
-	// 	return rp_obj_from_pyobject(pObj);
-	// }
+
 	if(pObj==Py_True)
 	{
 		Py_DECREF(Py_True);
@@ -159,12 +214,17 @@ VALUE ptor_obj(PyObject* pObj)
 	{
 		return Qnil;
 	}
-	// return rp_cla_from_class(pObj);	
-	PyObject* pRepr;
-	pRepr=PyObject_Repr(pObj);
-	Py_XDECREF(pObj);
-	rObj=ptor_string(pRepr);
-	Py_XDECREF(pRepr);
-	return rObj;
+	if(PyFunction_Check(pObj)||PyMethod_Check(pObj)||!PyObject_HasAttrString(pObj,"__dict__"))
+	{
+		return rp_func_from_function(pObj);
+
+	}	
+	return rp_cla_from_class(pObj);	
+	// PyObject* pRepr;
+	// pRepr=PyObject_Repr(pObj);
+	// Py_XDECREF(pObj);
+	// rObj=ptor_string(pRepr);
+	// Py_XDECREF(pRepr);
+	// return rObj;
 }
 

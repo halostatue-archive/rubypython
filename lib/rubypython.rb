@@ -1,4 +1,4 @@
-require 'rubypython_bridge'
+require 'rubypython_bridge.so'
 
 # 
 # This module provides the direct user interface for the RubyPython extension.
@@ -27,7 +27,12 @@ require 'rubypython_bridge'
 #   end
 # 
 module RubyPython
-  extend RubyPythonBridge
+  
+  class RubyPythonBridge::RubyPyObject
+    def inspect
+      "<#{self.class}:  #{__name}>"
+    end
+  end
   
   # RubyPython.start
   # 
@@ -52,4 +57,12 @@ module RubyPython
     end
     RubyPythonBridge.stop
   end
+  
+  # RubyPython.import(modname)
+  # 
+  # Import the python module +modname+ and return it wrapped as a ruby object
+  def self.import(mod)
+    RubyPythonBridge.import(mod)
+  end
+
 end

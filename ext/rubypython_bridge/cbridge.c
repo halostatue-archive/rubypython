@@ -90,7 +90,6 @@ PyObject* rp_get_module(VALUE mname)
 	{
 		mname=rb_str_new2("__builtins__");
 	}
-	printf("here\n");
 	PyObject *pModule,*pModuleName;
 	pModuleName=rtop_string(mname);
 	pModule=PyImport_Import(pModuleName);

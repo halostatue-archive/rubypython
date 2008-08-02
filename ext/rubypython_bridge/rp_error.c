@@ -5,10 +5,12 @@ VALUE ePythonError;
 void rp_pythonerror()
 {
 	PyObject *pType,*pValue,*pTraceback;
+	PyObject *pTypeName;
 	PyErr_Fetch(&pType,&pValue,&pTraceback);
-	rb_raise(ePythonError,"(%s):(%s)\n",rb_inspect(ptor_obj(pType)),rb_inspect(ptor_obj(pValue)));
+	pTypeName=PyObject_GetAttrString(pType,"__name__");
+	Py_XDECREF(pType);
+	rb_raise(ePythonError,"%s:(%s)\n",STR2CSTR(ptor_obj(pTypeName)),STR2CSTR(ptor_obj(pValue)));
 	Py_XDECREF(pTraceback);
-	PyErr_Clear();
 }
 void Init_RubyPyError()
 {

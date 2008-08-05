@@ -93,6 +93,7 @@ PyObject* rtop_symbol(VALUE rSymbol)
 	return pString;
 
 }
+
 PyObject* rtop_obj(VALUE rObj,int is_key)
 {
 	PyObject *pObj;
@@ -144,8 +145,15 @@ PyObject* rtop_obj(VALUE rObj,int is_key)
 			break;
 		
 		default:
-			rInspect=rb_inspect(rObj);
-			pObj=rtop_string(rInspect);
+			if(rb_obj_is_kind_of(rObj,rb_name2path("RubyPyObject"))==Qtrue)
+			{
+				pObj=rp_obj_pobject(rObj);
+			}
+			else
+			{
+				rInspect=rb_inspect(rObj);
+				pObj=rtop_string(rInspect);
+			}
 	}
 	return pObj;
 }

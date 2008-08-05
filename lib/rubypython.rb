@@ -1,10 +1,5 @@
 require 'rubypython_bridge.so'
-
-class RubyPythonBridge::RubyPyObject
-  def inspect
-    "<#{self.class}:  #{__name}>"
-  end
-end
+require 'rubypython/wrapper_extensions'
 
 
 =begin rdoc
@@ -82,7 +77,7 @@ module RubyPython
   # as the embedded interpreter will be halted at its end.
   def self.run(&block)
     start
-    module_eval(&block)
+      module_eval(&block)
     stop
   end
 

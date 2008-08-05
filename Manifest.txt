@@ -24,6 +24,7 @@ ext/rubypython_bridge/rubypython_bridge.h
 ext/rubypython_bridge/test.rb
 lib/rubypython.rb
 lib/rubypython/version.rb
+lib/rubypython/wrapper_extensions.rb
 script/console
 script/destroy
 script/generate

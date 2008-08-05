@@ -114,6 +114,7 @@ VALUE rp_mod_call_func(VALUE self,VALUE func_name,VALUE args)
 	
 }
 
+
 int rp_has_attr(VALUE self,VALUE func_name)
 {
 	
@@ -205,7 +206,7 @@ return either the equivalent attribute converted to a native Ruby type, or wrapp
 to a Python object. RubyPyModule instances should be created through the use of RubyPython.import.
 
 */
-inline void Init_RubyPyModule()
+void Init_RubyPyModule()
 {
 	cRubyPyModule=rb_define_class_under(mRubyPythonBridge,"RubyPyModule",cRubyPyObject);
 	rb_define_method(cRubyPyModule,"initialize",rp_mod_init,1);
@@ -220,17 +221,17 @@ from within ruby. Most users need not concern themselves with anything about thi
 its existence.
 
 */
-inline void Init_RubyPyClass()
+void Init_RubyPyClass()
 {
 	cRubyPyClass=rb_define_class_under(mRubyPythonBridge,"RubyPyClass",cRubyPyObject);
 }
 
-/*
-A wrapper class for Python functions and methods.
+// 
+// A wrapper class for Python functions and methods.
+// 
+// This is used internally to aid RubyPyClass in delegating method calls.
+// 
 
-This is used internally to aid RubyPyClass in delegating method calls.
-
-*/
 void Init_RubyPyFunction()
 {
 	cRubyPyFunction=rb_define_class_under(mRubyPythonBridge,"RubyPyFunction",cRubyPyObject);

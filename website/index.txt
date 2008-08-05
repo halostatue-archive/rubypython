@@ -1,10 +1,9 @@
 h1. rubypython
 
-h1. &#x2192; 'rubypython'
-
 
 h2. What
 
+	A C bridge between ruby and python providing an integrated ruby interface to Python.
 
 h2. Installing
 
@@ -12,53 +11,24 @@ h2. Installing
 
 h2. The basics
 
-
-h2. Demonstration of usage
-
+Check out the RDOC pages at "http://rubypython.rubyforge.org/rdoc":http://rubypython.rubyforge.org/rdoc
 
 
 h2. Forum
 
 "http://groups.google.com/group/rubypython":http://groups.google.com/group/rubypython
 
-TODO - create Google Group - rubypython
-
 h2. How to submit patches
 
 Read the "8 steps for fixing other people's code":http://drnicwilliams.com/2007/06/01/8-steps-for-fixing-other-peoples-code/ and for section "8b: Submit patch to Google Groups":http://drnicwilliams.com/2007/06/01/8-steps-for-fixing-other-peoples-code/#8b-google-groups, use the Google Group above.
 
-You can fetch the source from either:
+You can fetch the source from:
 
-<% if rubyforge_project_id %>
 
-* rubyforge: "http://rubyforge.org/scm/?group_id=<%= rubyforge_project_id %>":http://rubyforge.org/scm/?group_id=<%= rubyforge_project_id %>
+* rubyforge: "http://rubyforge.org/scm/?group_id=6737":http://rubyforge.org/scm/?group_id=6737
 
 <pre>git clone git://rubyforge.org/rubypython.git</pre>
 
-<% else %>
-
-* rubyforge: MISSING IN ACTION
-
-TODO - You can not created a RubyForge project, OR have not run <code>rubyforge config</code>
-yet to refresh your local rubyforge data with this projects' id information.
-
-When you do this, this message will magically disappear!
-
-Or you can hack website/index.txt and make it all go away!!
-
-<% end %>
-
-* github: "http://github.com/GITHUB_USERNAME/rubypython/tree/master":http://github.com/GITHUB_USERNAME/rubypython/tree/master
-
-<pre>git clone git://github.com/GITHUB_USERNAME/rubypython.git</pre>
-
-
-TODO - add "github_username: username" to ~/.rubyforge/user-config.yml and newgem will reuse it for future projects.
-
-
-* gitorious: "git://gitorious.org/rubypython/mainline.git":git://gitorious.org/rubypython/mainline.git
-
-<pre>git clone git://gitorious.org/rubypython/mainline.git</pre>
 
 h3. Build and test instructions
 

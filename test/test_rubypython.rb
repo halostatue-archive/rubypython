@@ -49,9 +49,16 @@ class TestRubypython < Test::Unit::TestCase
     unpickled=nil
     RubyPython.run do
       cPickle=import "cPickle"
+      cPickle.inspect
       unpickled=cPickle.loads("(dp1\nS'a'\nS'n'\ns(I1\nS'2'\ntp2\nI4\ns.")
     end
     assert_equal(unpickled,{"a"=>"n", [1, "2"]=>4})
     assert(!RubyPython.stop)
+  end
+  
+  def test_pass_back_py_classes
+    RubyPython.start
+    wave=RubyPython.import "wave"
+    RubyPython.stop
   end
 end

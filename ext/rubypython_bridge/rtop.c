@@ -1,5 +1,7 @@
 #include "rtop.h"
 
+extern VALUE cRubyPyObject;
+
 PyObject* rtop_string(VALUE rString)
 {
 	PyObject* pString;
@@ -145,7 +147,7 @@ PyObject* rtop_obj(VALUE rObj,int is_key)
 			break;
 		
 		default:
-			if(rb_obj_is_kind_of(rObj,rb_name2path("RubyPyObject"))==Qtrue)
+			if(rb_obj_is_kind_of(rObj,cRubyPyObject)==Qtrue)
 			{
 				pObj=rp_obj_pobject(rObj);
 			}

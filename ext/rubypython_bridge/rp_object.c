@@ -2,11 +2,13 @@
 #include "stdio.h"
 
 extern VALUE mRubyPythonBridge;
+extern VALUE ePythonError;
 
 VALUE cRubyPyObject;
 VALUE cRubyPyModule;
 VALUE cRubyPyClass;
 VALUE cRubyPyFunction;
+VALUE cRubyPyInstance;
 
 void rp_obj_mark(PObj* self)
 {}
@@ -36,6 +38,10 @@ VALUE rp_obj_free_pobj(VALUE self)
 		cself->pObject=NULL;
 		return Qtrue;
 	}
+	else
+	{
+		cself->pObject=NULL;
+	}
 	return Qfalse;
 }
 
@@ -51,6 +57,10 @@ PyObject* rp_obj_pobject(VALUE self)
 {
 	PObj *cself;
 	Data_Get_Struct(self,PObj,cself);
+	if(!cself->pObject)
+	{
+		rb_raise(ePythonError,"RubyPython tried to access a freed object");
+	}
 	return cself->pObject;
 }
 
@@ -62,9 +72,32 @@ VALUE rp_obj_name(VALUE self)
 {
 	if(Py_IsInitialized())
 	{
-	PyObject *pObject;
-	pObject=rp_obj_pobject(self);
-	return ptor_obj(PyObject_GetAttrString(pObject,"__name__"));		
+		PyObject *pObject,*pName,*pRepr;
+		VALUE rName;
+		pObject=rp_obj_pobject(self);
+		pName=PyObject_GetAttrString(pObject,"__name__");
+		if(!pName)
+		{
+			PyErr_Clear();
+			pName=PyObject_GetAttrString(pObject,"__class__");
+	 		pRepr=PyObject_Repr(pName);
+			rName=ptor_string(pRepr);
+			Py_XDECREF(pRepr);
+			return rb_str_concat(rb_str_new2("An instance of "),rName);
+			if(!pName)
+			{
+				PyErr_Clear();
+				pName=PyObject_Repr(pObject);
+				if(!pName)
+				{
+					PyErr_Clear();
+					return rb_str_new2("__Unnameable__");
+				}
+			}
+		}
+		rName=ptor_string(pName);
+		Py_XDECREF(pName);
+		return rName;
 	}
 	return rb_str_new2("__FREED__");
 
@@ -79,13 +112,83 @@ VALUE rp_obj_from_pyobject(PyObject *pObj)
 	return rObj;
 }
 
+VALUE rp_inst_from_instance(PyObject *pInst)
+{
+	PObj* self;
+	VALUE rInst=rb_class_new_instance(0,NULL,cRubyPyInstance);
+	PyObject *pClassDict,*pClass,*pInstDict;
+	VALUE rInstDict,rClassDict;
+	Data_Get_Struct(rInst,PObj,self);
+	self->pObject=pInst;
+	pClass=PyObject_GetAttrString(pInst,"__class__");
+	pClassDict=PyObject_GetAttrString(pClass,"__dict__");
+	pInstDict=PyObject_GetAttrString(pInst,"__dict__");
+	Py_XINCREF(pClassDict);
+	Py_XINCREF(pInstDict);
+	rClassDict=rp_obj_from_pyobject(pClassDict);
+	rInstDict=rp_obj_from_pyobject(pInstDict);
+	rb_iv_set(rInst,"@pclassdict",rClassDict);
+	rb_iv_set(rInst,"@pinstdict",rInstDict);
+	return rInst;
+}
+
+//:nodoc:
+VALUE rp_inst_delegate(VALUE self,VALUE args)
+{
+	VALUE name,name_string,rClassDict,result,rInstDict;
+	VALUE ret;
+	char *cname;
+	PObj *pClassDict,*pInstDict;
+	PyObject *pCalled;
+	if(!rp_has_attr(self,rb_ary_entry(args,0)))
+	{		
+		int argc;
+		
+		VALUE *argv;
+		argc=RARRAY(args)->len;
+		argv=ALLOC_N(VALUE,argc);
+		MEMCPY(argv,RARRAY(args)->ptr,VALUE,argc);
+		return rb_call_super(argc,argv);
+	}
+	name=rb_ary_shift(args);
+	name_string=rb_funcall(name,rb_intern("to_s"),0);
+	cname=STR2CSTR(name_string);
+		
+	rClassDict=rb_iv_get(self,"@pclassdict");
+	rInstDict=rb_iv_get(self,"@pinstdict");
+	Data_Get_Struct(rClassDict,PObj,pClassDict);
+	Data_Get_Struct(rInstDict,PObj,pInstDict);
+	pCalled=PyDict_GetItemString(pInstDict->pObject,cname);
+	if(!pCalled)
+	{
+		pCalled=PyDict_GetItemString(pClassDict->pObject,cname);
+	}
+	Py_XINCREF(pCalled);
+	result=ptor_obj_no_destruct(pCalled);
+	if(rb_obj_is_instance_of(result,cRubyPyFunction))
+	{
+		Py_XINCREF(rp_obj_pobject(self));
+		rb_ary_unshift(args,self);
+		ret=rp_call_func(pCalled,args);
+		return ret;
+	}
+	return result;
+	
+}
+
 
 VALUE rp_cla_from_class(PyObject *pClass)
 {
 	PObj* self;
 	VALUE rClass=rb_class_new_instance(0,NULL,cRubyPyClass);
+	PyObject *pClassDict;
+	VALUE rDict;
 	Data_Get_Struct(rClass,PObj,self);
 	self->pObject=pClass;
+	pClassDict=PyObject_GetAttrString(pClass,"__dict__");
+	Py_XINCREF(pClassDict);
+	rDict=rp_obj_from_pyobject(pClassDict);
+	rb_iv_set(rClass,"@pdict",rDict);
 	return rClass;
 }
 
@@ -136,7 +239,7 @@ VALUE rp_mod_init(VALUE self, VALUE mname)
 	PyObject *pModuleDict;
 	pModuleDict=PyModule_GetDict(cself->pObject);
 	Py_XINCREF(pModuleDict);
-	rDict=rp_cla_from_class(pModuleDict);
+	rDict=rp_obj_from_pyobject(pModuleDict);
 	rb_iv_set(self,"@pdict",rDict);
 	return self;
 }
@@ -154,6 +257,7 @@ int rp_is_func(VALUE pObj)
 VALUE rp_mod_delegate(VALUE self,VALUE args)
 {
 	VALUE name,name_string,rDict,result;
+	VALUE ret;
 	PObj *pDict;
 	PyObject *pCalled;
 	if(!rp_has_attr(self,rb_ary_entry(args,0)))
@@ -168,14 +272,16 @@ VALUE rp_mod_delegate(VALUE self,VALUE args)
 	}
 	name=rb_ary_shift(args);
 	name_string=rb_funcall(name,rb_intern("to_s"),0);
-	
+		
 	rDict=rb_iv_get(self,"@pdict");
 	Data_Get_Struct(rDict,PObj,pDict);
 	pCalled=PyDict_GetItemString(pDict->pObject,STR2CSTR(name_string));
+	Py_XINCREF(pCalled);
 	result=ptor_obj_no_destruct(pCalled);
 	if(rb_obj_is_instance_of(result,cRubyPyFunction))
 	{
-		return rp_call_func(pCalled,args);
+		ret=rp_call_func(pCalled,args);
+		return ret;
 	}
 	return result;
 	
@@ -224,6 +330,7 @@ its existence.
 void Init_RubyPyClass()
 {
 	cRubyPyClass=rb_define_class_under(mRubyPythonBridge,"RubyPyClass",cRubyPyObject);
+	rb_define_method(cRubyPyClass,"method_missing",rp_mod_delegate,-2);
 }
 
 // 
@@ -235,4 +342,10 @@ void Init_RubyPyClass()
 void Init_RubyPyFunction()
 {
 	cRubyPyFunction=rb_define_class_under(mRubyPythonBridge,"RubyPyFunction",cRubyPyObject);
+}
+
+void Init_RubyPyInstance()
+{
+	cRubyPyInstance=rb_define_class_under(mRubyPythonBridge,"RubyPyInstance",cRubyPyObject);
+	rb_define_method(cRubyPyInstance,"method_missing",rp_inst_delegate,-2);
 }

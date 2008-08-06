@@ -160,7 +160,12 @@ static VALUE ptor_obj_core(PyObject *pObj,int destructive)
 	{
 		return rp_func_from_function(pObj);
 
-	}	
+	}
+	if(PyInstance_Check(pObj))
+	{
+		rObj=rp_inst_from_instance(pObj);
+		return rObj;
+	}
 	return rp_cla_from_class(pObj);
 }
 VALUE ptor_obj_no_destruct(PyObject *pObj)

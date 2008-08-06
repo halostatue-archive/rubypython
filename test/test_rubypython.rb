@@ -56,9 +56,12 @@ class TestRubypython < Test::Unit::TestCase
     assert(!RubyPython.stop)
   end
   
-  def test_pass_back_py_classes
+  def test_instance_method_delegation
     RubyPython.start
     wave=RubyPython.import "wave"
+    w=wave.open("test/test.wav","rb")
+    assert_equal(w.getframerate,9600)
+    w.close
     RubyPython.stop
   end
 end

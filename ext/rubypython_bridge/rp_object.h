@@ -43,4 +43,9 @@ int rp_is_func(VALUE pObj);
 
 VALUE rp_obj_from_pyobject(PyObject *pObj);
 
+VALUE rp_inst_from_instance(PyObject *pInst);
+
+VALUE rp_inst_delegate(VALUE self,VALUE args);
+
+
 #endif /* _RP_OBJECT_H_ */

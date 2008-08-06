@@ -26,6 +26,5 @@ class TestRubypythonBridgeExtn < Test::Unit::TestCase
       o.free_pobj
     end
     assert(RubyPythonBridge.stop)
-  end
-  
+  end  
 end

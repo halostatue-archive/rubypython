@@ -122,6 +122,7 @@ VALUE rp_call_func(PyObject* pFunc, VALUE args)
 	PyObject *pReturn,*pArgs;
 	if(!(TYPE(args)==T_ARRAY))
 	{
+		
 		rArgs=rb_ary_new();
 		rb_ary_push(rArgs,args);
 	}
@@ -139,11 +140,8 @@ VALUE rp_call_func(PyObject* pFunc, VALUE args)
 		rp_pythonerror();
 		return Qnil;
 	}
-	rReturn=ptor_obj(pReturn);
+	rReturn=ptor_obj_no_destruct(pReturn);
 	
 	Py_XDECREF(pArgs);
-	Py_XDECREF(pReturn);
-	
 	return rReturn;
 }
-

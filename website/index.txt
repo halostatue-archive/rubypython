@@ -3,15 +3,19 @@ h1. rubypython
 
 h2. What
 
-	A C bridge between ruby and python providing an integrated ruby interface to Python.
-
+	RubyPython is a C bridge between Ruby and Python with a Ruby interface. It's aim is to make the power of the Python's great standard library available to Ruby programmers from within Ruby.
+	
 h2. Installing
 
 <pre syntax="ruby">sudo gem install rubypython</pre>
 
+Don't worry if you got some ugly output from RDOC and RI.
+
 h2. The basics
 
 Check out the RDOC pages at "http://rubypython.rubyforge.org/rdoc":http://rubypython.rubyforge.org/rdoc
+
+I have only tested this on Mac OS 10.5 with Python 2.5. If anyone has issues with another setup let me know and I'll do what I can.
 
 
 h2. Forum
@@ -24,8 +28,7 @@ Read the "8 steps for fixing other people's code":http://drnicwilliams.com/2007/
 
 You can fetch the source from:
 
-
-* rubyforge: "http://rubyforge.org/scm/?group_id=6737":http://rubyforge.org/scm/?group_id=6737
+"http://rubyforge.org/scm/?group_id=6737":http://rubyforge.org/scm/?group_id=6737
 
 <pre>git clone git://rubyforge.org/rubypython.git</pre>
 

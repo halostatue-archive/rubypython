@@ -47,5 +47,9 @@ VALUE rp_inst_from_instance(PyObject *pInst);
 
 VALUE rp_inst_delegate(VALUE self,VALUE args);
 
+VALUE rp_cla_new_inst(VALUE self,VALUE args);
+
+VALUE rp_obj_responds(VALUE self,VALUE mname);
+
 
 #endif /* _RP_OBJECT_H_ */

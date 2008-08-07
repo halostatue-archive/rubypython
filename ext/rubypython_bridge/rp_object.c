@@ -253,6 +253,21 @@ int rp_is_func(VALUE pObj)
 	return (PyFunction_Check(self->pObject)||PyMethod_Check(self->pObject));
 }
 
+VALUE rp_cla_new_inst(VALUE self,VALUE args)
+{
+	PyObject *pSelf;
+	pSelf=rp_obj_pobject(self);
+	return rp_call_func(pSelf,args);
+}
+
+VALUE rp_obj_responds(VALUE self,VALUE mname)
+{
+	if(rp_has_attr(self,mname))
+	{
+		return Qtrue;
+	}
+	return Qfalse;
+}
 //:nodoc:
 VALUE rp_mod_delegate(VALUE self,VALUE args)
 {
@@ -283,6 +298,11 @@ VALUE rp_mod_delegate(VALUE self,VALUE args)
 		ret=rp_call_func(pCalled,args);
 		return ret;
 	}
+	else if(rb_obj_is_instance_of(result,cRubyPyClass)&&(rb_funcall(args,rb_intern("empty?"),0)==Qfalse)&&PyCallable_Check(pCalled))
+	{
+		ret=rp_call_func(pCalled,args);
+		return ret;
+	}
 	return result;
 	
 }
@@ -300,6 +320,7 @@ inline void Init_RubyPyObject()
 	rb_define_alloc_func(cRubyPyObject,rp_obj_alloc);
 	rb_define_method(cRubyPyObject,"free_pobj",rp_obj_free_pobj,0);
 	rb_define_method(cRubyPyObject,"__name",rp_obj_name,0);
+	rb_define_method(cRubyPyObject,"respond_to?",rp_obj_responds,1);
 	
 }
 
@@ -331,6 +352,7 @@ void Init_RubyPyClass()
 {
 	cRubyPyClass=rb_define_class_under(mRubyPythonBridge,"RubyPyClass",cRubyPyObject);
 	rb_define_method(cRubyPyClass,"method_missing",rp_mod_delegate,-2);
+	rb_define_method(cRubyPyClass,"new",rp_cla_new_inst,-2);
 }
 
 // 

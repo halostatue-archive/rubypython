@@ -17,9 +17,22 @@ class TestRubyPythonBridgeExtn < Test::Unit::TestCase
     assert(!RubyPythonBridge.stop)
   end
   
-  def test_instance_wrapper
-    
+  def test_new_instance
+    RubyPythonBridge.start
+    urllib2=RubyPythonBridge.import "urllib2"
+    assert_instance_of(RubyPythonBridge::RubyPyClass,urllib2.Request)
+    assert_instance_of(RubyPythonBridge::RubyPyInstance,urllib2.Request("google.com"))
+    RubyPythonBridge.stop
   end
+  
+  def test_new_instance_with_new_method
+    RubyPythonBridge.start
+    urllib2=RubyPythonBridge.import "urllib2"
+    assert_instance_of(RubyPythonBridge::RubyPyClass,urllib2.Request)
+    assert_instance_of(RubyPythonBridge::RubyPyInstance,urllib2.Request.new("google.com"))
+    RubyPythonBridge.stop
+  end
+  
 end
 
 class TestRubyPythonBridgeWithCPickle < Test::Unit::TestCase
@@ -35,6 +48,9 @@ class TestRubyPythonBridgeWithCPickle < Test::Unit::TestCase
     RubyPythonBridge.stop
   end
   
+  def test_mod_respond_to
+    assert(@cPickle.respond_to? :loads)
+  end
   
   def test_data_passing
     assert_equal(@cPickle.loads("(dp1\nS'a'\nS'n'\ns(I1\nS'2'\ntp2\nI4\ns."),{"a"=>"n", [1, "2"]=>4})
@@ -54,6 +70,30 @@ class TestRubyPythonBridgeWithCPickle < Test::Unit::TestCase
   
   def test_module_method_wrapping
     assert_instance_of(RubyPythonBridge::RubyPyModule,@cPickle)
+  end
+  
+end
+
+
+class TestRubyPythonBridgeWithUrllib2 < Test::Unit::TestCase
+  def setup
+    RubyPythonBridge.start
+    @urllib2=RubyPythonBridge.import "urllib2"
+  end
+  
+  def teardown
+    ObjectSpace.each_object(RubyPythonBridge::RubyPyObject) do |o|
+      o.free_pobj
+    end
+    RubyPythonBridge.stop
+  end
+  
+  def test_class_respond_to
+    assert(@urllib2.Request.respond_to? :get_data)
+  end
+  
+  def test_instance_respond_to
+    assert(@urllib2.Request.new("google.com").respond_to? :get_data)
   end
   
 end

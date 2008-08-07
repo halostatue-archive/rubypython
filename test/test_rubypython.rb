@@ -30,14 +30,14 @@ class TestRubypython < Test::Unit::TestCase
     assert(RubyPython.stop)
   end
   
-  def test_double_import
+  def test_two_imports
     RubyPython.start
     RubyPython.import "cPickle"
     RubyPython.import "urllib"
     RubyPython.stop
   end
   
-  def test_handle_error
+  def test_propogate_python_errror
     RubyPython.start
     assert_raise PythonError do
       RubyPython.import "slasdfj"

@@ -1,9 +1,9 @@
 #include "rubypython_bridge.h"
 
 VALUE mRubyPythonBridge;
-extern VALUE cRubyPyObject;
-extern VALUE cRubyPyModule;
-extern VALUE cRubyPyClass;
+RUBY_EXTERN VALUE cRubyPyObject;
+RUBY_EXTERN VALUE cRubyPyModule;
+RUBY_EXTERN VALUE cRubyPyClass;
 
 
 /*

@@ -1,6 +1,6 @@
 #include "rtop.h"
 
-extern VALUE cRubyPyObject;
+RUBY_EXTERN VALUE cRubyPyObject;
 
 PyObject* rtop_string(VALUE rString)
 {

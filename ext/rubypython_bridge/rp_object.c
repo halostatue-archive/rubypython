@@ -1,8 +1,8 @@
 #include "rp_object.h"
 #include "stdio.h"
 
-extern VALUE mRubyPythonBridge;
-extern VALUE ePythonError;
+RUBY_EXTERN VALUE mRubyPythonBridge;
+RUBY_EXTERN VALUE ePythonError;
 
 VALUE cRubyPyObject;
 VALUE cRubyPyModule;

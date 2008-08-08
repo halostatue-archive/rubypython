@@ -10,7 +10,7 @@ checked program was:
 
 --------------------
 
-have_header: checking for Python.h... -------------------- no
+find_header: checking for Python.h in /Library/Frameworks/Python.framework/Versions/2.5/include/python2.5/,/Library/Frameworks/Python.framework/Versions/2.5/include/python2.5/... -------------------- yes
 
 "/usr/bin/cpp-4.0 -I. -I/opt/local/lib/ruby/1.8/i686-darwin9 -I. -I/opt/local/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE  -I/opt/local/include -O2  -fno-common -pipe -fno-common    conftest.c -o conftest.i"
 conftest.c:1:20: error: Python.h: No such file or directory
@@ -19,14 +19,10 @@ checked program was:
 1: #include <Python.h>
 /* end */
 
---------------------
-
-have_header: checking for python2.5/Python.h... -------------------- yes
-
-"/usr/bin/cpp-4.0 -I. -I/opt/local/lib/ruby/1.8/i686-darwin9 -I. -I/opt/local/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE  -I/opt/local/include -O2  -fno-common -pipe -fno-common    conftest.c -o conftest.i"
+"/usr/bin/cpp-4.0 -I. -I/opt/local/lib/ruby/1.8/i686-darwin9 -I. -I/opt/local/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE  -I/opt/local/include -O2  -fno-common -pipe -fno-common   -I/Library/Frameworks/Python.framework/Versions/2.5/include/python2.5/ conftest.c -o conftest.i"
 checked program was:
 /* begin */
-1: #include <python2.5/Python.h>
+1: #include <Python.h>
 /* end */
 
 --------------------

@@ -1,9 +1,34 @@
+require 'singleton'
 class RubyPythonBridge::RubyPyObject
   def inspect
     "<#{self.class}:#{__name}>"
   end
 end
 
+class PyMainClass
+  include Singleton
+  def main
+    @main||=RubyPython.import "__main__"
+  end
+  
+  def builtin
+    @builtin||=RubyPython.import "__builtin__"
+  end
+  
+  def method_missing(name,*args,&block)
+    begin
+      main.send(name,*args)
+    rescue NoMethodError
+      begin
+        builtin.send(name,*args)
+      rescue NoMethodError
+        super(name,*args)
+      end
+    end
+  end
+end
+
+PyMain=PyMainClass.instance
 
 # A wrapper class for Python Modules.
 # 

@@ -5,6 +5,8 @@ class RubyPythonBridge::RubyPyObject
   end
 end
 
+
+# An object providing access to the python __main__ and __builtin__ modules
 class PyMainClass
   include Singleton
   def main
@@ -17,13 +19,16 @@ class PyMainClass
   
   def method_missing(name,*args,&block)
     begin
-      main.send(name,*args)
+      result=main.send(name,*args)
     rescue NoMethodError
       begin
-        builtin.send(name,*args)
+        result=builtin.send(name,*args)
       rescue NoMethodError
         super(name,*args)
       end
+    end
+    if(block)
+      return block.call(result)
     end
   end
 end

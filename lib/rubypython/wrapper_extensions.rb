@@ -6,7 +6,15 @@ class RubyPythonBridge::RubyPyObject
 end
 
 
-# An object providing access to the python __main__ and __builtin__ modules
+# A singleton object providing access to the python __main__ and __builtin__ modules.
+# This can be conveniently accessed through the already instaniated PyMain constant.
+# The __main__ namespace is searched beofre the __builtin__ namespace. As such,
+# naming clashes will be resolved in that order.
+#
+# == Block Syntax
+# The PyMainClass object provides somewhat experimental block support.
+# A block may be passed to a method call and the object returned by the function call
+# will be passed as an argument to the block.
 class PyMainClass
   include Singleton
   def main
@@ -33,6 +41,7 @@ class PyMainClass
   end
 end
 
+# See _PyMainClass_
 PyMain=PyMainClass.instance
 
 # A wrapper class for Python Modules.

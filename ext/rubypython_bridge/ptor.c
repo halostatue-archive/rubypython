@@ -47,7 +47,7 @@ VALUE ptor_long(PyObject* pNum)
 	cNum=PyLong_AsLong(pNum);
 	if(PyErr_ExceptionMatches(PyExc_OverflowError))
 	{
-		raise_PyError();
+		rp_pythonerror();
 		return Qnil;
 	}
 	rNum=INT2NUM(cNum);

@@ -1,3 +1,17 @@
+== 0.2.3 2008-08-29
+* 2 Major Enhancements
+	* Introduced PyMain object to as a singleton wrapper for the Python __main__ and 
+		__builtin__ modules.
+	* Introduced block functionality for PyMain object.
+	
+* Compatibility Updates
+	* Changed some declarations in the C code make RubyPython more compatible with the style 						
+		conventions of the Ruby C API.
+	* Update how RubyPython locates the Python headers and library.
+* 1 Bug Fix
+	* Fixed an error in ptor.c that might have prevented RubyPython from building correctly 	
+		on certain systems.
+		
 == 0.2.2 2008-08-07
 * Major Enhancements
 	* Wrapped classes and instances should now behave as expected.

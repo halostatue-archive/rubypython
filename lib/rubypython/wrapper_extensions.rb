@@ -17,14 +17,17 @@ end
 # will be passed as an argument to the block.
 class PyMainClass
   include Singleton
+  #:nodoc:
   def main
     @main||=RubyPython.import "__main__"
   end
   
+  #:nodoc:
   def builtin
     @builtin||=RubyPython.import "__builtin__"
   end
   
+  #:nodoc:
   def method_missing(name,*args,&block)
     begin
       result=main.send(name,*args)

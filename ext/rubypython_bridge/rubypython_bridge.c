@@ -84,6 +84,7 @@ void Init_rubypython_bridge()
 	rb_define_module_function(mRubyPythonBridge,"start",rp_start,0);
 	rb_define_module_function(mRubyPythonBridge,"stop",rp_stop,0);
 	rb_define_module_function(mRubyPythonBridge,"import",rp_import,1);
+	Init_BlankObject();
 	Init_RubyPyObject();
 	Init_RubyPyModule();
 	Init_RubyPyClass();

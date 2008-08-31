@@ -4,6 +4,30 @@
 RUBY_EXTERN VALUE mRubyPythonBridge;
 RUBY_EXTERN VALUE ePythonError;
 
+VALUE cBlankObject;
+
+// :nodoc:
+VALUE blank_undef_if(VALUE mname,VALUE klass)
+{
+	if(rb_funcall(mname,rb_intern("match"),1,rb_str_new2("(?:^__)||(?:\\?$)||(?:send)"))==Qnil)
+	{
+		rb_undef_method(klass,STR2CSTR(mname));
+		return Qtrue;
+	}
+	else
+	{
+		return Qfalse;
+	}
+}
+
+// :nodoc:
+VALUE blank_obj_prep(VALUE self)
+{
+	VALUE instance_methods=rb_funcall(self,rb_intern("instance_methods"),0);
+	rb_iterate(rb_each,instance_methods,blank_undef_if,self);
+	return self;
+}
+
 VALUE cRubyPyObject;
 VALUE cRubyPyModule;
 VALUE cRubyPyClass;
@@ -307,6 +331,13 @@ VALUE rp_mod_delegate(VALUE self,VALUE args)
 	
 }
 
+// :nodoc:
+void Init_BlankObject()
+{
+	cBlankObject=rb_define_class_under(mRubyPythonBridge,"BlankObject",rb_cObject);
+	blank_obj_prep(cBlankObject);
+}
+
 /*
 A wrapper class for Python objects that allows them to manipulated from within ruby.
 
@@ -316,7 +347,7 @@ classes which wrap Python objects of similar names.
 */
 inline void Init_RubyPyObject()
 {
-	cRubyPyObject=rb_define_class_under(mRubyPythonBridge,"RubyPyObject",rb_cObject);
+	cRubyPyObject=rb_define_class_under(mRubyPythonBridge,"RubyPyObject",cBlankObject);
 	rb_define_alloc_func(cRubyPyObject,rp_obj_alloc);
 	rb_define_method(cRubyPyObject,"free_pobj",rp_obj_free_pobj,0);
 	rb_define_method(cRubyPyObject,"__name",rp_obj_name,0);

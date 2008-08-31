@@ -64,4 +64,12 @@ class TestRubypython < Test::Unit::TestCase
     w.close
     RubyPython.stop
   end
+  
+  def test_pymain_delegation
+    RubyPython.start
+    assert_equal(PyMain.float(42),42.to_f)
+    RubyPython.stop
+  end
+  
+  
 end

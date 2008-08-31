@@ -5,11 +5,6 @@ class RubyPythonBridge::RubyPyObject
   end
 end
 
-# :nodoc:
-class BlankSlate
-    instance_methods.each { |m| undef_method m unless m =~ /^__/ }
-end
-
 
 # A singleton object providing access to the python __main__ and __builtin__ modules.
 # This can be conveniently accessed through the already instaniated PyMain constant.
@@ -22,6 +17,7 @@ end
 # will be passed as an argument to the block.
 class PyMainClass < RubyPythonBridge::BlankObject
   include Singleton
+  attr_accessor :main, :builtin
   #:nodoc:
   def main
     @main||=RubyPython.import "__main__"

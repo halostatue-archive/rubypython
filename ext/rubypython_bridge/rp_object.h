@@ -51,5 +51,11 @@ VALUE rp_cla_new_inst(VALUE self,VALUE args);
 
 VALUE rp_obj_responds(VALUE self,VALUE mname);
 
+VALUE cBlankObject;
+
+VALUE blank_undef_if(VALUE mname,VALUE klass);
+
+VALUE blank_obj_prep(VALUE self);
+
 
 #endif /* _RP_OBJECT_H_ */

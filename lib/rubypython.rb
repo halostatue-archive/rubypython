@@ -64,6 +64,8 @@ module RubyPython
     ObjectSpace.each_object(RubyPythonBridge::RubyPyObject) do |o|
       o.free_pobj
     end
+    PyMain.main=nil
+    PyMain.builtin=nil
     RubyPythonBridge.stop
   end
   

@@ -66,8 +66,18 @@ class TestRubypython < Test::Unit::TestCase
   end
   
   def test_pymain_delegation
+        RubyPython.start
+        assert_equal(PyMain.float(42),42.to_f)
+        RubyPython.stop
+      end
+  
+  def test_block_syntax
+    returned=""
     RubyPython.start
-    assert_equal(PyMain.float(42),42.to_f)
+    returned=PyMain.float(22) do |f|
+      f*2
+    end
+    assert_equal(returned,44.0)
     RubyPython.stop
   end
   

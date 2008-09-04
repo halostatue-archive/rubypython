@@ -17,7 +17,7 @@ end
 # will be passed as an argument to the block.
 class PyMainClass < RubyPythonBridge::BlankObject
   include Singleton
-  attr_accessor :main, :builtin
+  attr_writer :main, :builtin
   #:nodoc:
   def main
     @main||=RubyPython.import "__main__"

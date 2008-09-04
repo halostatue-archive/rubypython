@@ -4,14 +4,14 @@ class TestRubypython < Test::Unit::TestCase
 
   def setup
   end
-  
+
   def test_simple
     assert RubyPython.start
     assert RubyPython.import "urllib"
     assert(RubyPython.stop)
     assert(!RubyPython.stop)
   end
-  
+
   def test_delegation
     RubyPython.start
     cPickle=RubyPython.import("cPickle")
@@ -29,14 +29,14 @@ class TestRubypython < Test::Unit::TestCase
     end
     assert(RubyPython.stop)
   end
-  
+
   def test_two_imports
     RubyPython.start
     RubyPython.import "cPickle"
     RubyPython.import "urllib"
     RubyPython.stop
   end
-  
+
   def test_propogate_python_errror
     RubyPython.start
     assert_raise PythonError do
@@ -44,7 +44,7 @@ class TestRubypython < Test::Unit::TestCase
     end
     RubyPython.stop
   end
-  
+
   def test_run_method
     unpickled=nil
     RubyPython.run do
@@ -55,7 +55,7 @@ class TestRubypython < Test::Unit::TestCase
     assert_equal(unpickled,{"a"=>"n", [1, "2"]=>4})
     assert(!RubyPython.stop)
   end
-  
+
   def test_instance_method_delegation
     RubyPython.start
     wave=RubyPython.import "wave"
@@ -64,13 +64,13 @@ class TestRubypython < Test::Unit::TestCase
     w.close
     RubyPython.stop
   end
-  
+
   def test_pymain_delegation
-        RubyPython.start
-        assert_equal(PyMain.float(42),42.to_f)
-        RubyPython.stop
-      end
-  
+    RubyPython.start
+    assert_equal(PyMain.float(42),42.to_f)
+    RubyPython.stop
+  end
+
   def test_block_syntax
     returned=""
     RubyPython.start
@@ -80,6 +80,6 @@ class TestRubypython < Test::Unit::TestCase
     assert_equal(returned,44.0)
     RubyPython.stop
   end
-  
-  
+
+
 end

@@ -30,6 +30,33 @@ This allows one to do something like the following:
     puts cPickle.dumps "RubyPython is still awesome!"
   end
 
+The downside to the above method is that the block has no access to the encompassing scope. An
+alternative is to use <tt>RubyPython.session</tt>. The downside to this approach is that the module
+methods are not available by their unqualified names: i.e.
+  irb(main):001:0>   RubyPython.session do
+  irb(main):002:1*     cPickle=import "cPickle"
+  irb(main):003:1>   end
+  NoMethodError: undefined method `import' for main:Object
+  	from (irb):2
+  	from ./rubypython.rb:93:in `call'
+  	from ./rubypython.rb:93:in `session'
+  	from (irb):1
+  	
+However:
+  irb(main):001:0> RubyPython.session do
+  irb(main):002:1*   cPickle=RubyPython.import "cPickle"
+  irb(main):003:1>   puts cPickle.dumps "RubyPython is still awesome!"
+  irb(main):004:1> end
+  S'RubyPython is still awesome!'
+  .
+  => nil
+
+A compromise can be achieved by just including the RubyPython module into the scope you're
+working in.
+
+If you really wish to be free of dealing with the interpreter, just import 'rubypython/session'.
+This will start the interpreter on import and will halt it when execution ends.
+  
 ==Errors
 The RubyPythonModule defines a new error object, PythonError. Should any error occur within
 the Python interpreter, the class and value of the error will be passed back into ruby within

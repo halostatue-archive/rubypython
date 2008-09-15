@@ -76,13 +76,24 @@ module RubyPython
   
   # Handles the setup and cleanup involved with using the interpreter for you.
   # Note that all Python object will be effectively scope to within the block
-  # as the embedded interpreter will be halted at its end.
+  # as the embedded interpreter will be halted at its end. The supplied block is
+  # run within the scope of the RubyPython module.
+  #
+  # Alternatively the user may prefer RubyPython.session which simples handles
+  # initialization and cleanup of the interpreter.
   def self.run(&block)
     start
       module_eval(&block)
     stop
   end
-
+  
+  # Simply starts the interpreter, runs the supplied block, and stops the interpreter.
+  def self.session(&block)
+    start
+    retval=block.call
+    stop
+    return retval
+  end
 end
 
 

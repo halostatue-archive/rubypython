@@ -80,6 +80,16 @@ class TestRubypython < Test::Unit::TestCase
     assert_equal(returned,44.0)
     RubyPython.stop
   end
+  
+  def test_session_function
+    RubyPython.session do
+      cPickle=RubyPython.import "cPickle"
+      cPickle.inspect
+      assert_equal(cPickle.loads("(dp1\nS'a'\nS'n'\ns(I1\nS'2'\ntp2\nI4\ns."),{"a"=>"n", [1, "2"]=>4})
+    end
+  end
+
+  
 
 
 end

@@ -164,6 +164,11 @@ VALUE rp_inst_delegate(VALUE self,VALUE args)
 	char *cname;
 	PObj *pClassDict,*pInstDict;
 	PyObject *pCalled;
+	
+	if(rp_equal(rb_ary_entry(args,0)))
+	{
+		return rp_inst_attr_set(self,args);
+	}
 	if(!rp_has_attr(self,rb_ary_entry(args,0)))
 	{		
 		int argc;
@@ -292,6 +297,48 @@ VALUE rp_obj_responds(VALUE self,VALUE mname)
 	}
 	return Qfalse;
 }
+
+static int rp_equal(VALUE args)
+{
+	VALUE mname=rb_ary_entry(args,0);
+	VALUE name_string=rb_funcall(mname,rb_intern("to_s"),0);
+	return Qtrue==rb_funcall(name_string,rb_intern("end_with?"),1,rb_str_new2("?"));
+}
+
+static int rp_double_bang(VALUE args)
+{
+	VALUE mname=rb_ary_entry(args,0);
+	VALUE name_string=rb_funcall(mname,rb_intern("to_s"),0);
+	return Qtrue==rb_funcall(name_string,rb_intern("end_with?"),1,rb_str_new2("!!"));
+}
+
+VALUE rp_mod_attr_set(VALUE self,VALUE args)
+{
+	VALUE rDict;
+	PObj *pDict;
+	VALUE mname=rb_ary_shift(args);
+	VALUE name_string=rb_funcall(mname,rb_intern("to_s"),0);
+	rb_funcall(name_string,rb_intern("chop!"),0);
+	if(!rp_has_attr(self,name_string))
+	{		
+		int argc;
+		
+		VALUE *argv;
+		argc=RARRAY(args)->len;
+		argv=ALLOC_N(VALUE,argc);
+		MEMCPY(argv,RARRAY(args)->ptr,VALUE,argc);
+		return rb_call_super(argc,argv);
+	}
+	if(NUM2INT(rb_funccal(args,rb_intern("size"),0))==1)
+	{
+		args=rb_ary_entry(args,0);
+	}
+	rDict=rb_iv_get(self,"@pdict");
+	Data_Get_Struct(rDict,PObj,pDict);
+	PyObject_SetAttr(pDict->pObject,rtop_string(name_string),rtop_obj(args,0));
+	return Qtrue;
+}
+
 //:nodoc:
 VALUE rp_mod_delegate(VALUE self,VALUE args)
 {
@@ -299,6 +346,14 @@ VALUE rp_mod_delegate(VALUE self,VALUE args)
 	VALUE ret;
 	PObj *pDict;
 	PyObject *pCalled;
+	if(rp_equal(args))
+	{
+		return rp_mod_attr_set(self,args);
+	}
+	// if(rp_double_bang)
+	// {
+	// 	return rp_mod_attr_db(args);
+	// }
 	if(!rp_has_attr(self,rb_ary_entry(args,0)))
 	{		
 		int argc;
@@ -332,7 +387,7 @@ VALUE rp_mod_delegate(VALUE self,VALUE args)
 }
 
 // :nodoc:
-void Init_BlankObject()
+inline void Init_BlankObject()
 {
 	cBlankObject=rb_define_class_under(mRubyPythonBridge,"BlankObject",rb_cObject);
 	blank_obj_prep(cBlankObject);

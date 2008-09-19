@@ -4,6 +4,7 @@ VALUE mRubyPythonBridge;
 RUBY_EXTERN VALUE cRubyPyObject;
 RUBY_EXTERN VALUE cRubyPyModule;
 RUBY_EXTERN VALUE cRubyPyClass;
+RUBY_EXTERN VALUE cBlankObject;
 
 
 /*

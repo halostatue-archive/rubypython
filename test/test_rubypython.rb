@@ -4,6 +4,7 @@ class TestRubypython < Test::Unit::TestCase
 
   def setup
   end
+  
 
   def test_simple
     assert RubyPython.start
@@ -90,6 +91,12 @@ class TestRubypython < Test::Unit::TestCase
   end
 
   
-
+  def test_setter_ary
+    RubyPython.session do
+      sys=RubyPython.import 'sys'
+      sys.path=[""]
+      assert_equal([""],sys.path)
+    end
+  end
 
 end

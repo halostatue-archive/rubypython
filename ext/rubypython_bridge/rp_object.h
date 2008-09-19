@@ -61,6 +61,8 @@ int rp_double_bang(VALUE args);
 
 VALUE rp_mod_attr_set(VALUE self,VALUE args);
 
+VALUE rp_inst_attr_set(VALUE self, VALUE args);
+
 VALUE rp_obj_wrap(PyObject* pObj);
 
 #endif /* _RP_OBJECT_H_ */

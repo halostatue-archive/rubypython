@@ -156,6 +156,55 @@ VALUE rp_inst_from_instance(PyObject *pInst)
 	return rInst;
 }
 
+VALUE rp_inst_attr_set(VALUE self,VALUE args)
+{
+	VALUE name,name_string,rClassDict,result,rInstDict;
+	VALUE ret;
+	int instance;
+	char *cname;
+	PObj *pClassDict,*pInstDict,*pDict;
+	PyObject *pName;
+
+	if(!rp_has_attr(self,rb_ary_entry(args,0)))
+	{		
+		int argc;
+		
+		VALUE *argv;
+		argc=RARRAY(args)->len;
+		argv=ALLOC_N(VALUE,argc);
+		MEMCPY(argv,RARRAY(args)->ptr,VALUE,argc);
+		return rb_call_super(argc,argv);
+	}
+	name=rb_ary_shift(args);
+	name_string=rb_funcall(name,rb_intern("to_s"),0);
+	cname=STR2CSTR(name_string);
+	rb_funcall(name_string,rb_intern("chop!"),0);
+	
+	if(NUM2INT(rb_funcall(args,rb_intern("size"),0))==1)
+	{
+		args=rb_ary_entry(args,0);
+	}
+		
+	rClassDict=rb_iv_get(self,"@pclassdict");
+	rInstDict=rb_iv_get(self,"@pinstdict");
+	Data_Get_Struct(rClassDict,PObj,pClassDict);
+	Data_Get_Struct(rInstDict,PObj,pInstDict);
+	pName=PyString_FromString(cname);
+	if(PyDict_Contains(pInstDict->pObject,pName))
+	{
+		pDict=pInstDict;
+
+	}
+	else
+	{
+		pDict=pClassDict;
+		
+	}
+	Py_XDECREF(pName);
+	PyDict_SetItemString(pDict->pObject,STR2CSTR(name_string),rtop_obj(args,0));
+	return Qtrue;
+}
+
 //:nodoc:
 VALUE rp_inst_delegate(VALUE self,VALUE args)
 {
@@ -347,13 +396,13 @@ VALUE rp_mod_attr_set(VALUE self,VALUE args)
 		MEMCPY(argv,RARRAY(args)->ptr,VALUE,argc);
 		return rb_call_super(argc,argv);
 	}
-	if(NUM2INT(rb_funccal(args,rb_intern("size"),0))==1)
+	if(NUM2INT(rb_funcall(args,rb_intern("size"),0))==1)
 	{
 		args=rb_ary_entry(args,0);
 	}
 	rDict=rb_iv_get(self,"@pdict");
 	Data_Get_Struct(rDict,PObj,pDict);
-	PyObject_SetAttr(pDict->pObject,rtop_string(name_string),rtop_obj(args,0));
+	PyDict_SetItemString(pDict->pObject,STR2CSTR(name_string),rtop_obj(args,0));
 	return Qtrue;
 }
 

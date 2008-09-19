@@ -230,6 +230,22 @@ VALUE rp_func_from_function(PyObject *pFunc)
 	return rFunc;
 }
 
+VALUE rp_obj_wrap(PyObject* pObj)
+{
+	VALUE rObj;
+	if(PyFunction_Check(pObj)||PyMethod_Check(pObj)||!PyObject_HasAttrString(pObj,"__dict__"))
+	{
+		return rp_func_from_function(pObj);
+
+	}
+	if(PyInstance_Check(pObj))
+	{
+		rObj=rp_inst_from_instance(pObj);
+		return rObj;
+	}
+	return rp_cla_from_class(pObj);
+}
+
 VALUE rp_mod_call_func(VALUE self,VALUE func_name,VALUE args)
 {
 	PObj *cself;
@@ -304,6 +320,8 @@ int rp_equal(VALUE args)
 	VALUE name_string=rb_funcall(mname,rb_intern("to_s"),0);
 	return Qtrue==rb_funcall(name_string,rb_intern("end_with?"),1,rb_str_new2("="));
 }
+
+
 
 int rp_double_bang(VALUE args)
 {

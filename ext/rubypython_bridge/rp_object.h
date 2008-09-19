@@ -55,9 +55,9 @@ VALUE blank_undef_if(VALUE mname,VALUE klass);
 
 VALUE blank_obj_prep(VALUE self);
 
-static int rp_equal(VALUE args);
+int rp_equal(VALUE args);
 
-static int rp_double_bang(VALUE args);
+int rp_double_bang(VALUE args);
 
 VALUE rp_mod_attr_set(VALUE self,VALUE args);
 

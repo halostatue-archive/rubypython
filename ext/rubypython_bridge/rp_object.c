@@ -165,7 +165,7 @@ VALUE rp_inst_delegate(VALUE self,VALUE args)
 	PObj *pClassDict,*pInstDict;
 	PyObject *pCalled;
 	
-	if(rp_equal(rb_ary_entry(args,0)))
+	if(rp_equal(args))
 	{
 		return rp_inst_attr_set(self,args);
 	}
@@ -298,14 +298,14 @@ VALUE rp_obj_responds(VALUE self,VALUE mname)
 	return Qfalse;
 }
 
-static int rp_equal(VALUE args)
+int rp_equal(VALUE args)
 {
 	VALUE mname=rb_ary_entry(args,0);
 	VALUE name_string=rb_funcall(mname,rb_intern("to_s"),0);
-	return Qtrue==rb_funcall(name_string,rb_intern("end_with?"),1,rb_str_new2("?"));
+	return Qtrue==rb_funcall(name_string,rb_intern("end_with?"),1,rb_str_new2("="));
 }
 
-static int rp_double_bang(VALUE args)
+int rp_double_bang(VALUE args)
 {
 	VALUE mname=rb_ary_entry(args,0);
 	VALUE name_string=rb_funcall(mname,rb_intern("to_s"),0);

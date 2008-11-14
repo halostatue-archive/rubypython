@@ -98,5 +98,14 @@ class TestRubypython < Test::Unit::TestCase
       assert_equal([""],sys.path)
     end
   end
+  
+  def test_setter_instance
+    RubyPython.session do
+      urllib2=RubyPython.import "urllib2"
+      req=urllib2.Request("google.com")
+      req.headers={:a=>"2","k"=>4}
+      assert_equal({"a"=>"2","k"=>4},req.headers)
+    end
+  end
 
 end

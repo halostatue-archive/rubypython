@@ -1,3 +1,11 @@
+== 0.2.4 2008-10-24
+* Major Enhancements
+	* Provided setter methods for object attributes. Python object attributes can now be set 
+		from within ruby.
+	* Made wrapper classes a subclass of custom made blank object class to try to avoid name 	
+		collisions.
+* Bug Fix
+	* Changed part of extconf.rb file that would not work under windows.
 == 0.2.3 2008-08-29
 * 2 Major Enhancements
 	* Introduced PyMain object to as a singleton wrapper for the Python __main__ and 

@@ -36,7 +36,7 @@ class PyMainClass < RubyPythonBridge::BlankObject
       begin
         result=builtin.send(name,*args)
       rescue NoMethodError
-        method_missing(name,*args)
+        super(name,*args)
       end
     end
     if(block)

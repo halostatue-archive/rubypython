@@ -1,6 +1,7 @@
 #include "rtop.h"
 
 RUBY_EXTERN VALUE cRubyPyObject;
+RUBY_EXTERN PyObject* rp_obj_pobject(VALUE self);
 
 PyObject* rtop_string(VALUE rString)
 {
@@ -45,6 +46,7 @@ PyObject* rtop_hash(VALUE rHash)
 	int i;
 	
 	pDict=PyDict_New();
+	
 	for(i=0;i<RARRAY(rKeys)->len;i++)
 	{
 		rKey=rb_ary_entry(rKeys,i);
@@ -91,7 +93,7 @@ PyObject* rtop_true()
 PyObject* rtop_symbol(VALUE rSymbol)
 {
 	PyObject* pString;
-	pString=PyString_FromString(rb_id2name(rSymbol));
+	pString=PyString_FromString(STR2CSTR(rb_funcall(rSymbol,rb_intern("to_s"),0)));
 	return pString;
 
 }

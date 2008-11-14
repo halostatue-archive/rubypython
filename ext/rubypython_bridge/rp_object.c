@@ -9,7 +9,7 @@ VALUE cBlankObject;
 // :nodoc:
 VALUE blank_undef_if(VALUE mname,VALUE klass)
 {
-	if(rb_funcall(mname,rb_intern("match"),1,rb_str_new2("(?:^__)||(?:\\?$)||(?:send)"))==Qnil)
+	if(rb_funcall(mname,rb_intern("match"),1,rb_str_new2("(?:^__)|(?:\\?$)|(?:^send$)|(?:^class$)"))==Qnil)
 	{
 		rb_undef_method(klass,STR2CSTR(mname));
 		return Qtrue;
@@ -164,29 +164,30 @@ VALUE rp_inst_attr_set(VALUE self,VALUE args)
 	char *cname;
 	PObj *pClassDict,*pInstDict,*pDict;
 	PyObject *pName;
-
-	if(!rp_has_attr(self,rb_ary_entry(args,0)))
+	name=rb_ary_shift(args);
+	name_string=rb_funcall(name,rb_intern("to_s"),0);
+	rb_funcall(name_string,rb_intern("chop!"),0);	
+	if(!rp_has_attr(self,name_string))
 	{		
-		int argc;
-		
+		int argc;		
 		VALUE *argv;
 		argc=RARRAY(args)->len;
 		argv=ALLOC_N(VALUE,argc);
 		MEMCPY(argv,RARRAY(args)->ptr,VALUE,argc);
 		return rb_call_super(argc,argv);
 	}
-	name=rb_ary_shift(args);
-	name_string=rb_funcall(name,rb_intern("to_s"),0);
-	cname=STR2CSTR(name_string);
-	rb_funcall(name_string,rb_intern("chop!"),0);
 	
-	if(NUM2INT(rb_funcall(args,rb_intern("size"),0))==1)
+	cname=STR2CSTR(name_string);
+	
+	if((NUM2INT(rb_funcall(args,rb_intern("size"),0))==1))
 	{
 		args=rb_ary_entry(args,0);
 	}
+	
 		
 	rClassDict=rb_iv_get(self,"@pclassdict");
 	rInstDict=rb_iv_get(self,"@pinstdict");
+	
 	Data_Get_Struct(rClassDict,PObj,pClassDict);
 	Data_Get_Struct(rInstDict,PObj,pInstDict);
 	pName=PyString_FromString(cname);

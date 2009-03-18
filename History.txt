@@ -8,13 +8,13 @@
 	* Changed part of extconf.rb file that would not work under windows.
 == 0.2.3 2008-08-29
 * 2 Major Enhancements
-	* Introduced PyMain object to as a singleton wrapper for the Python __main__ and 
+	* Introduced PyMain object as a singleton wrapper for the Python __main__ and 
 		__builtin__ modules.
 	* Introduced block functionality for PyMain object.
 	
 * Compatibility Updates
-	* Changed some declarations in the C code make RubyPython more compatible with the style 						
-		conventions of the Ruby C API.
+	* Changed some declarations in the C code to make RubyPython more compatible with the 	
+		style conventions of the Ruby C API.
 	* Update how RubyPython locates the Python headers and library.
 * 1 Bug Fix
 	* Fixed an error in ptor.c that might have prevented RubyPython from building correctly 	

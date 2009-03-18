@@ -7,8 +7,10 @@ RUBY_EXTERN VALUE ePythonError;
 VALUE cBlankObject;
 
 // :nodoc:
-VALUE blank_undef_if(VALUE mname,VALUE klass)
+VALUE blank_undef_if(VALUE name,VALUE klass)
 {
+	VALUE mname=rb_funcall(name,rb_intern("to_s"),0);
+	printf("OH SHIT\n");
 	if(rb_funcall(mname,rb_intern("match"),1,rb_str_new2("(?:^__)|(?:\\?$)|(?:^send$)|(?:^class$)"))==Qnil)
 	{
 		rb_undef_method(klass,STR2CSTR(mname));
@@ -49,7 +51,7 @@ void rp_obj_free(PObj* self)
 
 /*
 Decreases the reference count on the object wrapped by this instance.
-This is used for cleanup in RubyPython.stop. RubyPyObject instance automatically
+This is used for cleanup in RubyPython.stop. RubyPyObject instances automatically
 decrease the reference count on their associated objects before they are garbage collected.
 */
 VALUE rp_obj_free_pobj(VALUE self)
@@ -171,9 +173,9 @@ VALUE rp_inst_attr_set(VALUE self,VALUE args)
 	{		
 		int argc;		
 		VALUE *argv;
-		argc=RARRAY(args)->len;
+		argc=RARRAY_LEN(args);
 		argv=ALLOC_N(VALUE,argc);
-		MEMCPY(argv,RARRAY(args)->ptr,VALUE,argc);
+		MEMCPY(argv,RARRAY_PTR(args),VALUE,argc);
 		return rb_call_super(argc,argv);
 	}
 	
@@ -224,9 +226,9 @@ VALUE rp_inst_delegate(VALUE self,VALUE args)
 		int argc;
 		
 		VALUE *argv;
-		argc=RARRAY(args)->len;
+		argc=RARRAY_LEN(args);
 		argv=ALLOC_N(VALUE,argc);
-		MEMCPY(argv,RARRAY(args)->ptr,VALUE,argc);
+		MEMCPY(argv,RARRAY_PTR(args),VALUE,argc);
 		return rb_call_super(argc,argv);
 	}
 	name=rb_ary_shift(args);
@@ -392,9 +394,9 @@ VALUE rp_mod_attr_set(VALUE self,VALUE args)
 		int argc;
 		
 		VALUE *argv;
-		argc=RARRAY(args)->len;
+		argc=RARRAY_LEN(args);
 		argv=ALLOC_N(VALUE,argc);
-		MEMCPY(argv,RARRAY(args)->ptr,VALUE,argc);
+		MEMCPY(argv,RARRAY_PTR(args),VALUE,argc);
 		return rb_call_super(argc,argv);
 	}
 	if(NUM2INT(rb_funcall(args,rb_intern("size"),0))==1)
@@ -427,9 +429,9 @@ VALUE rp_mod_delegate(VALUE self,VALUE args)
 		int argc;
 		
 		VALUE *argv;
-		argc=RARRAY(args)->len;
+		argc=RARRAY_LEN(args);
 		argv=ALLOC_N(VALUE,argc);
-		MEMCPY(argv,RARRAY(args)->ptr,VALUE,argc);
+		MEMCPY(argv,RARRAY_PTR(args),VALUE,argc);
 		return rb_call_super(argc,argv);
 	}
 	name=rb_ary_shift(args);

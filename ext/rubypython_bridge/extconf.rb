@@ -25,6 +25,11 @@ unless find_library("python2.5",nil)||find("python2.4",nil)
   exit -1
 end
 
+if RUBY_VERSION=~/1\.9/ then
+	puts "Building for Ruby 1.9"
+	$CPPFLAGS += " -DRUBY_19"
+end
+
 find_header("Python.h",*`python-config --includes`.split.map{|s| s[2..-1]<<"/"})
 
 create_makefile("rubypython_bridge")

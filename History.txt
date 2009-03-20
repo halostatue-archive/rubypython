@@ -1,3 +1,10 @@
+== 0.2.6 2008-3-19
+* Bug Fixes
+	* Further updates to increase compatibility with 1.9.
+== 0.2.5 2009-3-18
+* Bug Fixes
+	* Updated to build and run under Ruby 1.9.
+
 == 0.2.4 2008-10-24
 * Major Enhancements
 	* Provided setter methods for object attributes. Python object attributes can now be set 

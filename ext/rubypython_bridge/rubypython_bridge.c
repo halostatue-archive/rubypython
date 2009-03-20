@@ -19,7 +19,7 @@ static VALUE func_with_module(VALUE self, VALUE args)
 {
 	int started_here=safe_start();
 	VALUE module,func,return_val;
-	if(RARRAY(args)->len<2) return Qfalse;
+	if(RARRAY_LEN(args)<2) return Qfalse;
 	module=rb_ary_shift(args);
 	func=rb_ary_shift(args);
 	return_val=rp_call_func_with_module_name(module,func,args);

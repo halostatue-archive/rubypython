@@ -1,42 +1,28 @@
 find_library: checking for main() in -lpython2.5... -------------------- yes
 
-"/usr/bin/gcc-4.0 -o conftest -I/opt/local/include/ruby1.9-1.9.1/i386-darwin9 -I/opt/local/include/ruby1.9-1.9.1/ruby/backward -I/opt/local/include/ruby1.9-1.9.1 -I. -I/opt/local/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE  -I/opt/local/include -O2 -O2 -g -Wall -Wno-parentheses  -fno-common -pipe -fno-common conftest.c  -L. -L/opt/local/lib -L. -L/opt/local/lib -L/usr/local/lib     -lruby1.9-static  -lpthread -ldl -lobjc  "
+"/usr/bin/gcc-4.0 -o conftest -I. -I/opt/local/lib/ruby/1.8/i686-darwin9 -I. -I/opt/local/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE  -I/opt/local/include -O2  -fno-common -pipe -fno-common   conftest.c  -L. -L/opt/local/lib -L. -L/opt/local/lib     -lruby-static -lpython2.5  -lpthread -ldl -lobjc  "
 checked program was:
 /* begin */
-1: #include "ruby.h"
-2: 
-3: int main() {return 0;}
-/* end */
-
-"/usr/bin/gcc-4.0 -o conftest -I/opt/local/include/ruby1.9-1.9.1/i386-darwin9 -I/opt/local/include/ruby1.9-1.9.1/ruby/backward -I/opt/local/include/ruby1.9-1.9.1 -I. -I/opt/local/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE  -I/opt/local/include -O2 -O2 -g -Wall -Wno-parentheses  -fno-common -pipe -fno-common conftest.c  -L. -L/opt/local/lib -L. -L/opt/local/lib -L/usr/local/lib     -lruby1.9-static -lpython2.5  -lpthread -ldl -lobjc  "
-checked program was:
-/* begin */
-1: #include "ruby.h"
-2: 
-3: /*top*/
-4: int main() {return 0;}
-5: int t() { void ((*volatile p)()); p = (void ((*)()))main; return 0; }
+1: /*top*/
+2: int main() { return 0; }
+3: int t() { void ((*volatile p)()); p = (void ((*)()))main; return 0; }
 /* end */
 
 --------------------
 
 find_header: checking for Python.h in /Library/Frameworks/Python.framework/Versions/2.5/include/python2.5/,/Library/Frameworks/Python.framework/Versions/2.5/include/python2.5/... -------------------- yes
 
-"/usr/bin/cpp-4.0 -I/opt/local/include/ruby1.9-1.9.1/i386-darwin9 -I/opt/local/include/ruby1.9-1.9.1/ruby/backward -I/opt/local/include/ruby1.9-1.9.1 -I. -I/opt/local/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE  -I/opt/local/include -DRUBY_19 -O2 -O2 -g -Wall -Wno-parentheses  -fno-common -pipe -fno-common  conftest.c -o conftest.i"
-conftest.c:3:20: error: Python.h: No such file or directory
+"/usr/bin/cpp-4.0 -I. -I/opt/local/lib/ruby/1.8/i686-darwin9 -I. -I/opt/local/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE  -I/opt/local/include -O2  -fno-common -pipe -fno-common    conftest.c -o conftest.i"
+conftest.c:1:20: error: Python.h: No such file or directory
 checked program was:
 /* begin */
-1: #include "ruby.h"
-2: 
-3: #include <Python.h>
+1: #include <Python.h>
 /* end */
 
-"/usr/bin/cpp-4.0 -I/opt/local/include/ruby1.9-1.9.1/i386-darwin9 -I/opt/local/include/ruby1.9-1.9.1/ruby/backward -I/opt/local/include/ruby1.9-1.9.1 -I. -I/opt/local/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE  -I/opt/local/include -DRUBY_19 -O2 -O2 -g -Wall -Wno-parentheses  -fno-common -pipe -fno-common -I/Library/Frameworks/Python.framework/Versions/2.5/include/python2.5/ conftest.c -o conftest.i"
+"/usr/bin/cpp-4.0 -I. -I/opt/local/lib/ruby/1.8/i686-darwin9 -I. -I/opt/local/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE  -I/opt/local/include -O2  -fno-common -pipe -fno-common   -I/Library/Frameworks/Python.framework/Versions/2.5/include/python2.5/ conftest.c -o conftest.i"
 checked program was:
 /* begin */
-1: #include "ruby.h"
-2: 
-3: #include <Python.h>
+1: #include <Python.h>
 /* end */
 
 --------------------

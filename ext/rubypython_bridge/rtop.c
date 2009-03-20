@@ -19,7 +19,7 @@ PyObject* rtop_string(VALUE rString)
 PyObject* rtop_array_list(VALUE rArray)
 {
 	PyObject* pList;
-	int size=RARRAY(rArray)->len;
+	int size=RARRAY_LEN(rArray);
 	pList=PyList_New(size);
 	int i;
 	for(i=0;i<size;i++)
@@ -47,7 +47,7 @@ PyObject* rtop_hash(VALUE rHash)
 	
 	pDict=PyDict_New();
 	
-	for(i=0;i<RARRAY(rKeys)->len;i++)
+	for(i=0;i<RARRAY_LEN(rKeys);i++)
 	{
 		rKey=rb_ary_entry(rKeys,i);
 		rVal=rb_hash_aref(rHash,rKey);

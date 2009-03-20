@@ -10,7 +10,6 @@ VALUE cBlankObject;
 VALUE blank_undef_if(VALUE name,VALUE klass)
 {
 	VALUE mname=rb_funcall(name,rb_intern("to_s"),0);
-	printf("OH SHIT\n");
 	if(rb_funcall(mname,rb_intern("match"),1,rb_str_new2("(?:^__)|(?:\\?$)|(?:^send$)|(?:^class$)"))==Qnil)
 	{
 		rb_undef_method(klass,STR2CSTR(mname));

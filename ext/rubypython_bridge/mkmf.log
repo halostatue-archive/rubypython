@@ -1,6 +1,6 @@
-find_library: checking for main() in -lpython2.5... -------------------- yes
+find_library: checking for main() in -lpython2.6... -------------------- yes
 
-"/usr/bin/gcc-4.0 -o conftest -I. -I/opt/local/lib/ruby/1.8/i686-darwin9 -I. -I/opt/local/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE  -I/opt/local/include -O2  -fno-common -pipe -fno-common   conftest.c  -L. -L/opt/local/lib -L. -L/opt/local/lib     -lruby-static -lpython2.5  -lpthread -ldl -lobjc  "
+"cc -o conftest -I. -I/usr/lib/ruby/1.8/i486-linux -I.  -D_FILE_OFFSET_BITS=64  -fno-strict-aliasing -g -g -O2  -fPIC   conftest.c  -L. -L/usr/lib -L. -Wl,-Bsymbolic-functions -rdynamic -Wl,-export-dynamic     -lruby1.8-static -lpython2.6  -lpthread -ldl -lcrypt -lm   -lc"
 checked program was:
 /* begin */
 1: /*top*/
@@ -10,16 +10,16 @@ checked program was:
 
 --------------------
 
-find_header: checking for Python.h in /Library/Frameworks/Python.framework/Versions/2.5/include/python2.5/,/Library/Frameworks/Python.framework/Versions/2.5/include/python2.5/... -------------------- yes
+find_header: checking for Python.h in /usr/include/python2.6/,/usr/include/python2.6/... -------------------- yes
 
-"/usr/bin/cpp-4.0 -I. -I/opt/local/lib/ruby/1.8/i686-darwin9 -I. -I/opt/local/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE  -I/opt/local/include -O2  -fno-common -pipe -fno-common    conftest.c -o conftest.i"
+"cc -E -I. -I/usr/lib/ruby/1.8/i486-linux -I.  -D_FILE_OFFSET_BITS=64  -fno-strict-aliasing -g -g -O2  -fPIC    conftest.c -o conftest.i"
 conftest.c:1:20: error: Python.h: No such file or directory
 checked program was:
 /* begin */
 1: #include <Python.h>
 /* end */
 
-"/usr/bin/cpp-4.0 -I. -I/opt/local/lib/ruby/1.8/i686-darwin9 -I. -I/opt/local/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE  -I/opt/local/include -O2  -fno-common -pipe -fno-common   -I/Library/Frameworks/Python.framework/Versions/2.5/include/python2.5/ conftest.c -o conftest.i"
+"cc -E -I. -I/usr/lib/ruby/1.8/i486-linux -I.  -D_FILE_OFFSET_BITS=64  -fno-strict-aliasing -g -g -O2  -fPIC   -I/usr/include/python2.6/ conftest.c -o conftest.i"
 checked program was:
 /* begin */
 1: #include <Python.h>

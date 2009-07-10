@@ -1,4 +1,7 @@
-== 0.2.6 2008-3-19
+== 0.2.7 2009-3-30
+* Bug Fixes
+	* Fixed some bugs which caused rubypython to be unable to determine python version correctly.
+== 0.2.6 2009-3-19
 * Bug Fixes
 	* Further updates to increase compatibility with 1.9.
 == 0.2.5 2009-3-18

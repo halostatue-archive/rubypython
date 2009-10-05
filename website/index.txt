@@ -11,7 +11,7 @@ h2. Installing
 
 Don't worry if you got some ugly output from RDOC and RI.
 
-h2. The basics
+h2. The Basics
 
 Check out the RDOC pages at "http://rubypython.rubyforge.org/rdoc":http://rubypython.rubyforge.org/rdoc
 

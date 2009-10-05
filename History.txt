@@ -1,3 +1,6 @@
+== 0.2.8 2009-10-05
+* Bug Fixes
+	* Some test files were improperly formatted (minor bug fix).
 == 0.2.7 2009-3-30
 * Bug Fixes
 	* Fixed some bugs which caused rubypython to be unable to determine python version correctly.

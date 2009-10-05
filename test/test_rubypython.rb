@@ -7,19 +7,19 @@ class TestRubypython < Test::Unit::TestCase
   
 
   def test_simple
-    assert RubyPython.start
-    assert RubyPython.import "urllib"
-    assert(RubyPython.stop)
-    assert(!RubyPython.stop)
+    assert(RubyPython.start,"RubyPython failed to initialize.")
+    assert(RubyPython.import("urllib"), "urllib library import failed.")
+    assert(RubyPython.stop,"RubyPython failed to halt.")
+    assert(!RubyPython.stop,"RubyPython did not realize it had halted.")
   end
 
   def test_delegation
     RubyPython.start
     cPickle=RubyPython.import("cPickle")
     assert_instance_of(RubyPythonBridge::RubyPyModule,cPickle)
-    assert_equal(cPickle.loads({"a"=>"n", [1, "2"]=>4},"(dp1\nS'a'\nS'n'\ns(I1\nS'2'\ntp2\nI4\ns."))
+    assert_equal({"a"=>"n", [1, "2"]=>4},cPickle.loads("(dp1\nS'a'\nS'n'\ns(I1\nS'2'\ntp2\nI4\ns."))
     dumped_array=cPickle.dumps([1,2,3,4])
-    assert_equal([1,2,3,4]cPickle.loads(dumped_array))
+    assert_equal([1,2,3,4],cPickle.loads(dumped_array))
     assert_raise NoMethodError do
       cPickle.splack
     end
@@ -38,7 +38,7 @@ class TestRubypython < Test::Unit::TestCase
     RubyPython.stop
   end
 
-  def test_propogate_python_errror
+  def test_propogate_python_error
     RubyPython.start
     assert_raise PythonError do
       RubyPython.import "slasdfj"

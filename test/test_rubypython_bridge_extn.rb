@@ -53,7 +53,7 @@ class TestRubyPythonBridgeWithCPickle < Test::Unit::TestCase
   end
   
   def test_data_passing
-    assert_equal(@cPickle.loads({"a"=>"n", [1, "2"]=>4},"(dp1\nS'a'\nS'n'\ns(I1\nS'2'\ntp2\nI4\ns."))
+    assert_equal({"a"=>"n", [1, "2"]=>4},@cPickle.loads("(dp1\nS'a'\nS'n'\ns(I1\nS'2'\ntp2\nI4\ns."))
     dumped_array=@cPickle.dumps([1,2,3,4])
     assert_equal(@cPickle.loads(dumped_array),[1,2,3,4])
   end

@@ -37,11 +37,11 @@ VALUE rp_call_func_with_module_name(VALUE module,VALUE name,VALUE args)
 
 	functionName = STR2CSTR(name);
 
-
-	//Check to see if the passed argument is an array. If it is we
-	//box it in another array so that the presentation of
-	//arguments is the same i.e. each method is supllied with an
-	//array of arguments.
+/* 	Check to see if the passed argument is an array. If it is we
+ * 	box it in another array so that the presentation of
+ * 	arguments is the same i.e. each method is supllied with an
+ * 	array of arguments.
+ */
 	if(!(TYPE(args)==T_ARRAY))
 	{
 		rArgs=rb_ary_new();

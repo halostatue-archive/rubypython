@@ -1,4 +1,5 @@
 #include "config.h"
+#include "rp_error.h"
 
 #ifndef _RTOP_H_
 #define _RTOP_H_

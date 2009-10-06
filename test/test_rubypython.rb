@@ -53,22 +53,22 @@ class TestRubypython < Test::Unit::TestCase
       cPickle.inspect
       unpickled=cPickle.loads("(dp1\nS'a'\nS'n'\ns(I1\nS'2'\ntp2\nI4\ns.")
     end
-    assert_equal({"a"=>"n", [1, "2"]=>4},unpickled)
-    assert(!RubyPython.stop)
+    assert_equal({"a"=>"n", [1, "2"]=>4},unpickled,"Incorrect object returned from cPickle.")
+    assert(!RubyPython.stop, "RubyPython did not seem to halt at the correct time.")
   end
 
   def test_instance_method_delegation
     RubyPython.start
     wave=RubyPython.import "wave"
     w=wave.open("test/test.wav","rb")
-    assert_equal(9600,w.getframerate)
+    assert_equal(9600,w.getframerate,"Wrapped wave library incorrectly passing framerate.")
     w.close
     RubyPython.stop
   end
 
   def test_pymain_delegation
     RubyPython.start
-    assert_equal(42.to_f,PyMain.float(42))
+    assert_equal(42.to_f,PyMain.float(42),"Integer conversion problems in Python.")
     RubyPython.stop
   end
 
@@ -78,7 +78,7 @@ class TestRubypython < Test::Unit::TestCase
     returned=PyMain.float(22) do |f|
       f*2
     end
-    assert_equal(44.0,returned)
+    assert_equal(44.0,returned, "Python math not isomorphic to ruby math.")
     RubyPython.stop
   end
   
@@ -86,7 +86,7 @@ class TestRubypython < Test::Unit::TestCase
     RubyPython.session do
       cPickle=RubyPython.import "cPickle"
       cPickle.inspect
-      assert_equal({"a"=>"n", [1, "2"]=>4},cPickle.loads("(dp1\nS'a'\nS'n'\ns(I1\nS'2'\ntp2\nI4\ns."))
+      assert_equal({"a"=>"n", [1, "2"]=>4},cPickle.loads("(dp1\nS'a'\nS'n'\ns(I1\nS'2'\ntp2\nI4\ns."), "cPickle misbehaved in session block.")
     end
   end
 
@@ -95,7 +95,7 @@ class TestRubypython < Test::Unit::TestCase
     RubyPython.session do
       sys=RubyPython.import 'sys'
       sys.path=[""]
-      assert_equal([""],sys.path)
+      assert_equal([""],sys.path, "Ruby failed to modify Python object as expected.")
     end
   end
   
@@ -104,7 +104,7 @@ class TestRubypython < Test::Unit::TestCase
       urllib2=RubyPython.import "urllib2"
       req=urllib2.Request("google.com")
       req.headers={:a=>"2","k"=>4}
-      assert_equal({"a"=>"2","k"=>4},req.headers)
+      assert_equal({"a"=>"2","k"=>4},req.headers, "Python dictionary not set as expected.")
     end
   end
 

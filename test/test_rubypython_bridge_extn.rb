@@ -11,25 +11,25 @@ class TestRubyPythonBridgeExtn < Test::Unit::TestCase
   end
   
   def test_start_stop
-    assert(RubyPythonBridge.start)
-    assert(!RubyPythonBridge.start)
-    assert(RubyPythonBridge.stop)
-    assert(!RubyPythonBridge.stop)
+    assert(RubyPythonBridge.start, "Embedded python interpreter failed to start correctly.")
+    assert(!RubyPythonBridge.start, "Interpreter attempted to start while running.")
+    assert(RubyPythonBridge.stop, "Interpreter failed to halt.")
+    assert(!RubyPythonBridge.stop, "Interpreter ran into trouble while halting.")
   end
   
   def test_new_instance
     RubyPythonBridge.start
     urllib2=RubyPythonBridge.import "urllib2"
-    assert_instance_of(RubyPythonBridge::RubyPyClass,urllib2.Request)
-    assert_instance_of(RubyPythonBridge::RubyPyInstance,urllib2.Request("google.com"))
+    assert_instance_of(RubyPythonBridge::RubyPyClass,urllib2.Request, "Wrapped Python class not of correct type.")
+    assert_instance_of(RubyPythonBridge::RubyPyInstance,urllib2.Request("google.com"), "Wrapped python instance not of correct type.")
     RubyPythonBridge.stop
   end
   
   def test_new_instance_with_new_method
     RubyPythonBridge.start
     urllib2=RubyPythonBridge.import "urllib2"
-    assert_instance_of(RubyPythonBridge::RubyPyClass,urllib2.Request)
-    assert_instance_of(RubyPythonBridge::RubyPyInstance,urllib2.Request.new("google.com"))
+    assert_instance_of(RubyPythonBridge::RubyPyClass,urllib2.Request,"Wrapped Python class not of correct type.")
+    assert_instance_of(RubyPythonBridge::RubyPyInstance,urllib2.Request.new("google.com"), "New call misbehaving of wrapped class.")
     RubyPythonBridge.stop
   end
   
@@ -49,27 +49,27 @@ class TestRubyPythonBridgeWithCPickle < Test::Unit::TestCase
   end
   
   def test_mod_respond_to
-    assert(@cPickle.respond_to? :loads)
+    assert(@cPickle.respond_to?(:loads), "Ruby respond to method not working on wrapped module.")
   end
   
   def test_data_passing
-    assert_equal({"a"=>"n", [1, "2"]=>4},@cPickle.loads("(dp1\nS'a'\nS'n'\ns(I1\nS'2'\ntp2\nI4\ns."))
+    assert_equal({"a"=>"n", [1, "2"]=>4},@cPickle.loads("(dp1\nS'a'\nS'n'\ns(I1\nS'2'\ntp2\nI4\ns."), "Data returned from wrapped cPickle is incorrect." )
     dumped_array=@cPickle.dumps([1,2,3,4])
-    assert_equal(@cPickle.loads(dumped_array),[1,2,3,4])
+    assert_equal([1,2,3,4],@cPickle.loads(dumped_array), "Array returned from cPickle is not equivalent to input array.")
   end
   
   def test_method_missing
-    assert_raise NoMethodError do
+    assert_raise(NoMethodError, "Missing method failed to raise NoMethodError") do
       @cPickle.splack
     end
   end
   
   def test_class_wrapping
-    assert_instance_of(RubyPythonBridge::RubyPyClass,@cPickle.PicklingError)
+    assert_instance_of(RubyPythonBridge::RubyPyClass,@cPickle.PicklingError, "Wrapped class is not an instance of RubyPyClass.")
   end
   
   def test_module_method_wrapping
-    assert_instance_of(RubyPythonBridge::RubyPyModule,@cPickle)
+    assert_instance_of(RubyPythonBridge::RubyPyModule,@cPickle,"Wrapped module is not of class RubyPyModule.")
   end
   
 end

@@ -17,12 +17,15 @@ Use builtins as the module for a built in function.
 */
 static VALUE func_with_module(VALUE self, VALUE args)
 {
+  //Before doing anything, we test to see if the interpreter is running
 	int started_here=safe_start();
 	VALUE module,func,return_val;
 	if(RARRAY_LEN(args)<2) return Qfalse;
 	module=rb_ary_shift(args);
 	func=rb_ary_shift(args);
 	return_val=rp_call_func_with_module_name(module,func,args);
+
+	//If we started the interpreter, we now halt it.
 	safe_stop(started_here);
 	return return_val;
 }

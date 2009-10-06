@@ -16,19 +16,19 @@ class TestRubypython < Test::Unit::TestCase
   def test_delegation
     RubyPython.start
     cPickle=RubyPython.import("cPickle")
-    assert_instance_of(RubyPythonBridge::RubyPyModule,cPickle)
-    assert_equal({"a"=>"n", [1, "2"]=>4},cPickle.loads("(dp1\nS'a'\nS'n'\ns(I1\nS'2'\ntp2\nI4\ns."))
+    assert_instance_of(RubyPythonBridge::RubyPyModule,cPickle, "Module object not returned by import.")
+    assert_equal({"a"=>"n", [1, "2"]=>4},cPickle.loads("(dp1\nS'a'\nS'n'\ns(I1\nS'2'\ntp2\nI4\ns."), "Python pickle load test returned incorrect objects.")
     dumped_array=cPickle.dumps([1,2,3,4])
-    assert_equal([1,2,3,4],cPickle.loads(dumped_array))
-    assert_raise NoMethodError do
+    assert_equal([1,2,3,4],cPickle.loads(dumped_array),"Pickled information was not retrieved correctly.")
+    assert_raise(NoMethodError,"Rubypython failed to raise NoMethodError on call to nonexistent method") do
       cPickle.splack
     end
-    assert_instance_of(RubyPythonBridge::RubyPyClass,cPickle.PicklingError)
+    assert_instance_of(RubyPythonBridge::RubyPyClass,cPickle.PicklingError,"Wrapped Python class was not of type RubyPyClass.")
     cPickle.free_pobj
     ObjectSpace.each_object(RubyPythonBridge::RubyPyObject) do |o|
       o.free_pobj
     end
-    assert(RubyPython.stop)
+    assert(RubyPython.stop,"Interpreter did not halt correctly.")
   end
 
   def test_two_imports
@@ -40,7 +40,7 @@ class TestRubypython < Test::Unit::TestCase
 
   def test_propogate_python_error
     RubyPython.start
-    assert_raise PythonError do
+    assert_raise(PythonError,"rubypython failed to propogate python error.") do
       RubyPython.import "slasdfj"
     end
     RubyPython.stop

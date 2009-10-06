@@ -1,11 +1,27 @@
 h1. rubypython
 
+h2. Is it in active development?
+
+       The short answer: No. I started rubypython a couple of years
+       ago in connection with some work I was doing as part of a
+       summer research job. I actively worked on it a for a period of
+       a few months from that time onward. Since then I have moved on
+       to other things more closely related to my chosen field.
+       
+       Nonetheless, I am always happy to help debug the code if a
+       problem should arise. So don't hesitate to contact me if you
+       have trouble.
+
+       Also, should anyone wish to take on the main drive of the
+       project and move forward with it, send me an email and we'll talk.
 
 h2. What
 
 	RubyPython is a C bridge between Ruby and Python with a Ruby interface. It's aim is to make the power of the Python's great standard library available to Ruby programmers from within Ruby.
 	
 h2. Installing
+
+    To install execute the following:
 
 <pre syntax="ruby">sudo gem install rubypython</pre>
 
@@ -15,7 +31,7 @@ h2. The Basics
 
 Check out the RDOC pages at "http://rubypython.rubyforge.org/rdoc":http://rubypython.rubyforge.org/rdoc
 
-I have only tested this on Mac OS 10.5 with Python 2.5. If anyone has issues with another setup let me know and I'll do what I can.
+I have test the system on Mac OS 10.5 and Ubuntu Jaunty 9.04. If anyone has issues with another setup let me know and I'll do what I can.
 
 
 h2. Forum

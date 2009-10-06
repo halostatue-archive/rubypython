@@ -9,6 +9,7 @@ RUBY_EXTERN VALUE cBlankObject;
 
 /*
 call-seq: func(modname,funcname,*args)
+
 Given a python module name _modname_ and a function name _funcname_ calls the given function
 with the supplied arguments.
 

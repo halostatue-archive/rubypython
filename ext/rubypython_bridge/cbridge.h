@@ -8,16 +8,16 @@
 
 int safe_start();
 
-void safe_stop(int here);
+void safe_stop(int);
 
 
-VALUE rp_call_func_with_module_name(VALUE module,VALUE name,VALUE args);
+VALUE rp_call_func_with_module_name(VALUE, VALUE, VALUE);
 
-PyObject* rp_get_module(VALUE mname);
+PyObject* rp_get_module(VALUE);
 
-PyObject* rp_get_func_with_module(PyObject* pModule,VALUE name);
+PyObject* rp_get_func_with_module(PyObject*, VALUE);
 
-VALUE rp_call_func(PyObject* pFunc, VALUE args);
+VALUE rp_call_func(PyObject*, VALUE);
 
 
 #endif /* _BRIDGE_H_ */

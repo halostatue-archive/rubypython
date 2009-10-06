@@ -3,15 +3,26 @@
 RUBY_EXTERN VALUE cRubyPyObject;
 RUBY_EXTERN PyObject* rp_obj_pobject(VALUE self);
 
+/*
+  Note: For the builtin types rubypython creates a copy of the ruby
+   object to pass into python. Builtin types are passed by VALUE not
+   by REFERENCE.
+
+ */
+
 PyObject* rtop_string(VALUE rString)
 {
+
 	PyObject* pString;
 	char *cString;
 	char *cStringCopy;
+
 	cString=STR2CSTR(rString);
 	cStringCopy=malloc(strlen(cString)*sizeof(char));
 	strcpy(cStringCopy,cString);
+
 	pString=PyString_FromString(cStringCopy);
+
 	return pString;
 }
 
@@ -19,33 +30,40 @@ PyObject* rtop_string(VALUE rString)
 PyObject* rtop_array_list(VALUE rArray)
 {
 	PyObject* pList;
-	int size=RARRAY_LEN(rArray);
-	pList=PyList_New(size);
 	int i;
+	int size=RARRAY_LEN(rArray);
+
+	pList=PyList_New(size);
+
 	for(i=0;i<size;i++)
 	{
 		PyList_SetItem(pList,i,rtop_obj(rb_ary_entry(rArray,i),0));
 	}
+
 	return pList;
 }
 
 PyObject* rtop_array_tuple(VALUE rArray)
 {
 	PyObject *pTuple,*pList;
+
 	pList=rtop_array_list(rArray);
 	pTuple=PySequence_Tuple(pList);
 	Py_XDECREF(pList);
+
 	return pTuple;
 }
 
 PyObject* rtop_hash(VALUE rHash)
 {
 	PyObject *pDict,*pKey,*pVal;
-	VALUE rKeys=rb_funcall(rHash,rb_intern("keys"),0);
+	VALUE rKeys;
 	VALUE rKey,rVal;
 	int i;
 	
 	pDict=PyDict_New();
+
+	rKeys = rb_funcall(rHash,rb_intern("keys"),0);
 	
 	for(i=0;i<RARRAY_LEN(rKeys);i++)
 	{
@@ -53,30 +71,40 @@ PyObject* rtop_hash(VALUE rHash)
 		rVal=rb_hash_aref(rHash,rKey);
 		PyDict_SetItem(pDict,rtop_obj(rKey,1),rtop_obj(rVal,0));
 	}
+
 	return pDict;
 }
 
 PyObject* rtop_fixnum(VALUE rNum)
 {
 	PyObject* pNum;
-	long cNum=NUM2LONG(rNum);
+	long cNum;
+
+	cNum=NUM2LONG(rNum);
 	pNum=PyInt_FromLong(cNum);
+
 	return pNum;
 }
 
 PyObject* rtop_bignum(VALUE rNum)
 {
 	PyObject* pNum;
-	long cNum=NUM2LONG(rNum);
+	long cNum;
+
+	cNum=NUM2LONG(rNum);
 	pNum=PyLong_FromLong(cNum);
+
 	return pNum;
 }
 
 PyObject* rtop_float(VALUE rNum)
 {
 	PyObject* pNum;
-	double cNum=NUM2DBL(rNum);
+	double cNum;
+
+	cNum=NUM2DBL(rNum);
 	pNum=PyFloat_FromDouble(cNum);
+
 	return pNum;
 }
 
@@ -93,15 +121,26 @@ PyObject* rtop_true()
 PyObject* rtop_symbol(VALUE rSymbol)
 {
 	PyObject* pString;
-	pString=PyString_FromString(STR2CSTR(rb_funcall(rSymbol,rb_intern("to_s"),0)));
+	char* cStr;
+
+	cStr = STR2CSTR(rb_funcall(rSymbol,rb_intern("to_s"),0));
+	pString=PyString_FromString(cStr);
+
 	return pString;
 
 }
 
 PyObject* rtop_obj(VALUE rObj,int is_key)
 {
+	//The above is_key parameter determines whether the object
+	//created show be immutable if possible
+
 	PyObject *pObj;
 	VALUE rInspect;
+
+	//Check the object for its type and apply the appropriate
+	//conversion function
+
 	switch(TYPE(rObj))
 	{
 		case T_STRING:
@@ -109,6 +148,9 @@ PyObject* rtop_obj(VALUE rObj,int is_key)
 			break;
 			
 		case T_ARRAY:
+			// If this object is going to be used as a
+			// hash key we should make it a tuple instead
+			// of a list
 			if(is_key) pObj=rtop_array_tuple(rObj);
 			else
 			{
@@ -151,13 +193,21 @@ PyObject* rtop_obj(VALUE rObj,int is_key)
 		default:
 			if(rb_obj_is_kind_of(rObj,cRubyPyObject)==Qtrue)
 			{
+				//rObj is a wrapped python object. We
+				//just take the object it wraps. In
+				//this case we are effectively passing
+				//a python object by reference
 				pObj=rp_obj_pobject(rObj);
 			}
 			else
 			{
+				//If we can't figure out what else to
+				//do with the ruby object we just pass
+				//a string representation of it
 				rInspect=rb_inspect(rObj);
 				pObj=rtop_string(rInspect);
 			}
 	}
+
 	return pObj;
 }

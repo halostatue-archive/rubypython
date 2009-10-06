@@ -1,9 +1,5 @@
 #include "config.h"
 
-#ifndef _RP_ERROR_H_
-#include "rp_error.h"
-#endif
-
 #ifndef _RTOP_H_
 #define _RTOP_H_
 PyObject* rtop_string(VALUE rString);

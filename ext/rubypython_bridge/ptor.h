@@ -1,8 +1,6 @@
 #include "config.h"
-
-#ifndef _RP_ERROR_H_
 #include "rp_error.h"
-#endif
+
 
 #ifndef _PTOR_H_
 #define _PTOR_H_

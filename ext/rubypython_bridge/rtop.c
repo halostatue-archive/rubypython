@@ -4,11 +4,10 @@ RUBY_EXTERN VALUE cRubyPyObject;
 RUBY_EXTERN PyObject* rp_obj_pobject(VALUE self);
 
 /*
-  Note: For the builtin types rubypython creates a copy of the ruby
-   object to pass into python. Builtin types are passed by VALUE not
-   by REFERENCE.
-
- */
+*  Note: For the builtin types rubypython creates a copy of the ruby
+*  object to pass into python. Builtin types are passed by VALUE not
+*  by REFERENCE.
+*/
 
 PyObject* rtop_string(VALUE rString)
 {
@@ -17,8 +16,8 @@ PyObject* rtop_string(VALUE rString)
 	char *cString;
 	char *cStringCopy;
 
-	cString=STR2CSTR(rString);
-	cStringCopy=malloc(strlen(cString)*sizeof(char));
+	cString = STR2CSTR(rString);
+	cStringCopy = malloc(strlen(cString)*sizeof(char));
 	strcpy(cStringCopy,cString);
 
 	pString=PyString_FromString(cStringCopy);

@@ -22,8 +22,13 @@
 	RubyPython.stop
 	
 == REQUIREMENTS:
-	Python must be installed. Currently, RubyPython requires python2.5 but it may soon be  able to work with other versions. It should work fine with Python 2.4 but you may experience issues with lower versions. I have only tested it on Mac OSX 10.5, so I'm not sure what parts may need correcting for other systems. 
-
+	
+	* Python >=2.4, < 3.0
+	
+	Note: Rubypython has been test on Mac OS 10.5.x and 10.6.1 as well
+	as Ubuntu Jaunty 9.04.
+	
+	
 == INSTALL:
 
 	sudo gem install rubypython

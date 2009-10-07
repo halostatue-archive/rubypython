@@ -8,7 +8,7 @@ RUBY_EXTERN VALUE cBlankObject;
 
 
 /*
-call-seq: func(modname,funcname,*args)
+call-seq: func(modname, funcname, *args)
 
 Given a python module name _modname_ and a function name _funcname_ calls the given function
 with the supplied arguments.
@@ -18,16 +18,26 @@ Use builtins as the module for a built in function.
 */
 static VALUE func_with_module(VALUE self, VALUE args)
 {
-  //Before doing anything, we test to see if the interpreter is running
-	int started_here=safe_start();
-	VALUE module,func,return_val;
-	if(RARRAY_LEN(args)<2) return Qfalse;
-	module=rb_ary_shift(args);
-	func=rb_ary_shift(args);
-	return_val=rp_call_func_with_module_name(module,func,args);
+	//Before doing anything we attempt to start the interpreter
+	//Started here will be 1 if the interpreter is started by this
+	//function and zero otherwise
+	int started_here = safe_start();
+	
+	VALUE module, func, return_val;
+	
+	//If we hav less than two arguments we cannot proceed.
+	//Perhaps it would make more sense to throw an error here.
+	if(RARRAY_LEN(args) < 2) return Qfalse;
+	
+	module = rb_ary_shift(args);
+	func = rb_ary_shift(args);
+	
+	// rp_call_func_with_module_name is defined in cbridge.c
+	return_val = rp_call_func_with_module_name(module,func,args);
 
 	//If we started the interpreter, we now halt it.
 	safe_stop(started_here);
+	
 	return return_val;
 }
 

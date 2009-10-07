@@ -17,6 +17,7 @@ int safe_start()
 
 void safe_stop(int here)
 {
+	
 	if(here && Py_IsInitialized())
 	{
 		Py_Finalize();
@@ -44,12 +45,12 @@ VALUE rp_call_func_with_module_name(VALUE module,VALUE name,VALUE args)
  */
 	if(!(TYPE(args)==T_ARRAY))
 	{
-		rArgs=rb_ary_new();
+		rArgs = rb_ary_new();
 		rb_ary_push(rArgs,args);
 	}
 	else
 	{
-		rArgs=args;
+		rArgs = args;
 	}
 	
 	//A little syntatic sugar here. We will allow users access the
@@ -58,12 +59,12 @@ VALUE rp_call_func_with_module_name(VALUE module,VALUE name,VALUE args)
 
 	if(rb_eql(module,rb_str_new2("builtins")))
 	{
-		module=rb_str_new2("__builtins__");
+		module = rb_str_new2("__builtins__");
 	}
 
 	//Load the Python module into the pModule variable
-	pModuleName=rtop_obj(module,0);
-	pModule=PyImport_Import(pModuleName);
+	pModuleName = rtop_obj(module,0);
+	pModule = PyImport_Import(pModuleName);
 	Py_XDECREF(pModuleName);
 
 	//Check for Errors and propagate them if they have occurred.
@@ -75,13 +76,13 @@ VALUE rp_call_func_with_module_name(VALUE module,VALUE name,VALUE args)
 	
 	
 	//Get a pointer to the request function
-	pFunc=PyObject_GetAttrString(pModule,functionName);
+	pFunc = PyObject_GetAttrString(pModule,functionName);
 	
 	//Convert the supplied arguments to python objects
-	pArgs=rtop_obj(rArgs,1);
+	pArgs = rtop_obj(rArgs,1);
 	
 	//Execute the function and obtain a pointer to the return object
-	pReturn=PyObject_CallObject(pFunc,pArgs);
+	pReturn = PyObject_CallObject(pFunc,pArgs);
 	
 	//Check for an error and do any necessary cleanup before
 	//propagating error
@@ -98,7 +99,7 @@ VALUE rp_call_func_with_module_name(VALUE module,VALUE name,VALUE args)
 	
 	//Convert return value to ruby object, do cleanup of python
 	//objects and return.
-	rReturn=ptor_obj(pReturn);
+	rReturn = ptor_obj(pReturn);
 	
 	Py_XDECREF(pArgs);
 	Py_XDECREF(pFunc);
@@ -113,11 +114,11 @@ PyObject* rp_get_module(VALUE mname)
 
 	if(rb_eql(mname,rb_str_new2("builtins")))
 	{
-		mname=rb_str_new2("__builtins__");
+		mname = rb_str_new2("__builtins__");
 	}
 
-	pModuleName=rtop_string(mname);
-	pModule=PyImport_Import(pModuleName);
+	pModuleName = rtop_string(mname);
+	pModule = PyImport_Import(pModuleName);
 	Py_XDECREF(pModuleName);
 
 	if(PyErr_Occurred())
@@ -134,7 +135,7 @@ PyObject* rp_get_func_with_module(PyObject* pModule,VALUE name)
 {
 	PyObject *pFunc;
 
-	pFunc=PyObject_GetAttrString(pModule,STR2CSTR(name));
+	pFunc = PyObject_GetAttrString(pModule,STR2CSTR(name));
 
 	if(PyErr_Occurred())
 	{
@@ -154,16 +155,16 @@ VALUE rp_call_func(PyObject* pFunc, VALUE args)
 	if(!(TYPE(args)==T_ARRAY))
 	{
 		
-		rArgs=rb_ary_new();
+		rArgs = rb_ary_new();
 		rb_ary_push(rArgs,args);
 	}
 	else
 	{
-		rArgs=args;
+		rArgs = args;
 	}
 
-	pArgs=rtop_obj(rArgs,1);
-	pReturn=PyObject_CallObject(pFunc,pArgs);
+	pArgs = rtop_obj(rArgs,1);
+	pReturn = PyObject_CallObject(pFunc,pArgs);
 	
 	if(PyErr_Occurred())
 	{
@@ -173,7 +174,7 @@ VALUE rp_call_func(PyObject* pFunc, VALUE args)
 		return Qnil;
 	}
 
-	rReturn=ptor_obj_no_destruct(pReturn);	
+	rReturn = ptor_obj_no_destruct(pReturn);	
 	Py_XDECREF(pArgs);
 
 	return rReturn;

@@ -16,7 +16,7 @@ VALUE ptor_string(PyObject* pString)
 	//Note that this is a new object, not a wrapper around a
 	//python object
 	char *cstr;
-	cstr=malloc(PyString_Size(pString)*sizeof(char));
+	cstr = malloc(PyString_Size(pString)*sizeof(char));
 	strcpy(cstr,PyString_AsString(pString));
 	return rb_str_new2(cstr);
 }
@@ -30,18 +30,18 @@ VALUE ptor_list(PyObject* pList)
 	VALUE rElement;
 	PyObject* element;
 
-	int i=0;
+	int i = 0;
 
 	//Allocate a new Ruby array
-	rArray=rb_ary_new();
+	rArray = rb_ary_new();
 
 	//Iteratively add converted elements to the new Ruby list
-	int list_size=PyList_Size(pList);
-	for(i=0;i<list_size;i++)
+	int list_size = PyList_Size(pList);
+	for(i = 0;i<list_size;i++)
 	{
-		element=PyList_GetItem(pList,i);
+		element = PyList_GetItem(pList,i);
 		Py_INCREF(element);
-		rElement=ptor_obj(element);
+		rElement = ptor_obj(element);
 		rb_ary_push(rArray,rElement);
 	}
 	return rArray;
@@ -53,7 +53,7 @@ VALUE ptor_int(PyObject* pNum)
 	
 	VALUE rNum;
   
-	rNum=INT2NUM(PyInt_AsLong(pNum));
+	rNum = INT2NUM(PyInt_AsLong(pNum));
 	return rNum;
 	
 }
@@ -65,7 +65,7 @@ VALUE ptor_long(PyObject* pNum)
 	VALUE rNum;
 	long cNum;
 
-	cNum=PyLong_AsLong(pNum);
+	cNum = PyLong_AsLong(pNum);
 
 	if(PyErr_ExceptionMatches(PyExc_OverflowError))
 	{
@@ -73,7 +73,7 @@ VALUE ptor_long(PyObject* pNum)
 		return Qnil;
 	}
 
-	rNum=INT2NUM(cNum);
+	rNum = INT2NUM(cNum);
 
 	return rNum;
 	
@@ -85,7 +85,7 @@ VALUE ptor_float(PyObject* pNum)
 
 	VALUE rNum;
 
-	rNum=rb_float_new(PyFloat_AsDouble(pNum));
+	rNum = rb_float_new(PyFloat_AsDouble(pNum));
 
 	return rNum;
 }
@@ -112,16 +112,16 @@ VALUE ptor_dict(PyObject* pDict)
 	VALUE rHash;
 	VALUE rKey,rVal;
 	PyObject *key,*val;
-	Py_ssize_t pos=0;
+	Py_ssize_t pos = 0;
 
-	rHash=rb_hash_new();
+	rHash = rb_hash_new();
 
 	while(PyDict_Next(pDict,&pos,&key,&val))
 	{
 		Py_XINCREF(key);
 		Py_XINCREF(val);
-		rKey=ptor_obj(key);
-		rVal=ptor_obj(val);
+		rKey = ptor_obj(key);
+		rVal = ptor_obj(val);
 		if(rKey==Qnil) continue;
 		rb_hash_aset(rHash,rKey,rVal);
 	}
@@ -139,44 +139,44 @@ static VALUE ptor_obj_core(PyObject *pObj,int destructive)
 
 	if(PyObject_TypeCheck(pObj,&PyString_Type))
 	{
-		rObj=ptor_string(pObj);
+		rObj = ptor_string(pObj);
 		if(destructive) Py_DECREF(pObj);
 		return rObj;
 	}
 	
 	if(PyObject_TypeCheck(pObj,&PyList_Type))
 	{
-		rObj=ptor_list(pObj);
+		rObj = ptor_list(pObj);
 		if(destructive) Py_DECREF(pObj);
 		return rObj;
 	}
 	if(PyObject_TypeCheck(pObj,&PyInt_Type))
 	{
-		rObj=ptor_int(pObj);
+		rObj = ptor_int(pObj);
 		if(destructive) Py_DECREF(pObj);
 		return rObj;
 	}
 	if(PyObject_TypeCheck(pObj,&PyLong_Type))
 	{
-		rObj=ptor_long(pObj);
+		rObj = ptor_long(pObj);
 		if(destructive) Py_DECREF(pObj);
 		return rObj;
 	}
 	if(PyObject_TypeCheck(pObj,&PyFloat_Type))
 	{
-		rObj=ptor_float(pObj);
+		rObj = ptor_float(pObj);
 		if(destructive) Py_DECREF(pObj);
 		return rObj;
 	}
 	if(PyObject_TypeCheck(pObj,&PyTuple_Type))
 	{
-		rObj=ptor_tuple(pObj);
+		rObj = ptor_tuple(pObj);
 		if(destructive) Py_DECREF(pObj);
 		return rObj;
 	}
 	if(PyObject_TypeCheck(pObj,&PyDict_Type))
 	{
-		rObj=ptor_dict(pObj);
+		rObj = ptor_dict(pObj);
 		if(destructive) Py_DECREF(pObj);
 		return rObj;
 	}
@@ -202,7 +202,7 @@ static VALUE ptor_obj_core(PyObject *pObj,int destructive)
 	}
 	if(PyInstance_Check(pObj))
 	{
-		rObj=rp_inst_from_instance(pObj);
+		rObj = rp_inst_from_instance(pObj);
 		return rObj;
 	}
 
@@ -214,7 +214,7 @@ static VALUE ptor_obj_core(PyObject *pObj,int destructive)
 VALUE ptor_obj_no_destruct(PyObject *pObj)
 {
 	VALUE rObj;
-	rObj=ptor_obj_core(pObj,0);
+	rObj = ptor_obj_core(pObj,0);
 	return rObj;
 }
 
@@ -223,7 +223,7 @@ VALUE ptor_obj_no_destruct(PyObject *pObj)
 VALUE ptor_obj(PyObject* pObj)
 {
 	VALUE rObj;
-	rObj=ptor_obj_core(pObj,1);
+	rObj = ptor_obj_core(pObj,1);
 	return rObj;
 }
 

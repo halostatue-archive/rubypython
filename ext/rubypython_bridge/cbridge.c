@@ -1,7 +1,8 @@
 #include "cbridge.h"
 
+#import "rtop.h"
 
-int safe_start()
+int rpSafeStart()
 {
 	int here;
 	
@@ -15,7 +16,7 @@ int safe_start()
 }
 
 
-void safe_stop(int here)
+void rpSafeStop(int here)
 {
 	
 	if(here && Py_IsInitialized())
@@ -26,7 +27,7 @@ void safe_stop(int here)
 
 
 
-VALUE rp_call_func_with_module_name(VALUE module, VALUE name, VALUE args)
+VALUE rpCallWithModule(VALUE module, VALUE name, VALUE args)
 {
 
 	VALUE rArgs;
@@ -99,7 +100,7 @@ VALUE rp_call_func_with_module_name(VALUE module, VALUE name, VALUE args)
 	
 	// Convert return value to ruby object,  do cleanup of python
 	// objects and return.
-	rReturn = ptor_obj(pReturn);
+	rReturn = rpPyToRbObject(pReturn);
 	
 	Py_XDECREF(pArgs);
 	Py_XDECREF(pFunc);
@@ -108,7 +109,7 @@ VALUE rp_call_func_with_module_name(VALUE module, VALUE name, VALUE args)
 	return rReturn;
 }
 
-PyObject* rp_get_module(VALUE mname)
+PyObject* rpGetModule(VALUE mname)
 {
 	PyObject *pModule, *pModuleName;
 
@@ -131,7 +132,7 @@ PyObject* rp_get_module(VALUE mname)
 	return pModule;
 }
 
-PyObject* rp_get_func_with_module(PyObject* pModule, VALUE name)
+PyObject* rpGetFunctionWithModule(PyObject* pModule, VALUE name)
 {
 	PyObject *pFunc;
 
@@ -147,7 +148,7 @@ PyObject* rp_get_func_with_module(PyObject* pModule, VALUE name)
 	return pFunc;
 }
 
-VALUE rp_call_func(PyObject* pFunc,  VALUE args)
+VALUE rpCall(PyObject* pFunc,  VALUE args)
 {
 	VALUE rArgs, rReturn;
 	PyObject *pReturn, *pArgs;
@@ -174,7 +175,7 @@ VALUE rp_call_func(PyObject* pFunc,  VALUE args)
 		return Qnil;
 	}
 
-	rReturn = ptor_obj_no_destruct(pReturn);	
+	rReturn = rpPyToRbObjectKeep(pReturn);	
 	Py_XDECREF(pArgs);
 
 	return rReturn;

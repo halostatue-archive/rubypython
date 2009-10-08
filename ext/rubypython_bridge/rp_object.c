@@ -121,12 +121,12 @@ VALUE rp_inst_delegate(VALUE self, VALUE args)
 		pCalled = PyDict_GetItemString(pClassDict->pObject, cname);
 	}
 	Py_XINCREF(pCalled);
-	result = ptor_obj_no_destruct(pCalled);
+	result = rpPyToRbObjectKeep(pCalled);
 	if(rb_obj_is_instance_of(result, cRubyPyFunction))
 	{
 		Py_XINCREF(rp_obj_pobject(self));
 		rb_ary_unshift(args, self);
-		ret = rp_call_func(pCalled, args);
+		ret = rpCall(pCalled, args);
 		return ret;
 	}
 	return result;

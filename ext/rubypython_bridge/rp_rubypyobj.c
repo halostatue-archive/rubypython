@@ -87,7 +87,7 @@ VALUE rp_obj_name(VALUE self)
 			PyErr_Clear();
 			pName = PyObject_GetAttrString(pObject,"__class__");
 	 		pRepr = PyObject_Repr(pName);
-			rName = ptor_string(pRepr);
+			rName = rpPyToRbString(pRepr);
 			Py_XDECREF(pRepr);
 			return rb_str_concat(rb_str_new2("An instance of "), rName);
 			if(!pName)
@@ -101,7 +101,7 @@ VALUE rp_obj_name(VALUE self)
 				}
 			}
 		}
-		rName = ptor_string(pName);
+		rName = rpPyToRbString(pName);
 		Py_XDECREF(pName);
 		return rName;
 	}

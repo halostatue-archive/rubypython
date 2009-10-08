@@ -12,7 +12,7 @@ void rp_pythonerror()
 	pTypeName = PyObject_GetAttrString(pType,"__name__");
 	Py_XDECREF(pType);
 	
-	rb_raise(ePythonError,"%s:(%s)\n", STR2CSTR(ptor_obj(pTypeName)), STR2CSTR(rb_inspect(ptor_obj(pValue))));
+	rb_raise(ePythonError,"%s:(%s)\n", STR2CSTR(rpPyToRbObject(pTypeName)), STR2CSTR(rb_inspect(rpPyToRbObject(pValue))));
 	
 	Py_XDECREF(pTraceback);
 }

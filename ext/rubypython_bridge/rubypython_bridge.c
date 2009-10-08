@@ -1,7 +1,7 @@
 #include "rubypython_bridge.h"
 
-#include "ptor.h" //PyObject to VALUE conversion
-#include "rtop.h" //VALUE to PyObject conversion
+#include "ptor.h" //PyObject* to VALUE conversion
+#include "rtop.h" //VALUE to PyObject* conversion
 #include "cbridge.h" //General interface functions
 #include "rp_error.h" //Error propogation from Python to Ruby
 #include "rp_rubypyobj.h"
@@ -32,7 +32,7 @@ static VALUE func_with_module(VALUE self, VALUE args)
 	// Before doing anything we attempt to start the interpreter
 	// Started here will be 1 if the interpreter is started by this
 	// function and zero otherwise
-	int started_here = safe_start();
+	int started_here = rpSafeStart();
 	
 	VALUE module, func, return_val;
 	
@@ -43,11 +43,11 @@ static VALUE func_with_module(VALUE self, VALUE args)
 	module = rb_ary_shift(args);
 	func = rb_ary_shift(args);
 	
-	// rp_call_func_with_module_name is defined in cbridge.c
-	return_val = rp_call_func_with_module_name(module, func, args);
+	// rpCallWithModule is defined in cbridge.c
+	return_val = rpCallWithModule(module, func, args);
 
 	// If we started the interpreter, we now halt it.
-	safe_stop(started_here);
+	rpSafeStop(started_here);
 	
 	return return_val;
 }

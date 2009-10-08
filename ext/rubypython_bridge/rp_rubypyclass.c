@@ -29,7 +29,7 @@ VALUE rp_cla_new_inst(VALUE self, VALUE args)
 {
 	PyObject* pSelf;
 	pSelf = rp_obj_pobject(self);
-	return rp_call_func(pSelf, args);
+	return rpCall(pSelf, args);
 }
 
 /*

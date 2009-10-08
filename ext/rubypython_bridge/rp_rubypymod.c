@@ -17,8 +17,8 @@ VALUE rp_mod_call_func(VALUE self, VALUE func_name, VALUE args)
 	VALUE rReturn;
 	
 	pModule = cself->pObject;
-	pFunc = rp_get_func_with_module(pModule, func_name);
-	rReturn = rp_call_func(pFunc, args);
+	pFunc = rpGetFunctionWithModule(pModule, func_name);
+	rReturn = rpCall(pFunc, args);
 	Py_XDECREF(pFunc);
 	
 	return rReturn;
@@ -33,7 +33,7 @@ VALUE rp_mod_init(VALUE self, VALUE mname)
 {
 	PObj* cself;
 	Data_Get_Struct(self, PObj, cself);
-	cself->pObject = rp_get_module(mname);
+	cself->pObject = rpGetModule(mname);
 	VALUE rDict;
 	PyObject *pModuleDict;
 	pModuleDict = PyModule_GetDict(cself->pObject);
@@ -103,15 +103,15 @@ VALUE rp_mod_delegate(VALUE self, VALUE args)
 	Data_Get_Struct(rDict, PObj, pDict);
 	pCalled = PyDict_GetItemString(pDict->pObject, STR2CSTR(name_string));
 	Py_XINCREF(pCalled);
-	result = ptor_obj_no_destruct(pCalled);
+	result = rpPyToRbObjectKeep(pCalled);
 	if(rb_obj_is_instance_of(result, cRubyPyFunction))
 	{
-		ret = rp_call_func(pCalled, args);
+		ret = rpCall(pCalled, args);
 		return ret;
 	}
 	else if(rb_obj_is_instance_of(result, cRubyPyClass)&&(rb_funcall(args, rb_intern("empty?"), 0) == Qfalse)&&PyCallable_Check(pCalled))
 	{
-		ret = rp_call_func(pCalled, args);
+		ret = rpCall(pCalled, args);
 		return ret;
 	}
 	return result;

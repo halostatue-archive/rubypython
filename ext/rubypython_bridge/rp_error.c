@@ -6,10 +6,14 @@ void rp_pythonerror()
 {
 	PyObject *pType,*pValue,*pTraceback;
 	PyObject *pTypeName;
+	
 	PyErr_Fetch(&pType,&pValue,&pTraceback);
-	pTypeName=PyObject_GetAttrString(pType,"__name__");
+	
+	pTypeName = PyObject_GetAttrString(pType,"__name__");
 	Py_XDECREF(pType);
-	rb_raise(ePythonError,"%s:(%s)\n",STR2CSTR(ptor_obj(pTypeName)),STR2CSTR(rb_inspect(ptor_obj(pValue))));
+	
+	rb_raise(ePythonError,"%s:(%s)\n", STR2CSTR(ptor_obj(pTypeName)), STR2CSTR(rb_inspect(ptor_obj(pValue))));
+	
 	Py_XDECREF(pTraceback);
 }
 
@@ -19,5 +23,5 @@ interpreter.
 */
 void Init_RubyPyError()
 {
-	ePythonError=rb_define_class("PythonError",rb_eException);
+	ePythonError = rb_define_class("PythonError", rb_eException);
 }

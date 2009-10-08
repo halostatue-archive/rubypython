@@ -9,21 +9,21 @@
 
 VALUE ptor_string(PyObject* pString)
 {
-  //Make sure pString is actually a string
+  // Make sure pString is actually a string
 	if(!PyString_Check(pString)) return Qnil;
 	
-	//Allocate a new string for Ruby and return it.
-	//Note that this is a new object, not a wrapper around a
-	//python object
+	// Allocate a new string for Ruby and return it.
+	// Note that this is a new object, not a wrapper around a
+	// python object
 	char *cstr;
-	cstr = malloc(PyString_Size(pString)*sizeof(char));
-	strcpy(cstr,PyString_AsString(pString));
+	cstr = malloc(PyString_Size(pString) * sizeof(char));
+	strcpy(cstr, PyString_AsString(pString));
 	return rb_str_new2(cstr);
 }
 
 VALUE ptor_list(PyObject* pList)
 {
-  //Verify that pList is a python list
+  // Verify that pList is a python list
 	if(!PyList_Check(pList)) return Qnil;
 
 	VALUE rArray;
@@ -32,17 +32,17 @@ VALUE ptor_list(PyObject* pList)
 
 	int i = 0;
 
-	//Allocate a new Ruby array
+	// Allocate a new Ruby array
 	rArray = rb_ary_new();
 
-	//Iteratively add converted elements to the new Ruby list
+	// Iteratively add converted elements to the new Ruby list
 	int list_size = PyList_Size(pList);
-	for(i = 0;i<list_size;i++)
+	for(i = 0; i < list_size; i++)
 	{
-		element = PyList_GetItem(pList,i);
+		element = PyList_GetItem(pList, i);
 		Py_INCREF(element);
 		rElement = ptor_obj(element);
-		rb_ary_push(rArray,rElement);
+		rb_ary_push(rArray, rElement);
 	}
 	return rArray;
 }
@@ -110,7 +110,7 @@ VALUE ptor_dict(PyObject* pDict)
 	if(!PyDict_Check(pDict)) return Qnil;
 
 	VALUE rHash;
-	VALUE rKey,rVal;
+	VALUE rKey, rVal;
 	PyObject *key,*val;
 	Py_ssize_t pos = 0;
 
@@ -122,20 +122,20 @@ VALUE ptor_dict(PyObject* pDict)
 		Py_XINCREF(val);
 		rKey = ptor_obj(key);
 		rVal = ptor_obj(val);
-		if(rKey==Qnil) continue;
-		rb_hash_aset(rHash,rKey,rVal);
+		if(rKey == Qnil) continue;
+		rb_hash_aset(rHash, rKey, rVal);
 	}
 
 	return rHash;
 }
 
-static VALUE ptor_obj_core(PyObject *pObj,int destructive)
+static VALUE ptor_obj_core(PyObject *pObj, int destructive)
 {
 	VALUE rObj;
 
-	//Test the Python object vs various types and convert/wrap it
-	//appropriately. If the destructive flag is set, we destroy
-	//the original.
+	// Test the Python object vs various types and convert / wrap it
+	// appropriately. If the destructive flag is set, we destroy
+	// the original.
 
 	if(PyObject_TypeCheck(pObj,&PyString_Type))
 	{
@@ -181,17 +181,17 @@ static VALUE ptor_obj_core(PyObject *pObj,int destructive)
 		return rObj;
 	}
 
-	if(pObj==Py_True)
+	if(pObj == Py_True)
 	{
 		if(destructive) Py_DECREF(Py_True);
 		return Qtrue;
 	}
-	if(pObj==Py_False)
+	if(pObj == Py_False)
 	{
 		if(destructive) Py_DECREF(Py_False);
 		return Qfalse;
 	}
-	if(pObj==Py_None)
+	if(pObj == Py_None)
 	{
 		return Qnil;
 	}
@@ -206,24 +206,24 @@ static VALUE ptor_obj_core(PyObject *pObj,int destructive)
 		return rObj;
 	}
 
-	//Fallthrough behavior: The object is a class which should be wrapped
+	// Fallthrough behavior: The object is a class which should be wrapped
 	return rp_cla_from_class(pObj);
 }
 
-//Convert a Python object to a Ruby object and destroy the original
+// Convert a Python object to a Ruby object and destroy the original
 VALUE ptor_obj_no_destruct(PyObject *pObj)
 {
 	VALUE rObj;
-	rObj = ptor_obj_core(pObj,0);
+	rObj = ptor_obj_core(pObj, 0);
 	return rObj;
 }
 
 
-//Convert a Python object to a Ruby object while keeping the original
+// Convert a Python object to a Ruby object while keeping the original
 VALUE ptor_obj(PyObject* pObj)
 {
 	VALUE rObj;
-	rObj = ptor_obj_core(pObj,1);
+	rObj = ptor_obj_core(pObj, 1);
 	return rObj;
 }
 

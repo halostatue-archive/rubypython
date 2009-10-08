@@ -1,12 +1,13 @@
 #include "rp_object.h"
 #include "stdio.h"
 
+#include "rp_rubypyobj.h"
+
 RUBY_EXTERN VALUE mRubyPythonBridge;
 RUBY_EXTERN VALUE ePythonError;
 RUBY_EXTERN VALUE cRubyPyObject;
 RUBY_EXTERN VALUE cBlankObject;
 RUBY_EXTERN VALUE cRubyPyClass;
-
 
 VALUE cRubyPyModule;
 VALUE cRubyPyFunction;

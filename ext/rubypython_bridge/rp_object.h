@@ -1,17 +1,11 @@
 #include "config.h"
-#include "ptor.h"
-#include "rtop.h"
-#include "cbridge.h"
-#include "rp_rubypyobj.h"
-#include "rp_blankobject.h"
-#include "rp_rubypymod.h"
 
 #ifndef _RP_OBJECT_H_
 #define _RP_OBJECT_H_
 
 VALUE rp_func_from_function(PyObject*);
 
-int rp_is_func(VALUE pObj);
+int rp_is_func(VALUE);
 
 
 VALUE rp_inst_from_instance(PyObject*);

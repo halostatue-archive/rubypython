@@ -6,12 +6,12 @@
 
 #ifndef _RP_RUBYPYOBJ_H_
 #define _RP_RUBYPYOBJ_H_
-struct RubyPyObj 
+
+typedef struct RubyPyObj 
 {
 	PyObject* pObject;
-};
+} PObj;
 
-typedef struct RubyPyObj PObj;
 
 void rp_obj_mark(PObj*);
 void rp_obj_free(PObj*);

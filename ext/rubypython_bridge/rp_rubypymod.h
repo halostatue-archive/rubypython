@@ -1,9 +1,4 @@
 #include "config.h"
-#include "ptor.h"
-#include "rtop.h"
-#include "cbridge.h"
-#include "rp_rubypyobj.h"
-#include "rp_blankobject.h"
 
 #ifndef _RP_RUBYPYMOD_H_
 #define _RP_RUBYPYMOD_H_

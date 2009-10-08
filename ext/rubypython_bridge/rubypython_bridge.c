@@ -1,6 +1,17 @@
 #include "rubypython_bridge.h"
 
+#include "ptor.h" //PyObject to VALUE conversion
+#include "rtop.h" //VALUE to PyObject conversion
+#include "cbridge.h" //General interface functions
+#include "rp_error.h" //Error propogation from Python to Ruby
+#include "rp_rubypyobj.h"
+#include "rp_blankobject.h"
+#include "rp_object.h"
+#include "rp_rubypymod.h"
+#include "rp_rubypyclass.h"
+
 VALUE mRubyPythonBridge;
+
 RUBY_EXTERN VALUE cRubyPyObject;
 RUBY_EXTERN VALUE cRubyPyModule;
 RUBY_EXTERN VALUE cRubyPyClass;
@@ -41,6 +52,7 @@ static VALUE func_with_module(VALUE self, VALUE args)
 	return return_val;
 }
 
+
 /*
 * call - seq: import(modname)
 * 
@@ -50,6 +62,7 @@ static VALUE rp_import(VALUE self, VALUE mname)
 {
 	return rb_class_new_instance(1,&mname, cRubyPyModule);
 }
+
 
 /*
 * call - seq: start()
@@ -65,6 +78,7 @@ VALUE rp_start(VALUE self)
 		return Qfalse;
 	}
 	Py_Initialize();
+	
 	return Qtrue;
 }
 
@@ -91,7 +105,6 @@ VALUE rp_stop(VALUE self)
 *
 * Use RubyPython instead.
 */
-
 void Init_rubypython_bridge()
 {
 	mRubyPythonBridge = rb_define_module("RubyPythonBridge");

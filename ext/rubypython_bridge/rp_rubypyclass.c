@@ -1,5 +1,8 @@
 #include "rp_rubypyclass.h"
 
+#include "rp_rubypymod.h"
+#include "rp_rubypyobj.h"
+
 RUBY_EXTERN VALUE mRubyPythonBridge;
 RUBY_EXTERN VALUE ePythonError;
 RUBY_EXTERN VALUE cRubyPyObject;

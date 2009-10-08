@@ -1,5 +1,7 @@
 #include "rp_rubypymod.h"
 
+#include "rp_rubypyobj.h"
+
 VALUE cRubyPyModule;
 
 RUBY_EXTERN VALUE mRubyPythonBridge;

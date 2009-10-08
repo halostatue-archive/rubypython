@@ -38,7 +38,7 @@
 	* Wrapped classes and instances should now behave as expected.
 	* Gave RubyPyClasses a "new" method for creating instances.
 	* Callable class can now be called provided that at least one argument is given
-	* A wrapped object's respond_to? method now has some relation to its actually methods.
+	* A wrapped object's respond_to? method now has some relation to its actual methods.
 	
 * Bug fixes
 	* Fixed bug with inspect method of RubyPyObject that caused a bus error when inspecting

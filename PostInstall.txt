@@ -1,7 +1,7 @@
 
 For more information on RubyPython, see http://rubypython.rubyforge.org
 
-If you find a bug, or have any suggestions, email me at: achatesavc+rubypython@gmail.com
+If you find a bug, or have any suggestions, email me at: raineszm+rubypython@gmail.com
 
 If you would like to help develop RubyPython, also send me an email.
 

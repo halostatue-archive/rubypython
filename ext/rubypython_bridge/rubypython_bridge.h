@@ -12,4 +12,8 @@
 #include "rtop.h" //VALUE to PyObject conversion
 #include "cbridge.h" //General interface functions
 #include "rp_error.h" //Error propogation from Python to Ruby
+#include "rp_rubypyobj.h"
+#include "rp_blankobject.h"
 #include "rp_object.h"
+#include "rp_rubypymod.h"
+#include "rp_rubypyclass.h"

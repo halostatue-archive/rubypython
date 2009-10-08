@@ -26,13 +26,13 @@ void safe_stop(int here)
 
 
 
-VALUE rp_call_func_with_module_name(VALUE module,VALUE name,VALUE args)
+VALUE rp_call_func_with_module_name(VALUE module, VALUE name, VALUE args)
 {
 
 	VALUE rArgs;
 	VALUE rReturn;
 
-	PyObject *pModuleName,*pModule,*pFunc,*pArgs,*pReturn;
+	PyObject *pModuleName, *pModule, *pFunc, *pArgs, *pReturn;
 
 	char* functionName;
 
@@ -43,31 +43,31 @@ VALUE rp_call_func_with_module_name(VALUE module,VALUE name,VALUE args)
  * 	arguments is the same i.e. each method is supllied with an
  * 	array of arguments.
  */
-	if(!(TYPE(args)==T_ARRAY))
+	if(!(TYPE(args) == T_ARRAY))
 	{
 		rArgs = rb_ary_new();
-		rb_ary_push(rArgs,args);
+		rb_ary_push(rArgs, args);
 	}
 	else
 	{
 		rArgs = args;
 	}
 	
-	//A little syntatic sugar here. We will allow users access the
-	//__builtins__ module under the name builtins
-	//FIXME: replace this with a call to rb_get_module
+	// A little syntatic sugar here. We will allow users access the
+	// __builtins__ module under the name builtins
+	// FIXME: replace this with a call to rb_get_module
 
-	if(rb_eql(module,rb_str_new2("builtins")))
+	if(rb_eql(module, rb_str_new2("builtins")))
 	{
 		module = rb_str_new2("__builtins__");
 	}
 
-	//Load the Python module into the pModule variable
-	pModuleName = rtop_obj(module,0);
+	// Load the Python module into the pModule variable
+	pModuleName = rtop_obj(module, 0);
 	pModule = PyImport_Import(pModuleName);
 	Py_XDECREF(pModuleName);
 
-	//Check for Errors and propagate them if they have occurred.
+	// Check for Errors and propagate them if they have occurred.
 	if(PyErr_Occurred())
 	{
 		rp_pythonerror();
@@ -75,20 +75,20 @@ VALUE rp_call_func_with_module_name(VALUE module,VALUE name,VALUE args)
 	}
 	
 	
-	//Get a pointer to the request function
-	pFunc = PyObject_GetAttrString(pModule,functionName);
+	// Get a pointer to the request function
+	pFunc = PyObject_GetAttrString(pModule, functionName);
 	
-	//Convert the supplied arguments to python objects
-	pArgs = rtop_obj(rArgs,1);
+	// Convert the supplied arguments to python objects
+	pArgs = rtop_obj(rArgs, 1);
 	
-	//Execute the function and obtain a pointer to the return object
-	pReturn = PyObject_CallObject(pFunc,pArgs);
+	// Execute the function and obtain a pointer to the return object
+	pReturn = PyObject_CallObject(pFunc, pArgs);
 	
-	//Check for an error and do any necessary cleanup before
-	//propagating error
+	// Check for an error and do any necessary cleanup before
+	// propagating error
 	if(PyErr_Occurred())
 	{
-		//FIXME: can some of this redundancy be removed?
+		// FIXME: can some of this redundancy be removed?
 		Py_XDECREF(pReturn);
 		Py_XDECREF(pArgs);
 		Py_XDECREF(pFunc);
@@ -97,8 +97,8 @@ VALUE rp_call_func_with_module_name(VALUE module,VALUE name,VALUE args)
 		return Qnil;
 	}
 	
-	//Convert return value to ruby object, do cleanup of python
-	//objects and return.
+	// Convert return value to ruby object,  do cleanup of python
+	// objects and return.
 	rReturn = ptor_obj(pReturn);
 	
 	Py_XDECREF(pArgs);
@@ -110,9 +110,9 @@ VALUE rp_call_func_with_module_name(VALUE module,VALUE name,VALUE args)
 
 PyObject* rp_get_module(VALUE mname)
 {
-	PyObject *pModule,*pModuleName;
+	PyObject *pModule, *pModuleName;
 
-	if(rb_eql(mname,rb_str_new2("builtins")))
+	if(rb_eql(mname, rb_str_new2("builtins")))
 	{
 		mname = rb_str_new2("__builtins__");
 	}
@@ -131,11 +131,11 @@ PyObject* rp_get_module(VALUE mname)
 	return pModule;
 }
 
-PyObject* rp_get_func_with_module(PyObject* pModule,VALUE name)
+PyObject* rp_get_func_with_module(PyObject* pModule, VALUE name)
 {
 	PyObject *pFunc;
 
-	pFunc = PyObject_GetAttrString(pModule,STR2CSTR(name));
+	pFunc = PyObject_GetAttrString(pModule, STR2CSTR(name));
 
 	if(PyErr_Occurred())
 	{
@@ -147,24 +147,24 @@ PyObject* rp_get_func_with_module(PyObject* pModule,VALUE name)
 	return pFunc;
 }
 
-VALUE rp_call_func(PyObject* pFunc, VALUE args)
+VALUE rp_call_func(PyObject* pFunc,  VALUE args)
 {
-	VALUE rArgs,rReturn;
-	PyObject *pReturn,*pArgs;
+	VALUE rArgs, rReturn;
+	PyObject *pReturn, *pArgs;
 
-	if(!(TYPE(args)==T_ARRAY))
+	if(!(TYPE(args) == T_ARRAY))
 	{
 		
 		rArgs = rb_ary_new();
-		rb_ary_push(rArgs,args);
+		rb_ary_push(rArgs, args);
 	}
 	else
 	{
 		rArgs = args;
 	}
 
-	pArgs = rtop_obj(rArgs,1);
-	pReturn = PyObject_CallObject(pFunc,pArgs);
+	pArgs = rtop_obj(rArgs, 1);
+	pReturn = PyObject_CallObject(pFunc, pArgs);
 	
 	if(PyErr_Occurred())
 	{

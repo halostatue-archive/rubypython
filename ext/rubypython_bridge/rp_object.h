@@ -13,56 +13,56 @@ struct RubyPyObj
 
 typedef struct RubyPyObj PObj;
 
-void rp_obj_mark(PObj* self);
+void rp_obj_mark(PObj*);
 
-void rp_obj_free(PObj* self);
+void rp_obj_free(PObj*);
 
-VALUE rp_obj_alloc(VALUE klass);
+VALUE rp_obj_alloc(VALUE);
 
-PyObject* rp_obj_pobject(VALUE self);
+PyObject* rp_obj_pobject(VALUE);
 
-VALUE rp_obj_name(VALUE self);
+VALUE rp_obj_name(VALUE);
 
 
-//Ruby wrapper for Python Modules
-VALUE rp_mod_init(VALUE self,VALUE mname);
+// Ruby wrapper for Python Modules
+VALUE rp_mod_init(VALUE, VALUE);
 
-int rp_has_attr(VALUE self,ID func_hame);
+int rp_has_attr(VALUE, ID);
 
-VALUE rp_mod_call_func(VALUE self,VALUE func_name,VALUE args);
+VALUE rp_mod_call_func(VALUE, VALUE, VALUE);
 
-VALUE rp_mod_delegate(VALUE self,VALUE args);
+VALUE rp_mod_delegate(VALUE, VALUE);
 
-//Ruby wrapper for Python classes
+// Ruby wrapper for Python classes
 
-VALUE rp_cla_from_class(PyObject *pClass);
+VALUE rp_cla_from_class(PyObject*);
 
-VALUE rp_func_from_function(PyObject *pFunc);
+VALUE rp_func_from_function(PyObject*);
 
 int rp_is_func(VALUE pObj);
 
-VALUE rp_obj_from_pyobject(PyObject *pObj);
+VALUE rp_obj_from_pyobject(PyObject*);
 
-VALUE rp_inst_from_instance(PyObject *pInst);
+VALUE rp_inst_from_instance(PyObject*);
 
-VALUE rp_inst_delegate(VALUE self,VALUE args);
+VALUE rp_inst_delegate(VALUE, VALUE);
 
-VALUE rp_cla_new_inst(VALUE self,VALUE args);
+VALUE rp_cla_new_inst(VALUE, VALUE);
 
-VALUE rp_obj_responds(VALUE self,VALUE mname);
+VALUE rp_obj_responds(VALUE, VALUE);
 
-VALUE blank_undef_if(VALUE mname,VALUE klass);
+VALUE blank_undef_if(VALUE, VALUE);
 
-VALUE blank_obj_prep(VALUE self);
+VALUE blank_obj_prep(VALUE);
 
-int rp_equal(VALUE args);
+int rp_equal();
 
-int rp_double_bang(VALUE args);
+int rp_double_bang(VALUE);
 
-VALUE rp_mod_attr_set(VALUE self,VALUE args);
+VALUE rp_mod_attr_set(VALUE, VALUE);
 
-VALUE rp_inst_attr_set(VALUE self, VALUE args);
+VALUE rp_inst_attr_set(VALUE, VALUE);
 
-VALUE rp_obj_wrap(PyObject* pObj);
+VALUE rp_obj_wrap(PyObject*);
 
 #endif /* _RP_OBJECT_H_ */

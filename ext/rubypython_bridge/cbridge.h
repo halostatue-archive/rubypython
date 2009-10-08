@@ -7,7 +7,6 @@
 #define _BRIDGE_H_
 
 int safe_start();
-
 void safe_stop(int);
 
 

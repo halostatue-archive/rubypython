@@ -33,8 +33,10 @@ class TestRubypython < Test::Unit::TestCase
 
   def test_two_imports
     RubyPython.start
-    RubyPython.import "cPickle"
-    RubyPython.import "urllib"
+    assert_nothing_raised("Error raised on imports") do
+      RubyPython.import "cPickle"
+      RubyPython.import "urllib"
+    end
     RubyPython.stop
   end
 

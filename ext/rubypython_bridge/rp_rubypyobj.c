@@ -6,12 +6,22 @@ RUBY_EXTERN VALUE cBlankObject;
 
 VALUE cRubyPyObject;
 
+//Create a new RubyPyObject
+VALUE rp_obj_alloc(VALUE klass)
+{
+	PObj* self = ALLOC(PObj);
+	self->pObject = NULL;
+	return Data_Wrap_Struct(klass, rp_obj_mark, rp_obj_free, self);
+}
+
+//Mark subsidiary objects for deletion
 void rp_obj_mark(PObj* self)
 {}
 
+//Delete a RubyPyObject
 void rp_obj_free(PObj* self)
 {
-	if(Py_IsInitialized()&&self->pObject)
+	if(Py_IsInitialized() && self->pObject)
 	{
 		Py_XDECREF(self->pObject);
 	}
@@ -27,8 +37,10 @@ decrease the reference count on their associated objects before they are garbage
 VALUE rp_obj_free_pobj(VALUE self)
 {
 	PObj *cself;
+	
 	Data_Get_Struct(self, PObj, cself);
-	if(Py_IsInitialized()&&cself->pObject)
+	
+	if(Py_IsInitialized() && cself->pObject)
 	{
 		Py_XDECREF(cself->pObject);
 		cself->pObject = NULL;
@@ -38,25 +50,22 @@ VALUE rp_obj_free_pobj(VALUE self)
 	{
 		cself->pObject = NULL;
 	}
+	
 	return Qfalse;
-}
-
-VALUE rp_obj_alloc(VALUE klass)
-{
-	PObj* self = ALLOC(PObj);
-	self->pObject = NULL;
-	return Data_Wrap_Struct(klass, rp_obj_mark, rp_obj_free, self);
 }
 
 
 PyObject* rp_obj_pobject(VALUE self)
 {
 	PObj *cself;
+	
 	Data_Get_Struct(self, PObj, cself);
+	
 	if(!cself->pObject)
 	{
 		rb_raise(ePythonError,"RubyPython tried to access a freed object");
 	}
+	
 	return cself->pObject;
 }
 
@@ -64,15 +73,19 @@ PyObject* rp_obj_pobject(VALUE self)
 VALUE rp_obj_from_pyobject(PyObject* pObj)
 {
 	PObj* self;
+	
 	VALUE rObj = rb_class_new_instance(0, NULL, cRubyPyObject);
+	
 	Data_Get_Struct(rObj, PObj, self);
 	self->pObject = pObj;
+	
 	return rObj;
 }
 
 /*
 Returns the name of the Python object which this instance wraps.
 
+If it cannot determine a reasonable name it just gives up.
 */
 VALUE rp_obj_name(VALUE self)
 {
@@ -87,7 +100,7 @@ VALUE rp_obj_name(VALUE self)
 			PyErr_Clear();
 			pName = PyObject_GetAttrString(pObject,"__class__");
 	 		pRepr = PyObject_Repr(pName);
-			rName = rpPyToRbString(pRepr);
+			rName = ptorString(pRepr);
 			Py_XDECREF(pRepr);
 			return rb_str_concat(rb_str_new2("An instance of "), rName);
 			if(!pName)
@@ -101,10 +114,11 @@ VALUE rp_obj_name(VALUE self)
 				}
 			}
 		}
-		rName = rpPyToRbString(pName);
+		rName = ptorString(pName);
 		Py_XDECREF(pName);
 		return rName;
 	}
+	
 	return rb_str_new2("__FREED__");
 
 }
@@ -120,6 +134,7 @@ int rp_has_attr(VALUE self, VALUE func_name)
 	return 0;
 }
 
+/* Tests whether the warpped object will respond to the given method*/
 VALUE rp_obj_responds(VALUE self, VALUE mname)
 {
 	if(rp_has_attr(self, mname))

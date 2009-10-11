@@ -9,7 +9,7 @@ RUBY_EXTERN PyObject* rp_obj_pobject(VALUE self);
 *  by REFERENCE.
 */
 
-PyObject* rtop_string(VALUE rString)
+PyObject* rtopString(VALUE rString)
 {
 
 	PyObject* pString;
@@ -26,7 +26,7 @@ PyObject* rtop_string(VALUE rString)
 }
 
 
-PyObject* rtop_array_list(VALUE rArray)
+PyObject* rtopArrayToList(VALUE rArray)
 {
 	PyObject* pList;
 	int i;
@@ -36,24 +36,24 @@ PyObject* rtop_array_list(VALUE rArray)
 
 	for(i = 0; i < size; i++)
 	{
-		PyList_SetItem(pList, i, rtop_obj(rb_ary_entry(rArray, i), 0));
+		PyList_SetItem(pList, i, rtopObject(rb_ary_entry(rArray, i), 0));
 	}
 
 	return pList;
 }
 
-PyObject* rtop_array_tuple(VALUE rArray)
+PyObject* rtopArrayToTuple(VALUE rArray)
 {
 	PyObject *pTuple,*pList;
 
-	pList = rtop_array_list(rArray);
+	pList = rtopArrayToList(rArray);
 	pTuple = PySequence_Tuple(pList);
 	Py_XDECREF(pList);
 
 	return pTuple;
 }
 
-PyObject* rtop_hash(VALUE rHash)
+PyObject* rtopHash(VALUE rHash)
 {
 	PyObject *pDict,*pKey,*pVal;
 	VALUE rKeys;
@@ -68,13 +68,13 @@ PyObject* rtop_hash(VALUE rHash)
 	{
 		rKey = rb_ary_entry(rKeys, i);
 		rVal = rb_hash_aref(rHash, rKey);
-		PyDict_SetItem(pDict, rtop_obj(rKey, 1), rtop_obj(rVal, 0));
+		PyDict_SetItem(pDict, rtopObject(rKey, 1), rtopObject(rVal, 0));
 	}
 
 	return pDict;
 }
 
-PyObject* rtop_fixnum(VALUE rNum)
+PyObject* rtopFixnum(VALUE rNum)
 {
 	PyObject* pNum;
 	long cNum;
@@ -85,7 +85,7 @@ PyObject* rtop_fixnum(VALUE rNum)
 	return pNum;
 }
 
-PyObject* rtop_bignum(VALUE rNum)
+PyObject* rtopBignum(VALUE rNum)
 {
 	PyObject* pNum;
 	long cNum;
@@ -96,7 +96,7 @@ PyObject* rtop_bignum(VALUE rNum)
 	return pNum;
 }
 
-PyObject* rtop_float(VALUE rNum)
+PyObject* rtopFloat(VALUE rNum)
 {
 	PyObject* pNum;
 	double cNum;
@@ -107,17 +107,17 @@ PyObject* rtop_float(VALUE rNum)
 	return pNum;
 }
 
-PyObject* rtop_false()
+PyObject* rtopFalse()
 {
 	Py_RETURN_FALSE;
 }
 
-PyObject* rtop_true()
+PyObject* rtopTrue()
 {
 	Py_RETURN_TRUE;
 }
 
-PyObject* rtop_symbol(VALUE rSymbol)
+PyObject* rtopSymbol(VALUE rSymbol)
 {
 	PyObject* pString;
 	char* cStr;
@@ -129,7 +129,7 @@ PyObject* rtop_symbol(VALUE rSymbol)
 
 }
 
-PyObject* rtop_obj(VALUE rObj, int is_key)
+PyObject* rtopObject(VALUE rObj, int is_key)
 {
 	// The above is_key parameter determines whether the object
 	// created show be immutable if possible
@@ -143,34 +143,34 @@ PyObject* rtop_obj(VALUE rObj, int is_key)
 	switch(TYPE(rObj))
 	{
 		case T_STRING:
-			pObj = rtop_string(rObj);
+			pObj = rtopString(rObj);
 			break;
 			
 		case T_ARRAY:
 			// If this object is going to be used as a
 			// hash key we should make it a tuple instead
 			// of a list
-			if(is_key) pObj = rtop_array_tuple(rObj);
+			if(is_key) pObj = rtopArrayToTuple(rObj);
 			else
 			{
-				pObj = rtop_array_list(rObj);
+				pObj = rtopArrayToList(rObj);
 			}
 			break;
 			
 		case T_HASH:
-			pObj = rtop_hash(rObj);
+			pObj = rtopHash(rObj);
 			break;
 		
 		case T_FIXNUM:
-			pObj = rtop_fixnum(rObj);
+			pObj = rtopFixnum(rObj);
 			break;
 		
 		case T_BIGNUM:
-			pObj = rtop_bignum(rObj);
+			pObj = rtopBignum(rObj);
 			break;
 		
 		case T_FLOAT:
-			pObj = rtop_float(rObj);
+			pObj = rtopFloat(rObj);
 			break;
 			
 		case T_NIL:
@@ -178,15 +178,15 @@ PyObject* rtop_obj(VALUE rObj, int is_key)
 			break;
 			
 		case T_TRUE:
-			pObj = rtop_true();
+			pObj = rtopTrue();
 			break;
 			
 		case T_FALSE:
-			pObj = rtop_false();
+			pObj = rtopFalse();
 			break;
 		
 		case T_SYMBOL:
-			pObj = rtop_symbol(rObj);
+			pObj = rtopSymbol(rObj);
 			break;
 		
 		default:
@@ -204,7 +204,7 @@ PyObject* rtop_obj(VALUE rObj, int is_key)
 				// do with the ruby object we just pass
 				// a string representation of it
 				rInspect = rb_inspect(rObj);
-				pObj = rtop_string(rInspect);
+				pObj = rtopString(rInspect);
 			}
 	}
 

@@ -80,7 +80,7 @@ VALUE rp_inst_attr_set(VALUE self, VALUE args)
 		
 	}
 	Py_XDECREF(pName);
-	PyDict_SetItemString(pDict->pObject, STR2CSTR(name_string), rtop_obj(args, 0));
+	PyDict_SetItemString(pDict->pObject, STR2CSTR(name_string), rtopObject(args, 0));
 	return Qtrue;
 }
 
@@ -121,7 +121,7 @@ VALUE rp_inst_delegate(VALUE self, VALUE args)
 		pCalled = PyDict_GetItemString(pClassDict->pObject, cname);
 	}
 	Py_XINCREF(pCalled);
-	result = rpPyToRbObjectKeep(pCalled);
+	result = ptorObjectKeep(pCalled);
 	if(rb_obj_is_instance_of(result, cRubyPyFunction))
 	{
 		Py_XINCREF(rp_obj_pobject(self));

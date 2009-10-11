@@ -3,6 +3,6 @@
 #ifndef _RP_ERROR_H_
 #define _RP_ERROR_H_
 
-void rp_pythonerror();
+void rpPythonError();
 
 #endif /* _RP_ERROR_H_ */

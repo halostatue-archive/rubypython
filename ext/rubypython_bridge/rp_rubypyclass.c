@@ -13,22 +13,28 @@ VALUE cRubyPyClass;
 VALUE rp_cla_from_class(PyObject *pClass)
 {
 	PObj* self;
-	VALUE rClass = rb_class_new_instance(0, NULL, cRubyPyClass);
 	PyObject* pClassDict;
 	VALUE rDict;
+	VALUE rClass = rb_class_new_instance(0, NULL, cRubyPyClass);
+
 	Data_Get_Struct(rClass, PObj, self);
 	self->pObject = pClass;
+	
 	pClassDict = PyObject_GetAttrString(pClass,"__dict__");
 	Py_XINCREF(pClassDict);
+	
 	rDict = rp_obj_from_pyobject(pClassDict);
 	rb_iv_set(rClass,"@pdict", rDict);
+	
 	return rClass;
 }
 
 VALUE rp_cla_new_inst(VALUE self, VALUE args)
 {
 	PyObject* pSelf;
+	
 	pSelf = rp_obj_pobject(self);
+	
 	return rpCall(pSelf, args);
 }
 

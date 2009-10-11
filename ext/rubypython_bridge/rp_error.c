@@ -2,7 +2,7 @@
 
 VALUE ePythonError;
 
-void rp_pythonerror()
+void rpPythonError()
 {
 	PyObject *pType,*pValue,*pTraceback;
 	PyObject *pTypeName;
@@ -12,7 +12,7 @@ void rp_pythonerror()
 	pTypeName = PyObject_GetAttrString(pType,"__name__");
 	Py_XDECREF(pType);
 	
-	rb_raise(ePythonError,"%s:(%s)\n", STR2CSTR(rpPyToRbObject(pTypeName)), STR2CSTR(rb_inspect(rpPyToRbObject(pValue))));
+	rb_raise(ePythonError,"%s:(%s)\n", STR2CSTR(ptorObject(pTypeName)), STR2CSTR(rb_inspect(ptorObject(pValue))));
 	
 	Py_XDECREF(pTraceback);
 }

@@ -2,6 +2,10 @@
 
 #import "rtop.h"
 
+/* Attempt to initialize the embedded python interpreter.
+  Return 1 if we initialize it here and 0 if the interpreter is
+  already running.
+*/
 int rpSafeStart()
 {
 	int here;
@@ -15,7 +19,7 @@ int rpSafeStart()
 	return here;
 }
 
-
+/* Attempt to stop the embedded python interpreter.*/
 void rpSafeStop(int here)
 {
 	
@@ -25,7 +29,43 @@ void rpSafeStop(int here)
 	}
 }
 
+VALUE rpCall(PyObject* pFunc,  VALUE args)
+{
+	VALUE rArgs, rReturn;
+	PyObject *pReturn, *pArgs;
 
+/* 	Check to see if the passed argument is an array. If it is we
+ * 	box it in another array so that the presentation of
+ * 	arguments is the same i.e. each method is supllied with an
+ * 	array of arguments.
+ */
+	if(!(TYPE(args) == T_ARRAY))
+	{
+		
+		rArgs = rb_ary_new();
+		rb_ary_push(rArgs, args);
+	}
+	else
+	{
+		rArgs = args;
+	}
+
+	pArgs = rtopObject(rArgs, 1);
+	pReturn = PyObject_CallObject(pFunc, pArgs);
+	
+	if(PyErr_Occurred())
+	{
+		Py_XDECREF(pArgs);
+		Py_XDECREF(pReturn);
+		rpPythonError();
+		return Qnil;
+	}
+
+	rReturn = ptorObjectKeep(pReturn);	
+	Py_XDECREF(pArgs);
+
+	return rReturn;
+}
 
 VALUE rpCallWithModule(VALUE module, VALUE name, VALUE args)
 {
@@ -33,17 +73,9 @@ VALUE rpCallWithModule(VALUE module, VALUE name, VALUE args)
 	VALUE rArgs;
 	VALUE rReturn;
 
-	PyObject *pModuleName, *pModule, *pFunc, *pArgs, *pReturn;
+	PyObject *pModule, *pFunc, *pArgs, *pReturn;
 
-	char* functionName;
 
-	functionName = STR2CSTR(name);
-
-/* 	Check to see if the passed argument is an array. If it is we
- * 	box it in another array so that the presentation of
- * 	arguments is the same i.e. each method is supllied with an
- * 	array of arguments.
- */
 	if(!(TYPE(args) == T_ARRAY))
 	{
 		rArgs = rb_ary_new();
@@ -63,24 +95,14 @@ VALUE rpCallWithModule(VALUE module, VALUE name, VALUE args)
 		module = rb_str_new2("__builtins__");
 	}
 
-	// Load the Python module into the pModule variable
-	pModuleName = rtop_obj(module, 0);
-	pModule = PyImport_Import(pModuleName);
-	Py_XDECREF(pModuleName);
-
-	// Check for Errors and propagate them if they have occurred.
-	if(PyErr_Occurred())
-	{
-		rp_pythonerror();
-		return Qnil;
-	}
+	// Load the requested python module
+	pModule = rpGetModule(module);
 	
-	
-	// Get a pointer to the request function
-	pFunc = PyObject_GetAttrString(pModule, functionName);
+	// Get a pointer to the requested function
+	pFunc = rpGetFunctionWithModule(pModule, name);
 	
 	// Convert the supplied arguments to python objects
-	pArgs = rtop_obj(rArgs, 1);
+	pArgs = rtopObject(rArgs, 1);
 	
 	// Execute the function and obtain a pointer to the return object
 	pReturn = PyObject_CallObject(pFunc, pArgs);
@@ -94,13 +116,13 @@ VALUE rpCallWithModule(VALUE module, VALUE name, VALUE args)
 		Py_XDECREF(pArgs);
 		Py_XDECREF(pFunc);
 		Py_XDECREF(pModule);
-		rp_pythonerror();
+		rpPythonError();
 		return Qnil;
 	}
 	
 	// Convert return value to ruby object,  do cleanup of python
 	// objects and return.
-	rReturn = rpPyToRbObject(pReturn);
+	rReturn = ptorObject(pReturn);
 	
 	Py_XDECREF(pArgs);
 	Py_XDECREF(pFunc);
@@ -118,14 +140,14 @@ PyObject* rpGetModule(VALUE mname)
 		mname = rb_str_new2("__builtins__");
 	}
 
-	pModuleName = rtop_string(mname);
+	pModuleName = rtopString(mname);
 	pModule = PyImport_Import(pModuleName);
 	Py_XDECREF(pModuleName);
 
 	if(PyErr_Occurred())
 	{
 		Py_XDECREF(pModule);
-		rp_pythonerror();
+		rpPythonError();
 		return Py_None;
 	}
 
@@ -141,42 +163,11 @@ PyObject* rpGetFunctionWithModule(PyObject* pModule, VALUE name)
 	if(PyErr_Occurred())
 	{
 		Py_XDECREF(pFunc);
-		rp_pythonerror();
+		rpPythonError();
 		return Py_None;
 	}
 
 	return pFunc;
 }
 
-VALUE rpCall(PyObject* pFunc,  VALUE args)
-{
-	VALUE rArgs, rReturn;
-	PyObject *pReturn, *pArgs;
 
-	if(!(TYPE(args) == T_ARRAY))
-	{
-		
-		rArgs = rb_ary_new();
-		rb_ary_push(rArgs, args);
-	}
-	else
-	{
-		rArgs = args;
-	}
-
-	pArgs = rtop_obj(rArgs, 1);
-	pReturn = PyObject_CallObject(pFunc, pArgs);
-	
-	if(PyErr_Occurred())
-	{
-		Py_XDECREF(pArgs);
-		Py_XDECREF(pReturn);
-		rp_pythonerror();
-		return Qnil;
-	}
-
-	rReturn = rpPyToRbObjectKeep(pReturn);	
-	Py_XDECREF(pArgs);
-
-	return rReturn;
-}

@@ -1,5 +1,7 @@
 #include "ptor.h"
 
+//TODO: Review naming scheme and rename file?
+
 /* Note:
    The conversion functions for the builtin types are just that,
    conversion functions. They create a new Ruby object equivalent to
@@ -7,7 +9,7 @@
 
  */
 
-VALUE rpPyToRbString(PyObject* pString)
+VALUE ptorString(PyObject* pString)
 {
   // Make sure pString is actually a string
 	if(!PyString_Check(pString)) return Qnil;
@@ -21,7 +23,7 @@ VALUE rpPyToRbString(PyObject* pString)
 	return rb_str_new2(cstr);
 }
 
-VALUE rpPyToRbList(PyObject* pList)
+VALUE ptorList(PyObject* pList)
 {
   // Verify that pList is a python list
 	if(!PyList_Check(pList)) return Qnil;
@@ -41,13 +43,13 @@ VALUE rpPyToRbList(PyObject* pList)
 	{
 		element = PyList_GetItem(pList, i);
 		Py_INCREF(element);
-		rElement = rpPyToRbObject(element);
+		rElement = ptorObject(element);
 		rb_ary_push(rArray, rElement);
 	}
 	return rArray;
 }
 
-VALUE rpPyToRbInt(PyObject* pNum)
+VALUE ptorInt(PyObject* pNum)
 {
 	if(!PyInt_Check(pNum)) return Qnil;
 	
@@ -58,7 +60,7 @@ VALUE rpPyToRbInt(PyObject* pNum)
 	
 }
 
-VALUE rpPyToRbLong(PyObject* pNum)
+VALUE ptorLong(PyObject* pNum)
 {
 	if(!PyLong_Check(pNum)) return Qnil;
 
@@ -69,7 +71,7 @@ VALUE rpPyToRbLong(PyObject* pNum)
 
 	if(PyErr_ExceptionMatches(PyExc_OverflowError))
 	{
-		rp_pythonerror();
+		rpPythonError();
 		return Qnil;
 	}
 
@@ -79,7 +81,7 @@ VALUE rpPyToRbLong(PyObject* pNum)
 	
 }
 
-VALUE rpPyToRbFloat(PyObject* pNum)
+VALUE ptorFloat(PyObject* pNum)
 {
 	if(!PyFloat_Check(pNum)) return Qnil;
 
@@ -90,7 +92,7 @@ VALUE rpPyToRbFloat(PyObject* pNum)
 	return rNum;
 }
 
-VALUE rpPyToRbTuple(PyObject* pTuple)
+VALUE ptorTuple(PyObject* pTuple)
 {
 	if(!PyTuple_Check(pTuple)) return Qnil;
 
@@ -98,14 +100,14 @@ VALUE rpPyToRbTuple(PyObject* pTuple)
 	PyObject* pList;
 
 	pList = PySequence_List(pTuple);
-	rArray = rpPyToRbList(pList);
+	rArray = ptorList(pList);
 	Py_DECREF(pList);
 
 	return rArray;
 }
 
 
-VALUE rpPyToRbDict(PyObject* pDict)
+VALUE ptorDict(PyObject* pDict)
 {
 	if(!PyDict_Check(pDict)) return Qnil;
 
@@ -120,8 +122,8 @@ VALUE rpPyToRbDict(PyObject* pDict)
 	{
 		Py_XINCREF(key);
 		Py_XINCREF(val);
-		rKey = rpPyToRbObject(key);
-		rVal = rpPyToRbObject(val);
+		rKey = ptorObject(key);
+		rVal = ptorObject(val);
 		if(rKey == Qnil) continue;
 		rb_hash_aset(rHash, rKey, rVal);
 	}
@@ -129,7 +131,7 @@ VALUE rpPyToRbDict(PyObject* pDict)
 	return rHash;
 }
 
-static VALUE rpPyToRbObjectBasic(PyObject *pObj, int destructive)
+static VALUE ptorObjectBasic(PyObject *pObj, int destructive)
 {
 	VALUE rObj;
 
@@ -139,44 +141,44 @@ static VALUE rpPyToRbObjectBasic(PyObject *pObj, int destructive)
 
 	if(PyObject_TypeCheck(pObj,&PyString_Type))
 	{
-		rObj = rpPyToRbString(pObj);
+		rObj = ptorString(pObj);
 		if(destructive) Py_DECREF(pObj);
 		return rObj;
 	}
 	
 	if(PyObject_TypeCheck(pObj,&PyList_Type))
 	{
-		rObj = rpPyToRbList(pObj);
+		rObj = ptorList(pObj);
 		if(destructive) Py_DECREF(pObj);
 		return rObj;
 	}
 	if(PyObject_TypeCheck(pObj,&PyInt_Type))
 	{
-		rObj = rpPyToRbInt(pObj);
+		rObj = ptorInt(pObj);
 		if(destructive) Py_DECREF(pObj);
 		return rObj;
 	}
 	if(PyObject_TypeCheck(pObj,&PyLong_Type))
 	{
-		rObj = rpPyToRbLong(pObj);
+		rObj = ptorLong(pObj);
 		if(destructive) Py_DECREF(pObj);
 		return rObj;
 	}
 	if(PyObject_TypeCheck(pObj,&PyFloat_Type))
 	{
-		rObj = rpPyToRbFloat(pObj);
+		rObj = ptorFloat(pObj);
 		if(destructive) Py_DECREF(pObj);
 		return rObj;
 	}
 	if(PyObject_TypeCheck(pObj,&PyTuple_Type))
 	{
-		rObj = rpPyToRbTuple(pObj);
+		rObj = ptorTuple(pObj);
 		if(destructive) Py_DECREF(pObj);
 		return rObj;
 	}
 	if(PyObject_TypeCheck(pObj,&PyDict_Type))
 	{
-		rObj = rpPyToRbDict(pObj);
+		rObj = ptorDict(pObj);
 		if(destructive) Py_DECREF(pObj);
 		return rObj;
 	}
@@ -211,19 +213,19 @@ static VALUE rpPyToRbObjectBasic(PyObject *pObj, int destructive)
 }
 
 // Convert a Python object to a Ruby object and destroy the original
-VALUE rpPyToRbObjectKeep(PyObject *pObj)
+VALUE ptorObjectKeep(PyObject *pObj)
 {
 	VALUE rObj;
-	rObj = rpPyToRbObjectBasic(pObj, 0);
+	rObj = ptorObjectBasic(pObj, 0);
 	return rObj;
 }
 
 
 // Convert a Python object to a Ruby object while keeping the original
-VALUE rpPyToRbObject(PyObject* pObj)
+VALUE ptorObject(PyObject* pObj)
 {
 	VALUE rObj;
-	rObj = rpPyToRbObjectBasic(pObj, 1);
+	rObj = ptorObjectBasic(pObj, 1);
 	return rObj;
 }
 

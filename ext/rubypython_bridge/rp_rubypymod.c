@@ -11,12 +11,11 @@ RUBY_EXTERN VALUE cRubyPyObject;
 
 VALUE rp_mod_call_func(VALUE self, VALUE func_name, VALUE args)
 {
-	PObj* cself;
-	Data_Get_Struct(self, PObj, cself);
 	PyObject *pModule,*pFunc;
 	VALUE rReturn;
 	
-	pModule = cself->pObject;
+	pModule = rp_obj_pobject(self);
+	
 	pFunc = rpGetFunctionWithModule(pModule, func_name);
 	rReturn = rpCall(pFunc, args);
 	Py_XDECREF(pFunc);
@@ -25,20 +24,21 @@ VALUE rp_mod_call_func(VALUE self, VALUE func_name, VALUE args)
 	
 }
 
-
-
-
 //:nodoc:
 VALUE rp_mod_init(VALUE self, VALUE mname)
 {
 	PObj* cself;
-	Data_Get_Struct(self, PObj, cself);
-	cself->pObject = rpGetModule(mname);
 	VALUE rDict;
 	PyObject *pModuleDict;
+	
+	Data_Get_Struct(self, PObj, cself);
+	cself->pObject = rpGetModule(mname);
+	
 	pModuleDict = PyModule_GetDict(cself->pObject);
 	Py_XINCREF(pModuleDict);
+	
 	rDict = rp_obj_from_pyobject(pModuleDict);
+	
 	rb_iv_set(self,"@pdict", rDict);
 	return self;
 }
@@ -50,7 +50,9 @@ VALUE rp_mod_attr_set(VALUE self, VALUE args)
 	PObj *pDict;
 	VALUE mname = rb_ary_shift(args);
 	VALUE name_string = rb_funcall(mname, rb_intern("to_s"), 0);
+	
 	rb_funcall(name_string, rb_intern("chop!"), 0);
+	
 	if(!rp_has_attr(self, name_string))
 	{		
 		int argc;
@@ -61,13 +63,16 @@ VALUE rp_mod_attr_set(VALUE self, VALUE args)
 		MEMCPY(argv, RARRAY_PTR(args), VALUE, argc);
 		return rb_call_super(argc, argv);
 	}
+	
 	if(NUM2INT(rb_funcall(args, rb_intern("size"), 0)) == 1)
 	{
 		args = rb_ary_entry(args, 0);
 	}
+	
 	rDict = rb_iv_get(self,"@pdict");
 	Data_Get_Struct(rDict, PObj, pDict);
-	PyDict_SetItemString(pDict->pObject, STR2CSTR(name_string), rtop_obj(args, 0));
+	PyDict_SetItemString(pDict->pObject, STR2CSTR(name_string), rtopObject(args, 0));
+	
 	return Qtrue;
 }
 
@@ -78,10 +83,12 @@ VALUE rp_mod_delegate(VALUE self, VALUE args)
 	VALUE ret;
 	PObj *pDict;
 	PyObject *pCalled;
+	
 	if(rp_equal(args))
 	{
 		return rp_mod_attr_set(self, args);
 	}
+	
 	// if(rp_double_bang)
 	// {
 	// 	return rp_mod_attr_db(args);
@@ -100,10 +107,13 @@ VALUE rp_mod_delegate(VALUE self, VALUE args)
 	name_string = rb_funcall(name, rb_intern("to_s"), 0);
 		
 	rDict = rb_iv_get(self,"@pdict");
+	
 	Data_Get_Struct(rDict, PObj, pDict);
 	pCalled = PyDict_GetItemString(pDict->pObject, STR2CSTR(name_string));
 	Py_XINCREF(pCalled);
-	result = rpPyToRbObjectKeep(pCalled);
+	
+	result = ptorObjectKeep(pCalled);
+	
 	if(rb_obj_is_instance_of(result, cRubyPyFunction))
 	{
 		ret = rpCall(pCalled, args);
@@ -114,6 +124,7 @@ VALUE rp_mod_delegate(VALUE self, VALUE args)
 		ret = rpCall(pCalled, args);
 		return ret;
 	}
+	
 	return result;
 	
 }

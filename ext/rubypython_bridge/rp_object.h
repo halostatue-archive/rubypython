@@ -4,8 +4,8 @@
 #include "cbridge.h"
 #include "rp_error.h"
 
-#ifndef _RP_RUBYPYOBJ_H_
-#define _RP_RUBYPYOBJ_H_
+#ifndef _RP_OBJECT_H_
+#define _RP_OBJECT_H_
 
 typedef struct RubyPyObj 
 {

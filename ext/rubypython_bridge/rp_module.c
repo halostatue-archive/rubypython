@@ -1,6 +1,6 @@
-#include "rp_rubypymod.h"
+#include "rp_module.h"
 
-#include "rp_rubypyobj.h"
+#include "rp_object.h"
 #include "rp_function.h"
 
 VALUE cRubyPyModule;
@@ -81,7 +81,7 @@ VALUE rpModuleSetAttr(VALUE self, VALUE args)
 }
 
 //:nodoc:
-VALUE rpModuleDelagate(VALUE self, VALUE args)
+VALUE rpModuleDelegate(VALUE self, VALUE args)
 {
 	VALUE name, name_string, rDict, result;
 	VALUE ret;
@@ -146,5 +146,5 @@ void Init_RubyPyModule()
 {
 	cRubyPyModule = rb_define_class_under(mRubyPythonBridge,"RubyPyModule", cRubyPyObject);
 	rb_define_method(cRubyPyModule,"initialize", rpModuleInit, 1);
-	rb_define_method(cRubyPyModule,"method_missing", rpModuleDelagate,- 2);
+	rb_define_method(cRubyPyModule,"method_missing", rpModuleDelegate,- 2);
 }

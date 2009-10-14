@@ -1,6 +1,6 @@
 #include "rp_util.h"
 
-#include "rp_rubypyobj.h"
+#include "rp_object.h"
 #include "rp_function.h"
 
 RUBY_EXTERN VALUE mRubyPythonBridge;

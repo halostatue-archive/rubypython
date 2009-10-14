@@ -1,5 +1,5 @@
 #include "rp_function.h"
-#include "rp_rubypyobj.h"
+#include "rp_object.h"
 
 RUBY_EXTERN VALUE mRubyPythonBridge;
 RUBY_EXTERN VALUE cRubyPyObject;

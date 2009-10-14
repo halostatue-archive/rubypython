@@ -1,4 +1,4 @@
-#include "rp_rubypyobj.h"
+#include "rp_object.h"
 
 RUBY_EXTERN VALUE ePythonError;
 RUBY_EXTERN VALUE mRubyPythonBridge;

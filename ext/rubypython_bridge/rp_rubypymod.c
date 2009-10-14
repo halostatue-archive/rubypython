@@ -9,12 +9,13 @@ RUBY_EXTERN VALUE cRubyPyFunction;
 RUBY_EXTERN VALUE cRubyPyClass;
 RUBY_EXTERN VALUE cRubyPyObject;
 
-VALUE rp_mod_call_func(VALUE self, VALUE func_name, VALUE args)
+static
+VALUE rpModuleCallFunction(VALUE self, VALUE func_name, VALUE args)
 {
 	PyObject *pModule,*pFunc;
 	VALUE rReturn;
 	
-	pModule = rp_obj_pobject(self);
+	pModule = rpObjectUnwrap(self);
 	
 	pFunc = rpGetFunctionWithModule(pModule, func_name);
 	rReturn = rpCall(pFunc, args);
@@ -25,7 +26,8 @@ VALUE rp_mod_call_func(VALUE self, VALUE func_name, VALUE args)
 }
 
 //:nodoc:
-VALUE rp_mod_init(VALUE self, VALUE mname)
+static
+VALUE rpModuleInit(VALUE self, VALUE mname)
 {
 	PObj* cself;
 	VALUE rDict;
@@ -37,14 +39,15 @@ VALUE rp_mod_init(VALUE self, VALUE mname)
 	pModuleDict = PyModule_GetDict(cself->pObject);
 	Py_XINCREF(pModuleDict);
 	
-	rDict = rp_obj_from_pyobject(pModuleDict);
+	rDict = rpObjectFromPyObject
+(pModuleDict);
 	
 	rb_iv_set(self,"@pdict", rDict);
 	return self;
 }
 
-
-VALUE rp_mod_attr_set(VALUE self, VALUE args)
+static
+VALUE rpModuleSetAttr(VALUE self, VALUE args)
 {
 	VALUE rDict;
 	PObj *pDict;
@@ -53,7 +56,7 @@ VALUE rp_mod_attr_set(VALUE self, VALUE args)
 	
 	rb_funcall(name_string, rb_intern("chop!"), 0);
 	
-	if(!rp_has_attr(self, name_string))
+	if(!rpHasSymbol(self, name_string))
 	{		
 		int argc;
 		
@@ -77,7 +80,7 @@ VALUE rp_mod_attr_set(VALUE self, VALUE args)
 }
 
 //:nodoc:
-VALUE rp_mod_delegate(VALUE self, VALUE args)
+VALUE rpModuleDelagate(VALUE self, VALUE args)
 {
 	VALUE name, name_string, rDict, result;
 	VALUE ret;
@@ -86,14 +89,14 @@ VALUE rp_mod_delegate(VALUE self, VALUE args)
 	
 	if(rp_equal(args))
 	{
-		return rp_mod_attr_set(self, args);
+		return rpModuleSetAttr(self, args);
 	}
 	
 	// if(rp_double_bang)
 	// {
 	// 	return rp_mod_attr_db(args);
 	// }
-	if(!rp_has_attr(self, rb_ary_entry(args, 0)))
+	if(!rpHasSymbol(self, rb_ary_entry(args, 0)))
 	{		
 		int argc;
 		
@@ -141,6 +144,6 @@ to a Python object. RubyPyModule instances should be created through the use of 
 void Init_RubyPyModule()
 {
 	cRubyPyModule = rb_define_class_under(mRubyPythonBridge,"RubyPyModule", cRubyPyObject);
-	rb_define_method(cRubyPyModule,"initialize", rp_mod_init, 1);
-	rb_define_method(cRubyPyModule,"method_missing", rp_mod_delegate,- 2);
+	rb_define_method(cRubyPyModule,"initialize", rpModuleInit, 1);
+	rb_define_method(cRubyPyModule,"method_missing", rpModuleDelagate,- 2);
 }

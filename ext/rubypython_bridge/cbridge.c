@@ -124,6 +124,7 @@ VALUE rpCallWithModule(VALUE module, VALUE name, VALUE args)
 	// objects and return.
 	rReturn = ptorObject(pReturn);
 	
+	// Cleanup temporary objects
 	Py_XDECREF(pArgs);
 	Py_XDECREF(pFunc);
 	Py_XDECREF(pModule);

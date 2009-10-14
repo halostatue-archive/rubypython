@@ -1,6 +1,5 @@
 #include "ptor.h"
 
-//TODO: Review naming scheme and rename file?
 
 /* Note:
    The conversion functions for the builtin types are just that,
@@ -209,7 +208,7 @@ static VALUE ptorObjectBasic(PyObject *pObj, int destructive)
 	}
 
 	// Fallthrough behavior: The object is a class which should be wrapped
-	return rp_cla_from_class(pObj);
+	return rpClassFromPyObject(pObj);
 }
 
 // Convert a Python object to a Ruby object and destroy the original

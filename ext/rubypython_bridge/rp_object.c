@@ -27,8 +27,10 @@ VALUE rp_inst_from_instance(PyObject* pInst)
 	pInstDict = PyObject_GetAttrString(pInst,"__dict__");
 	Py_XINCREF(pClassDict);
 	Py_XINCREF(pInstDict);
-	rClassDict = rp_obj_from_pyobject(pClassDict);
-	rInstDict = rp_obj_from_pyobject(pInstDict);
+	rClassDict = rpObjectFromPyObject
+(pClassDict);
+	rInstDict = rpObjectFromPyObject
+(pInstDict);
 	rb_iv_set(rInst,"@pclassdict", rClassDict);
 	rb_iv_set(rInst,"@pinstdict", rInstDict);
 	return rInst;
@@ -45,7 +47,7 @@ VALUE rp_inst_attr_set(VALUE self, VALUE args)
 	name = rb_ary_shift(args);
 	name_string = rb_funcall(name, rb_intern("to_s"), 0);
 	rb_funcall(name_string, rb_intern("chop!"), 0);	
-	if(!rp_has_attr(self, name_string))
+	if(!rpHasSymbol(self, name_string))
 	{		
 		int argc;		
 		VALUE* argv;
@@ -97,7 +99,7 @@ VALUE rp_inst_delegate(VALUE self, VALUE args)
 	{
 		return rp_inst_attr_set(self, args);
 	}
-	if(!rp_has_attr(self, rb_ary_entry(args, 0)))
+	if(!rpHasSymbol(self, rb_ary_entry(args, 0)))
 	{		
 		int argc;
 		
@@ -124,7 +126,7 @@ VALUE rp_inst_delegate(VALUE self, VALUE args)
 	result = ptorObjectKeep(pCalled);
 	if(rb_obj_is_instance_of(result, cRubyPyFunction))
 	{
-		Py_XINCREF(rp_obj_pobject(self));
+		Py_XINCREF(rpObjectUnwrap(self));
 		rb_ary_unshift(args, self);
 		ret = rpCall(pCalled, args);
 		return ret;
@@ -158,7 +160,7 @@ VALUE rp_obj_wrap(PyObject* pObj)
 		rObj = rp_inst_from_instance(pObj);
 		return rObj;
 	}
-	return rp_cla_from_class(pObj);
+	return rpClassFromPyObject(pObj);
 }
 
 

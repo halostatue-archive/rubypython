@@ -12,19 +12,11 @@ typedef struct RubyPyObj
 	PyObject* pObject;
 } PObj;
 
+PyObject* rpObjectUnwrap(VALUE);
 
-void rp_obj_mark(PObj*);
-void rp_obj_free(PObj*);
+VALUE rpObjectFromPyObject(PyObject*);
 
-VALUE rp_obj_alloc(VALUE);
+int rpHasSymbol(VALUE, ID);
 
-PyObject* rp_obj_pobject(VALUE);
-
-VALUE rp_obj_from_pyobject(PyObject*);
-
-VALUE rp_obj_name(VALUE);
-
-int rp_has_attr(VALUE, ID);
-
-VALUE rp_obj_responds(VALUE, VALUE);
+VALUE rpRespondsTo(VALUE, VALUE);
 #endif

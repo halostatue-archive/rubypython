@@ -12,7 +12,7 @@ typedef struct RubyPyObj
 	PyObject* pObject;
 } PObj;
 
-PyObject* rpObjectUnwrap(VALUE);
+PyObject* rpObjectGetPyObject(VALUE);
 
 VALUE rpObjectFromPyObject(PyObject*);
 

@@ -9,6 +9,7 @@
 #include "rp_object.h"
 #include "rp_rubypymod.h"
 #include "rp_rubypyclass.h"
+#include "rp_function.h"
 
 VALUE mRubyPythonBridge;
 

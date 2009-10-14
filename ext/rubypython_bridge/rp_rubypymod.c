@@ -1,6 +1,7 @@
 #include "rp_rubypymod.h"
 
 #include "rp_rubypyobj.h"
+#include "rp_function.h"
 
 VALUE cRubyPyModule;
 
@@ -15,7 +16,7 @@ VALUE rpModuleCallFunction(VALUE self, VALUE func_name, VALUE args)
 	PyObject *pModule,*pFunc;
 	VALUE rReturn;
 	
-	pModule = rpObjectUnwrap(self);
+	pModule = rpObjectGetPyObject(self);
 	
 	pFunc = rpGetFunctionWithModule(pModule, func_name);
 	rReturn = rpCall(pFunc, args);
@@ -87,12 +88,12 @@ VALUE rpModuleDelagate(VALUE self, VALUE args)
 	PObj *pDict;
 	PyObject *pCalled;
 	
-	if(rp_equal(args))
+	if(rpSymbolIsSetter(args))
 	{
 		return rpModuleSetAttr(self, args);
 	}
 	
-	// if(rp_double_bang)
+	// if(rpSymbolIsDoubleBang)
 	// {
 	// 	return rp_mod_attr_db(args);
 	// }

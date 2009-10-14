@@ -67,7 +67,7 @@ VALUE rpObjectFreePobj(VALUE self)
 }
 
 //Fetchs the wrapped Python object from a RubyPyObject
-PyObject* rpObjectUnwrap(VALUE self)
+PyObject* rpObjectGetPyObject(VALUE self)
 {
 	PObj *cself;
 	
@@ -111,7 +111,7 @@ VALUE rpObjectectGetName(VALUE self)
 		PyObject *pObject,*pName,*pRepr;
 		VALUE rName;
 		
-		pObject = rpObjectUnwrap(self);
+		pObject = rpObjectGetPyObject(self);
 		
 		
 		pName = PyObject_GetAttrString(pObject,"__name__");

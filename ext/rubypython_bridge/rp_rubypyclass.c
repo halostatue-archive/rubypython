@@ -35,7 +35,7 @@ VALUE rpClassNew(VALUE self, VALUE args)
 {
 	PyObject* pSelf;
 
-	pSelf = rpObjectUnwrap(self);
+	pSelf = rpObjectGetPyObject(self);
 	
 	return rpCall(pSelf, args);
 }

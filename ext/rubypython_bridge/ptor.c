@@ -198,12 +198,12 @@ static VALUE ptorObjectBasic(PyObject *pObj, int destructive)
 	}
 	if(PyFunction_Check(pObj)||PyMethod_Check(pObj)||!PyObject_HasAttrString(pObj,"__dict__"))
 	{
-		return rp_func_from_function(pObj);
+		return rpFunctionFromPyObject(pObj);
 
 	}
 	if(PyInstance_Check(pObj))
 	{
-		rObj = rp_inst_from_instance(pObj);
+		rObj = rpInstanceFromPyObject(pObj);
 		return rObj;
 	}
 

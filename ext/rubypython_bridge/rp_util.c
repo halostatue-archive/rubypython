@@ -1,5 +1,4 @@
-#include "rp_object.h"
-#include "stdio.h"
+#include "rp_util.h"
 
 #include "rp_rubypyobj.h"
 #include "rp_function.h"
@@ -11,8 +10,6 @@ RUBY_EXTERN VALUE cBlankObject;
 RUBY_EXTERN VALUE cRubyPyClass;
 RUBY_EXTERN VALUE cRubyPyFunction;
 RUBY_EXTERN VALUE cRubyPyInstance;
-
-VALUE cRubyPyModule;
 
 VALUE rpObjectWrap(PyObject* pObj)
 {

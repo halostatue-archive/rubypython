@@ -6,7 +6,7 @@
 #include "rp_error.h" //Error propogation from Python to Ruby
 #include "rp_rubypyobj.h"
 #include "rp_blankobject.h"
-#include "rp_object.h"
+#include "rp_util.h"
 #include "rp_rubypymod.h"
 #include "rp_rubypyclass.h"
 #include "rp_function.h"

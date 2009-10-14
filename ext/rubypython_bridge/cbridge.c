@@ -50,7 +50,10 @@ VALUE rpCall(PyObject* pFunc,  VALUE args)
 		rArgs = args;
 	}
 
+	// Convert the supplied arguments to python objects
 	pArgs = rtopObject(rArgs, 1);
+	
+	// Execute the function and obtain a pointer to the return object
 	pReturn = PyObject_CallObject(pFunc, pArgs);
 	
 	if(PyErr_Occurred())
@@ -76,58 +79,27 @@ VALUE rpCallWithModule(VALUE module, VALUE name, VALUE args)
 	PyObject *pModule, *pFunc, *pArgs, *pReturn;
 
 
-	if(!(TYPE(args) == T_ARRAY))
-	{
-		rArgs = rb_ary_new();
-		rb_ary_push(rArgs, args);
-	}
-	else
-	{
-		rArgs = args;
-	}
-	
-	// A little syntatic sugar here. We will allow users access the
-	// __builtins__ module under the name builtins
-	// FIXME: replace this with a call to rb_get_module
-
-	if(rb_eql(module, rb_str_new2("builtins")))
-	{
-		module = rb_str_new2("__builtins__");
-	}
-
 	// Load the requested python module
 	pModule = rpGetModule(module);
 	
 	// Get a pointer to the requested function
 	pFunc = rpGetFunctionWithModule(pModule, name);
 	
-	// Convert the supplied arguments to python objects
-	pArgs = rtopObject(rArgs, 1);
+	Py_XDECREF(pModule);
 	
-	// Execute the function and obtain a pointer to the return object
-	pReturn = PyObject_CallObject(pFunc, pArgs);
+	rReturn = rpCall(pFunc, args);
 	
 	// Check for an error and do any necessary cleanup before
 	// propagating error
 	if(PyErr_Occurred())
 	{
-		// FIXME: can some of this redundancy be removed?
-		Py_XDECREF(pReturn);
-		Py_XDECREF(pArgs);
 		Py_XDECREF(pFunc);
-		Py_XDECREF(pModule);
 		rpPythonError();
 		return Qnil;
 	}
 	
-	// Convert return value to ruby object,  do cleanup of python
-	// objects and return.
-	rReturn = ptorObject(pReturn);
-	
 	// Cleanup temporary objects
-	Py_XDECREF(pArgs);
 	Py_XDECREF(pFunc);
-	Py_XDECREF(pModule);
 
 	return rReturn;
 }
@@ -136,6 +108,9 @@ PyObject* rpGetModule(VALUE mname)
 {
 	PyObject *pModule, *pModuleName;
 
+	// A little syntatic sugar here. We will allow users access the
+	// __builtins__ module under the name builtins
+	// FIXME: replace this with a call to rb_get_module
 	if(rb_eql(mname, rb_str_new2("builtins")))
 	{
 		mname = rb_str_new2("__builtins__");

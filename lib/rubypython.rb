@@ -80,7 +80,7 @@ module RubyPython
   #   RubyPython.stop
   #   
   # Also see, _stop_
-  def self.start() # true||false
+  def self.start() #=> true||false
     RubyPythonBridge.start
   end
   
@@ -117,7 +117,7 @@ module RubyPython
   # Simply starts the interpreter, runs the supplied block, and stops the interpreter.
   def self.session(&block)
     start
-    retval=block.call
+    retval = block.call
     stop
     return retval
   end

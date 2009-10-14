@@ -5,4 +5,6 @@
 
 void rpPythonError();
 
+void rpRubyPyError(char*);
+
 #endif /* _RP_ERROR_H_ */

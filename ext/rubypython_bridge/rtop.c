@@ -13,8 +13,8 @@ PyObject* rtopString(VALUE rString)
 {
 
 	PyObject* pString;
-	char *cString;
-	char *cStringCopy;
+	char* cString;
+	char* cStringCopy;
 
 	cString = STR2CSTR(rString);
 	cStringCopy = malloc(strlen(cString) * sizeof(char));

@@ -16,10 +16,27 @@ VALUE ptorString(PyObject* pString)
 	// Allocate a new string for Ruby and return it.
 	// Note that this is a new object, not a wrapper around a
 	// python object
-	char *cstr;
-	cstr = malloc(PyString_Size(pString) * sizeof(char));
-	strcpy(cstr, PyString_AsString(pString));
-	return rb_str_new2(cstr);
+	char* cStr;
+	char* cStrCopy;
+	
+	static int i=0;
+	i++;
+	
+	cStr = PyString_AsString(pString);
+	
+	if(!cStr) {
+		rpRubyPyError("Tried to convert freed string.");
+	}
+	PySys_WriteStdout("%d: %s\n",i, cStr);
+	
+
+	
+	cStrCopy = malloc(PyString_Size(pString) * sizeof(char));
+
+	strcpy(cStrCopy, cStr);
+	
+	
+	return rb_str_new2(cStrCopy);
 }
 
 VALUE ptorList(PyObject* pList)

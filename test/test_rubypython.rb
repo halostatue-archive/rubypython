@@ -179,9 +179,9 @@ class TestRubypython < Test::Unit::TestCase
     RubyPython.session do
       sys = RubyPython.import 'sys'
       
-      path = sys.path
+      #path = sys.path
       
-      path2 = sys.path
+      #path2 = sys.path
       
     end
   end

@@ -19,17 +19,7 @@ VALUE ptorString(PyObject* pString)
 	char* cStr;
 	char* cStrCopy;
 	
-	static int i=0;
-	i++;
-	
 	cStr = PyString_AsString(pString);
-	
-	if(!cStr) {
-		rpRubyPyError("Tried to convert freed string.");
-	}
-	PySys_WriteStdout("%d: %s\n",i, cStr);
-	
-
 	
 	cStrCopy = malloc(PyString_Size(pString) * sizeof(char));
 

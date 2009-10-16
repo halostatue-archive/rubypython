@@ -174,7 +174,7 @@ class TestRubypython < Test::Unit::TestCase
       
     end
   end
-  
+    
   def test_python_persistence
     RubyPython.session do
       sys = RubyPython.import 'sys'
@@ -186,6 +186,26 @@ class TestRubypython < Test::Unit::TestCase
     end
   end
 
+end
+
+class TestWithCustomObject < Test::Unit::TestCase
+  def setup
+    RubyPython.start
+    sys = RubyPython.import 'sys'
+    sys.path = ['./test/python_helpers']
+    @objects = RubyPython.import 'objects'
+  end
+  
+  def teardown
+    RubyPython.stop
+  end
+  
+  def test_string_access
+    assert_equal("STRING",
+           @objects.RubyPythonMockObject.STRING,
+           "String class members not being converted correctly.")
+    rbString = @objects.RubyPythonMockObject.STRING
+  end
 end
 
 #class TestUnitarity < Test::Unit::TestCase

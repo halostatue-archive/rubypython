@@ -40,10 +40,10 @@ VALUE rpModuleInit(VALUE self, VALUE mname)
 	pModuleDict = PyModule_GetDict(cself->pObject);
 	Py_XINCREF(pModuleDict);
 	
-	rDict = rpObjectFromPyObject
-(pModuleDict);
+	rDict = rpObjectFromPyObject(pModuleDict);
 	
 	rb_iv_set(self,"@pdict", rDict);
+	
 	return self;
 }
 
@@ -51,20 +51,27 @@ static
 VALUE rpModuleSetAttr(VALUE self, VALUE args)
 {
 	VALUE rDict;
-	PObj *pDict;
+	PyObject* pDict;
+	
 	VALUE mname = rb_ary_shift(args);
 	VALUE name_string = rb_funcall(mname, rb_intern("to_s"), 0);
 	
+	//The method name ends with "=" because it is a setter.
+	//We must chop that off before we pass the string to python.
 	rb_funcall(name_string, rb_intern("chop!"), 0);
 	
+	//The wrapped python object does not have method or attribute with the
+	//request named. Check for it in the Ruby superclass.
 	if(!rpHasSymbol(self, name_string))
 	{		
 		int argc;
 		
-		VALUE *argv;
+		VALUE* argv;
 		argc = RARRAY_LEN(args);
+		
 		argv = ALLOC_N(VALUE, argc);
 		MEMCPY(argv, RARRAY_PTR(args), VALUE, argc);
+		
 		return rb_call_super(argc, argv);
 	}
 	
@@ -74,8 +81,10 @@ VALUE rpModuleSetAttr(VALUE self, VALUE args)
 	}
 	
 	rDict = rb_iv_get(self,"@pdict");
-	Data_Get_Struct(rDict, PObj, pDict);
-	PyDict_SetItemString(pDict->pObject, STR2CSTR(name_string), rtopObject(args, 0));
+	
+	pDict = rpObjectGetPyObject(rDict);
+	
+	PyDict_SetItemString(pDict, STR2CSTR(name_string), rtopObject(args, 0));
 	
 	return Qtrue;
 }
@@ -85,8 +94,7 @@ VALUE rpModuleDelegate(VALUE self, VALUE args)
 {
 	VALUE name, name_string, rDict, result;
 	VALUE ret;
-	PObj *pDict;
-	PyObject *pCalled;
+	PyObject *pCalled, *pDict;
 	
 	if(rpSymbolIsSetter(args))
 	{
@@ -112,8 +120,9 @@ VALUE rpModuleDelegate(VALUE self, VALUE args)
 		
 	rDict = rb_iv_get(self,"@pdict");
 	
-	Data_Get_Struct(rDict, PObj, pDict);
-	pCalled = PyDict_GetItemString(pDict->pObject, STR2CSTR(name_string));
+	pDict = rpObjectGetPyObject(rDict);
+	
+	pCalled = PyDict_GetItemString(pDict, STR2CSTR(name_string));
 	Py_XINCREF(pCalled);
 	
 	result = ptorObjectKeep(pCalled);

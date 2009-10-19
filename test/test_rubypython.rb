@@ -174,17 +174,6 @@ class TestRubypython < Test::Unit::TestCase
       
     end
   end
-    
-  def test_python_persistence
-    RubyPython.session do
-      sys = RubyPython.import 'sys'
-      
-      #path = sys.path
-      
-      #path2 = sys.path
-      
-    end
-  end
 
 end
 
@@ -206,6 +195,21 @@ class TestWithCustomObject < Test::Unit::TestCase
            "String class members not being converted correctly.")
     rbString = @objects.RubyPythonMockObject.STRING
   end
+  
+  def test_string_ary_access
+    assert_equal(["STRING1", "STRING2"],
+                 @objects.RubyPythonMockObject.STRING_LIST,
+                 "List of strings class member not being converted correctly.")
+    rbStringList = @objects.RubyPythonMockObject.STRING_LIST
+  end
+  
+  def test_string_ary_modify
+    rbStringList = @objects.RubyPythonMockObject.STRING_LIST
+    rbStringList.push"NEW_STRING"
+    @objects.RubyPythonMockObject.STRING_LIST = rbStringList
+    assert_equal("NEW_STRING",
+                @objects.RubyPythonMockObject.STRING_LIST[2],
+                "Failed to add object to list.")
+  end
 end
 
-#class TestUnitarity < Test::Unit::TestCase

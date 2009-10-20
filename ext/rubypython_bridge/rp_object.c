@@ -83,8 +83,7 @@ PyObject* rpObjectGetPyObject(VALUE self)
 
 
 //Creates a new RubyPyObject to wrap a python object
-VALUE rpObjectFromPyObject
-(PyObject* pObj)
+VALUE rpObjectFromPyObject(PyObject* pObj)
 {
 	PObj* self;
 	

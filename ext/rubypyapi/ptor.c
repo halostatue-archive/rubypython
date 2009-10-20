@@ -149,7 +149,6 @@ VALUE ptorObject(PyObject* pObj)
 	{
 		rObj = ptorString(pObj);
 	}
-	
 	if(PyObject_TypeCheck(pObj,&PyList_Type))
 	{
 		rObj = ptorList(pObj);
@@ -174,7 +173,6 @@ VALUE ptorObject(PyObject* pObj)
 	{
 		rObj = ptorDict(pObj);
 	}
-
 	if(pObj == Py_True)
 	{
 		rObj = Qtrue;

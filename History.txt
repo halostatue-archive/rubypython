@@ -1,3 +1,6 @@
+== 0.2.9 2009-10-19
+* Minor Enhancements
+	* Updated the C code to make it cleaner, more readable, and more maintainable.
 == 0.2.8 2009-10-05
 * Bug Fixes
 	* Some test files were improperly formatted (minor bug fix).

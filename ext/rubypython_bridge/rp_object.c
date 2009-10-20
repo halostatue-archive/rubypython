@@ -1,193 +1,209 @@
 #include "rp_object.h"
+#include "stdio.h"
 
-RUBY_EXTERN VALUE ePythonError;
+#include "rp_rubypyobj.h"
+
 RUBY_EXTERN VALUE mRubyPythonBridge;
+RUBY_EXTERN VALUE ePythonError;
+RUBY_EXTERN VALUE cRubyPyObject;
 RUBY_EXTERN VALUE cBlankObject;
+RUBY_EXTERN VALUE cRubyPyClass;
 
-VALUE cRubyPyObject;
+VALUE cRubyPyModule;
+VALUE cRubyPyFunction;
+VALUE cRubyPyInstance;
 
 
-static void rpObjectMark(PObj*);
-static void rpObjectFree(PObj*);
-static VALUE rpObjectAlloc(VALUE);
-
-//Create a new RubyPyObject
-static
-VALUE rpObjectAlloc(VALUE klass)
+VALUE rp_inst_from_instance(PyObject* pInst)
 {
-	PObj* self = ALLOC(PObj);
-	self->pObject = NULL;
-	
-	return Data_Wrap_Struct(klass, rpObjectMark, rpObjectFree, self);
+	PObj* self;
+	VALUE rInst = rb_class_new_instance(0, NULL, cRubyPyInstance);
+	PyObject *pClassDict,*pClass,*pInstDict;
+	VALUE rInstDict, rClassDict;
+	Data_Get_Struct(rInst, PObj, self);
+	self->pObject = pInst;
+	pClass = PyObject_GetAttrString(pInst,"__class__");
+	pClassDict = PyObject_GetAttrString(pClass,"__dict__");
+	pInstDict = PyObject_GetAttrString(pInst,"__dict__");
+	Py_XINCREF(pClassDict);
+	Py_XINCREF(pInstDict);
+	rClassDict = rp_obj_from_pyobject(pClassDict);
+	rInstDict = rp_obj_from_pyobject(pInstDict);
+	rb_iv_set(rInst,"@pclassdict", rClassDict);
+	rb_iv_set(rInst,"@pinstdict", rInstDict);
+	return rInst;
 }
 
-//Mark subsidiary objects for deletion
-static
-void rpObjectMark(PObj* self)
-{}
-
-//Delete a RubyPyObject
-static
-void rpObjectFree(PObj* self)
+VALUE rp_inst_attr_set(VALUE self, VALUE args)
 {
-	if(Py_IsInitialized() && self->pObject)
-	{
-		//Make sure we decrement the object count on our wrapped
-		//object before we free the ruby wrapper
-		Py_XDECREF(self->pObject);
+	VALUE name, name_string, rClassDict, result, rInstDict;
+	VALUE ret;
+	int instance;
+	char* cname;
+	PObj *pClassDict,*pInstDict,*pDict;
+	PyObject* pName;
+	name = rb_ary_shift(args);
+	name_string = rb_funcall(name, rb_intern("to_s"), 0);
+	rb_funcall(name_string, rb_intern("chop!"), 0);	
+	if(!rp_has_attr(self, name_string))
+	{		
+		int argc;		
+		VALUE* argv;
+		argc = RARRAY_LEN(args);
+		argv = ALLOC_N(VALUE, argc);
+		MEMCPY(argv, RARRAY_PTR(args), VALUE, argc);
+		return rb_call_super(argc, argv);
 	}
-	free(self);
-}
-
-
-/*
-Decreases the reference count on the object wrapped by this instance.
-This is used for cleanup in RubyPython.stop. RubyPyObject instances automatically
-decrease the reference count on their associated objects before they are garbage collected.
-*/
-static
-VALUE rpObjectFreePobj(VALUE self)
-{
-	PObj *cself;
 	
-	Data_Get_Struct(self, PObj, cself);
+	cname = STR2CSTR(name_string);
 	
-	if(Py_IsInitialized() && cself->pObject)
+	if((NUM2INT(rb_funcall(args, rb_intern("size"), 0)) == 1))
 	{
-		Py_XDECREF(cself->pObject);
-		cself->pObject = NULL;
-		return Qtrue;
+		args = rb_ary_entry(args, 0);
+	}
+	
+		
+	rClassDict = rb_iv_get(self,"@pclassdict");
+	rInstDict = rb_iv_get(self,"@pinstdict");
+	
+	Data_Get_Struct(rClassDict, PObj, pClassDict);
+	Data_Get_Struct(rInstDict, PObj, pInstDict);
+	pName = PyString_FromString(cname);
+	if(PyDict_Contains(pInstDict->pObject, pName))
+	{
+		pDict = pInstDict;
+
 	}
 	else
 	{
-		cself->pObject = NULL;
+		pDict = pClassDict;
+		
 	}
-	
-	return Qfalse;
+	Py_XDECREF(pName);
+	PyDict_SetItemString(pDict->pObject, STR2CSTR(name_string), rtopObject(args, 0));
+	return Qtrue;
 }
 
-//Fetchs the wrapped Python object from a RubyPyObject
-PyObject* rpObjectGetPyObject(VALUE self)
+//:nodoc:
+VALUE rp_inst_delegate(VALUE self, VALUE args)
 {
-	PObj *cself;
+	VALUE name, name_string, rClassDict, result, rInstDict;
+	VALUE ret;
+	char* cname;
+	PObj *pClassDict,*pInstDict;
+	PyObject* pCalled;
 	
-	Data_Get_Struct(self, PObj, cself);
-	
-	if(!cself->pObject)
+	if(rp_equal(args))
 	{
-		rb_raise(ePythonError,"RubyPython tried to access a freed object");
+		return rp_inst_attr_set(self, args);
 	}
+	if(!rp_has_attr(self, rb_ary_entry(args, 0)))
+	{		
+		int argc;
+		
+		VALUE* argv;
+		argc = RARRAY_LEN(args);
+		argv = ALLOC_N(VALUE, argc);
+		MEMCPY(argv, RARRAY_PTR(args), VALUE, argc);
+		return rb_call_super(argc, argv);
+	}
+	name = rb_ary_shift(args);
+	name_string = rb_funcall(name, rb_intern("to_s"), 0);
+	cname = STR2CSTR(name_string);
+		
+	rClassDict = rb_iv_get(self,"@pclassdict");
+	rInstDict = rb_iv_get(self,"@pinstdict");
+	Data_Get_Struct(rClassDict, PObj, pClassDict);
+	Data_Get_Struct(rInstDict, PObj, pInstDict);
+	pCalled = PyDict_GetItemString(pInstDict->pObject, cname);
+	if(!pCalled)
+	{
+		pCalled = PyDict_GetItemString(pClassDict->pObject, cname);
+	}
+	Py_XINCREF(pCalled);
+	result = ptorObjectKeep(pCalled);
+	if(rb_obj_is_instance_of(result, cRubyPyFunction))
+	{
+		Py_XINCREF(rp_obj_pobject(self));
+		rb_ary_unshift(args, self);
+		ret = rpCall(pCalled, args);
+		return ret;
+	}
+	return result;
 	
-	return cself->pObject;
 }
 
 
-//Creates a new RubyPyObject to wrap a python object
-VALUE rpObjectFromPyObject(PyObject* pObj)
+
+
+VALUE rp_func_from_function(PyObject *pFunc)
 {
 	PObj* self;
-	
-	VALUE rObj = rb_class_new_instance(0, NULL, cRubyPyObject);
-	
-	Data_Get_Struct(rObj, PObj, self);
-	
-	self->pObject = pObj;
-	
-	return rObj;
+	VALUE rFunc = rb_class_new_instance(0, NULL, cRubyPyFunction);
+	Data_Get_Struct(rFunc, PObj, self);
+	self->pObject = pFunc;
+	return rFunc;
 }
 
-/*
-Returns the name of the Python object which this instance wraps.
-
-If it cannot determine a reasonable name it just gives up.
-*/
-static
-VALUE rpObjectectGetName(VALUE self)
+VALUE rp_obj_wrap(PyObject* pObj)
 {
-	//It only makes sense to query a python object if the interpreter is running.
-	if(Py_IsInitialized())
+	VALUE rObj;
+	if(PyFunction_Check(pObj)||PyMethod_Check(pObj)||!PyObject_HasAttrString(pObj,"__dict__"))
 	{
-		PyObject *pObject,*pName,*pRepr;
-		VALUE rName;
-		
-		pObject = rpObjectGetPyObject(self);
-		
-		
-		pName = PyObject_GetAttrString(pObject,"__name__");
-		
-		if(!pName)
-		{
-			PyErr_Clear();
-			
-			pName = PyObject_GetAttrString(pObject,"__class__");
-	 		pRepr = PyObject_Repr(pName);
-			rName = ptorString(pRepr);
-			Py_XDECREF(pRepr);
-			
-			return rb_str_concat(rb_str_new2("An instance of "), rName);
-			if(!pName)
-			{
-				PyErr_Clear();
-				
-				pName = PyObject_Repr(pObject);
-				
-				if(!pName)
-				{
-					PyErr_Clear();
-					return rb_str_new2("__Unnameable__");
-				}
-			}
-		}
-		
-		rName = ptorString(pName);
-		
-		Py_XDECREF(pName);
-		
-		return rName;
+		return rp_func_from_function(pObj);
+
 	}
-	
-	return rb_str_new2("__FREED__");
-
-}
-
-//Test to see the RubyPyObj has the supplied symbol as an attribute
-int rpHasSymbol(VALUE self, VALUE symbol)
-{
-	PObj *cself;
-	VALUE rName;
-	
-	Data_Get_Struct(self, PObj, cself);
-	rName = rb_funcall(symbol, rb_intern("to_s"), 0);
-	
-	if(PyObject_HasAttrString(cself->pObject, STR2CSTR(rName))) return 1;
-	
-	return 0;
-}
-
-/* Tests whether the wrapped object will respond to the given method*/
-VALUE rpRespondsTo(VALUE self, VALUE mname)
-{
-	if(rpHasSymbol(self, mname))
+	if(PyInstance_Check(pObj))
 	{
-		return Qtrue;
+		rObj = rp_inst_from_instance(pObj);
+		return rObj;
 	}
-	
-	return Qfalse;
+	return rp_cla_from_class(pObj);
 }
 
-/*
-A wrapper class for Python objects that allows them to manipulated from within ruby.
 
-Important wrapper functionality is found in the RubyPyModule, RubyPyClass, and RubyPyFunction
-classes which wrap Python objects of similar names.
-
-*/
-inline void Init_RubyPyObject()
+// Not completely accurate
+int rp_is_func(VALUE pObj)
 {
-	cRubyPyObject = rb_define_class_under(mRubyPythonBridge,"RubyPyObject", cBlankObject);
-	rb_define_alloc_func(cRubyPyObject, rpObjectAlloc);
-	rb_define_method(cRubyPyObject,"free_pobj", rpObjectFreePobj, 0);
-	rb_define_method(cRubyPyObject,"__name", rpObjectectGetName, 0);
-	rb_define_method(cRubyPyObject,"respond_to?", rpRespondsTo, 1);
-	
+	PObj* self;
+	Data_Get_Struct(pObj, PObj, self);
+	Py_XINCREF(self->pObject);
+	return (PyFunction_Check(self->pObject)||PyMethod_Check(self->pObject));
+}
+
+
+int rp_equal(VALUE args)
+{
+	VALUE mname = rb_ary_entry(args, 0);
+	VALUE name_string = rb_funcall(mname, rb_intern("to_s"), 0);
+	return Qtrue == rb_funcall(name_string, rb_intern("end_with?"), 1, rb_str_new2("="));
+}
+
+
+
+int rp_double_bang(VALUE args)
+{
+	VALUE mname = rb_ary_entry(args, 0);
+	VALUE name_string = rb_funcall(mname, rb_intern("to_s"), 0);
+	return Qtrue == rb_funcall(name_string, rb_intern("end_with?"), 1, rb_str_new2("!!"));
+}
+
+
+
+
+// 
+// A wrapper class for Python functions and methods.
+// 
+// This is used internally to aid RubyPyClass in delegating method calls.
+// 
+
+void Init_RubyPyFunction()
+{
+	cRubyPyFunction = rb_define_class_under(mRubyPythonBridge,"RubyPyFunction", cRubyPyObject);
+}
+
+void Init_RubyPyInstance()
+{
+	cRubyPyInstance = rb_define_class_under(mRubyPythonBridge,"RubyPyInstance", cRubyPyObject);
+	rb_define_method(cRubyPyInstance,"method_missing", rp_inst_delegate,- 2);
 }

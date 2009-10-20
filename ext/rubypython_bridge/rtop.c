@@ -1,16 +1,20 @@
 #include "rtop.h"
 
 RUBY_EXTERN VALUE cRubyPyObject;
-RUBY_EXTERN PyObject* rpObjectGetPyObject(VALUE self);
+RUBY_EXTERN PyObject* rp_obj_pobject(VALUE self);
 
-/* Convert Builtin types */
+/*
+*  Note: For the builtin types rubypython creates a copy of the ruby
+*  object to pass into python. Builtin types are passed by VALUE not
+*  by REFERENCE.
+*/
 
 PyObject* rtopString(VALUE rString)
 {
 
 	PyObject* pString;
-	char* cString;
-	char* cStringCopy;
+	char *cString;
+	char *cStringCopy;
 
 	cString = STR2CSTR(rString);
 	cStringCopy = malloc(strlen(cString) * sizeof(char));
@@ -125,7 +129,7 @@ PyObject* rtopSymbol(VALUE rSymbol)
 
 }
 
-PyObject* rtopObject(VALUE rObj)
+PyObject* rtopObject(VALUE rObj, int is_key)
 {
 	// The above is_key parameter determines whether the object
 	// created show be immutable if possible
@@ -171,7 +175,6 @@ PyObject* rtopObject(VALUE rObj)
 			
 		case T_NIL:
 			pObj = Py_None;
-			Py_INCREF(Py_None);
 			break;
 			
 		case T_TRUE:
@@ -187,8 +190,23 @@ PyObject* rtopObject(VALUE rObj)
 			break;
 		
 		default:
-			pObj = Py_None;
-			Py_INCREF(Py_None);
-			break;
+			if(rb_obj_is_kind_of(rObj, cRubyPyObject) == Qtrue)
+			{
+				// rObj is a wrapped python object. We
+				// just take the object it wraps. In
+				// this case we are effectively passing
+				// a python object by reference
+				pObj = rp_obj_pobject(rObj);
+			}
+			else
+			{
+				// If we can't figure out what else to
+				// do with the ruby object we just pass
+				// a string representation of it
+				rInspect = rb_inspect(rObj);
+				pObj = rtopString(rInspect);
+			}
+	}
+
 	return pObj;
 }

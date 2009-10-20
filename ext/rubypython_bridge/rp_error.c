@@ -1,7 +1,6 @@
 #include "rp_error.h"
 
 VALUE ePythonError;
-VALUE eRubyPyError;
 
 void rpPythonError()
 {
@@ -18,10 +17,6 @@ void rpPythonError()
 	Py_XDECREF(pTraceback);
 }
 
-void rpRubyPyError(char* eString) {
-	rb_raise(eRubyPyError, eString);
-}
-
 /*
 Used to pass error information back into Ruby should an error occur in the embedded Python
 interpreter.
@@ -29,5 +24,4 @@ interpreter.
 void Init_RubyPyError()
 {
 	ePythonError = rb_define_class("PythonError", rb_eException);
-	eRubyPyError = rb_define_class("RubyPyError", rb_eException);
 }

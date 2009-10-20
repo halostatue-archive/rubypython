@@ -1,22 +1,23 @@
 #include "config.h"
-#include "ptor.h"
-#include "rtop.h"
-#include "cbridge.h"
-#include "rp_error.h"
 
 #ifndef _RP_OBJECT_H_
 #define _RP_OBJECT_H_
 
-typedef struct RubyPyObj 
-{
-	PyObject* pObject;
-} PObj;
+VALUE rp_func_from_function(PyObject*);
 
-PyObject* rpObjectGetPyObject(VALUE);
+int rp_is_func(VALUE);
 
-VALUE rpObjectFromPyObject(PyObject*);
 
-int rpHasSymbol(VALUE, ID);
+VALUE rp_inst_from_instance(PyObject*);
 
-VALUE rpRespondsTo(VALUE, VALUE);
-#endif
+VALUE rp_inst_delegate(VALUE, VALUE);
+
+int rp_equal();
+
+int rp_double_bang(VALUE);
+
+VALUE rp_inst_attr_set(VALUE, VALUE);
+
+VALUE rp_obj_wrap(PyObject*);
+
+#endif /* _RP_OBJECT_H_ */

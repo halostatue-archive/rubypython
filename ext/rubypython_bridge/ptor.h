@@ -11,4 +11,5 @@ VALUE ptorFloat(PyObject* pNum);
 VALUE ptorTuple(PyObject* pTuple);
 VALUE ptorDict(PyObject* pDict);
 VALUE ptorObject(PyObject* pObj);
+VALUE ptorObjectKeep(PyObject *pObj);
 #endif /* _PTOR_H_ */

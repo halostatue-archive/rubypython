@@ -4,7 +4,7 @@
 RUBY_EXTERN VALUE cRubyPyObject;
 RUBY_EXTERN VALUE mRubyPyApi;
 
-VALUE nilVal = (VALUE) 4;
+RUBY_EXTERN VALUE nilVal;
 
 static
 VALUE rpPy_Import(VALUE mod, VALUE mname) {

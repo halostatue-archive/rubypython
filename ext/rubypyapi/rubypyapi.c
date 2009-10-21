@@ -50,4 +50,5 @@ Init_rubypyapi()
 
   Init_RubyPyObject();
   Init_RubyPyImport();
+  Init_RubyPyError();
 }

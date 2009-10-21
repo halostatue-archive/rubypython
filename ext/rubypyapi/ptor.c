@@ -139,7 +139,7 @@ VALUE ptorDict(PyObject* pDict)
 
 VALUE ptorObject(PyObject* pObj)
 {
-	VALUE rObj;
+	VALUE rObj = NULL;
 
 	// Test the Python object vs various types and convert / wrap it
 	// appropriately. If the destructive flag is set, we destroy

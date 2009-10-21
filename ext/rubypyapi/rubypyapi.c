@@ -49,4 +49,5 @@ Init_rubypyapi()
   rb_define_module_function(mRubyPyApi, "stop", rp_stop, 0);
 
   Init_RubyPyObject();
+  Init_RubyPyImport();
 }

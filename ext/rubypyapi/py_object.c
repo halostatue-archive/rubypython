@@ -66,10 +66,30 @@ VALUE PyStructInit(VALUE self, VALUE rbObject) {
 	return self;
 }
 
+static
+VALUE rpHasAttr(VALUE self, VALUE attrName) {
+	PyStruct* cSelf;
+	char* cName;
+	VALUE has;
+	
+	cName = STR2CSTR(attrName);
+	
+	Data_Get_Struct(self, PyStruct, cSelf);
+	
+	if(PyObject_HasAttrString(cSelf->pObject, cName)) {
+		has = Qtrue;
+	} else {
+		has = Qfalse;
+	}
+	
+	return has;
+	
+}
 
 inline void Init_RubyPyObject() {
 	cRubyPyObject = rb_define_class_under(mRubyPyApi,"PyObject", rb_cObject);
         rb_define_alloc_func(cRubyPyObject, PyStructAlloc);
 	rb_define_method(cRubyPyObject, "initialize", &PyStructInit, 1);
         rb_define_method(cRubyPyObject, "rubify", &rpRubify, 0);
+	rb_define_method(cRubyPyObject, "hasAttr", &rpHasAttr, 1);
 }

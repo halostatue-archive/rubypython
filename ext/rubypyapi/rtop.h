@@ -12,6 +12,6 @@ PyObject* rtopFloat(VALUE);
 PyObject* rtopFalse(void);
 PyObject* rtopTrue(void);
 PyObject* rtopSymbol(VALUE);
-PyObject* rtopObject(VALUE;
+PyObject* rtopObject(VALUE, int);
 
 #endif /* _RTOP_H_ */

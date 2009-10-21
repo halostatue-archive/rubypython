@@ -1,6 +1,7 @@
 #include "py_object.h"
 
 #include "ptor.h"
+#include "rtop.h"
 
 RUBY_EXTERN VALUE mRubyPyApi;
 
@@ -35,12 +36,12 @@ void PyStructFree(PyStruct* self)
 }
 
 static
-VALUE rpRubify(VALUE rbPyObject) {
+VALUE rpRubify(VALUE self) {
     VALUE rbObject;
     PyObject* pObject;
     PyStruct* pyStruct;
     
-    Data_Get_Struct(rbPyObject, PyStruct, pyStruct);
+    Data_Get_Struct(self, PyStruct, pyStruct);
     
     pObject = pyStruct->pObject;
     
@@ -50,9 +51,25 @@ VALUE rpRubify(VALUE rbPyObject) {
     return rbObject;
 }
 
+static
+VALUE PyStructInit(VALUE self, VALUE rbObject) {
+	PyObject* pObject;
+	PyStruct* cSelf;
+	
+	pObject = rtopObject(rbObject, 0);
+	
+	Data_Get_Struct(self, PyStruct, cSelf);
+	
+	Py_XDECREF(cSelf->pObject);
+	cSelf->pObject = pObject;
+
+	return self;
+}
+
 
 inline void Init_RubyPyObject() {
 	cRubyPyObject = rb_define_class_under(mRubyPyApi,"PyObject", rb_cObject);
         rb_define_alloc_func(cRubyPyObject, PyStructAlloc);
+	rb_define_method(cRubyPyObject, "initialize", &PyStructInit, 1);
         rb_define_method(cRubyPyObject, "rubify", &rpRubify, 0);
 }

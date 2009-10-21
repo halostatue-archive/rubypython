@@ -1,7 +1,7 @@
-#include "rp_rubypyclass.h"
+#include "rp_class.h"
 
-#include "rp_rubypymod.h"
-#include "rp_rubypyobj.h"
+#include "rp_module.h"
+#include "rp_object.h"
 
 RUBY_EXTERN VALUE mRubyPythonBridge;
 RUBY_EXTERN VALUE ePythonError;
@@ -10,7 +10,7 @@ RUBY_EXTERN VALUE cBlankObject;
 
 VALUE cRubyPyClass;
 
-VALUE rp_cla_from_class(PyObject *pClass)
+VALUE rpClassFromPyObject(PyObject *pClass)
 {
 	PObj* self;
 	PyObject* pClassDict;
@@ -23,17 +23,19 @@ VALUE rp_cla_from_class(PyObject *pClass)
 	pClassDict = PyObject_GetAttrString(pClass,"__dict__");
 	Py_XINCREF(pClassDict);
 	
-	rDict = rp_obj_from_pyobject(pClassDict);
+	rDict = rpObjectFromPyObject
+(pClassDict);
 	rb_iv_set(rClass,"@pdict", rDict);
 	
 	return rClass;
 }
 
-VALUE rp_cla_new_inst(VALUE self, VALUE args)
+static
+VALUE rpClassNew(VALUE self, VALUE args)
 {
 	PyObject* pSelf;
-	
-	pSelf = rp_obj_pobject(self);
+
+	pSelf = rpObjectGetPyObject(self);
 	
 	return rpCall(pSelf, args);
 }
@@ -49,6 +51,6 @@ its existence.
 void Init_RubyPyClass()
 {
 	cRubyPyClass = rb_define_class_under(mRubyPythonBridge,"RubyPyClass", cRubyPyObject);
-	rb_define_method(cRubyPyClass,"method_missing", rp_mod_delegate,- 2);
-	rb_define_method(cRubyPyClass,"new", rp_cla_new_inst,- 2);
+	rb_define_method(cRubyPyClass,"method_missing", rpModuleDelegate,- 2);
+	rb_define_method(cRubyPyClass,"new", rpClassNew,- 2);
 }

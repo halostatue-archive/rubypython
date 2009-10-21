@@ -1,7 +1,6 @@
 #include "rtop.h"
 
 RUBY_EXTERN VALUE cRubyPyObject;
-RUBY_EXTERN PyObject* rpObjectGetPyObject(VALUE self);
 
 /* Convert Builtin types */
 
@@ -125,7 +124,7 @@ PyObject* rtopSymbol(VALUE rSymbol)
 
 }
 
-PyObject* rtopObject(VALUE rObj)
+PyObject* rtopObject(VALUE rObj, int is_key)
 {
 	// The above is_key parameter determines whether the object
 	// created show be immutable if possible
@@ -190,5 +189,6 @@ PyObject* rtopObject(VALUE rObj)
 			pObj = Py_None;
 			Py_INCREF(Py_None);
 			break;
+	}
 	return pObj;
 }

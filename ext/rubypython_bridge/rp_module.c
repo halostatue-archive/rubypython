@@ -1,6 +1,7 @@
-#include "rp_rubypymod.h"
+#include "rp_module.h"
 
-#include "rp_rubypyobj.h"
+#include "rp_object.h"
+#include "rp_function.h"
 
 VALUE cRubyPyModule;
 
@@ -9,12 +10,13 @@ RUBY_EXTERN VALUE cRubyPyFunction;
 RUBY_EXTERN VALUE cRubyPyClass;
 RUBY_EXTERN VALUE cRubyPyObject;
 
-VALUE rp_mod_call_func(VALUE self, VALUE func_name, VALUE args)
+static
+VALUE rpModuleCallFunction(VALUE self, VALUE func_name, VALUE args)
 {
 	PyObject *pModule,*pFunc;
 	VALUE rReturn;
 	
-	pModule = rp_obj_pobject(self);
+	pModule = rpObjectGetPyObject(self);
 	
 	pFunc = rpGetFunctionWithModule(pModule, func_name);
 	rReturn = rpCall(pFunc, args);
@@ -25,7 +27,8 @@ VALUE rp_mod_call_func(VALUE self, VALUE func_name, VALUE args)
 }
 
 //:nodoc:
-VALUE rp_mod_init(VALUE self, VALUE mname)
+static
+VALUE rpModuleInit(VALUE self, VALUE mname)
 {
 	PObj* cself;
 	VALUE rDict;
@@ -37,30 +40,38 @@ VALUE rp_mod_init(VALUE self, VALUE mname)
 	pModuleDict = PyModule_GetDict(cself->pObject);
 	Py_XINCREF(pModuleDict);
 	
-	rDict = rp_obj_from_pyobject(pModuleDict);
+	rDict = rpObjectFromPyObject(pModuleDict);
 	
 	rb_iv_set(self,"@pdict", rDict);
+	
 	return self;
 }
 
-
-VALUE rp_mod_attr_set(VALUE self, VALUE args)
+static
+VALUE rpModuleSetAttr(VALUE self, VALUE args)
 {
 	VALUE rDict;
-	PObj *pDict;
+	PyObject* pDict;
+	
 	VALUE mname = rb_ary_shift(args);
 	VALUE name_string = rb_funcall(mname, rb_intern("to_s"), 0);
 	
+	//The method name ends with "=" because it is a setter.
+	//We must chop that off before we pass the string to python.
 	rb_funcall(name_string, rb_intern("chop!"), 0);
 	
-	if(!rp_has_attr(self, name_string))
+	//The wrapped python object does not have method or attribute with the
+	//request named. Check for it in the Ruby superclass.
+	if(!rpHasSymbol(self, name_string))
 	{		
 		int argc;
 		
-		VALUE *argv;
+		VALUE* argv;
 		argc = RARRAY_LEN(args);
+		
 		argv = ALLOC_N(VALUE, argc);
 		MEMCPY(argv, RARRAY_PTR(args), VALUE, argc);
+		
 		return rb_call_super(argc, argv);
 	}
 	
@@ -70,30 +81,31 @@ VALUE rp_mod_attr_set(VALUE self, VALUE args)
 	}
 	
 	rDict = rb_iv_get(self,"@pdict");
-	Data_Get_Struct(rDict, PObj, pDict);
-	PyDict_SetItemString(pDict->pObject, STR2CSTR(name_string), rtopObject(args, 0));
+	
+	pDict = rpObjectGetPyObject(rDict);
+	
+	PyDict_SetItemString(pDict, STR2CSTR(name_string), rtopObject(args, 0));
 	
 	return Qtrue;
 }
 
 //:nodoc:
-VALUE rp_mod_delegate(VALUE self, VALUE args)
+VALUE rpModuleDelegate(VALUE self, VALUE args)
 {
 	VALUE name, name_string, rDict, result;
 	VALUE ret;
-	PObj *pDict;
-	PyObject *pCalled;
+	PyObject *pCalled, *pDict;
 	
-	if(rp_equal(args))
+	if(rpSymbolIsSetter(args))
 	{
-		return rp_mod_attr_set(self, args);
+		return rpModuleSetAttr(self, args);
 	}
 	
-	// if(rp_double_bang)
+	// if(rpSymbolIsDoubleBang)
 	// {
 	// 	return rp_mod_attr_db(args);
 	// }
-	if(!rp_has_attr(self, rb_ary_entry(args, 0)))
+	if(!rpHasSymbol(self, rb_ary_entry(args, 0)))
 	{		
 		int argc;
 		
@@ -108,8 +120,9 @@ VALUE rp_mod_delegate(VALUE self, VALUE args)
 		
 	rDict = rb_iv_get(self,"@pdict");
 	
-	Data_Get_Struct(rDict, PObj, pDict);
-	pCalled = PyDict_GetItemString(pDict->pObject, STR2CSTR(name_string));
+	pDict = rpObjectGetPyObject(rDict);
+	
+	pCalled = PyDict_GetItemString(pDict, STR2CSTR(name_string));
 	Py_XINCREF(pCalled);
 	
 	result = ptorObjectKeep(pCalled);
@@ -141,6 +154,6 @@ to a Python object. RubyPyModule instances should be created through the use of 
 void Init_RubyPyModule()
 {
 	cRubyPyModule = rb_define_class_under(mRubyPythonBridge,"RubyPyModule", cRubyPyObject);
-	rb_define_method(cRubyPyModule,"initialize", rp_mod_init, 1);
-	rb_define_method(cRubyPyModule,"method_missing", rp_mod_delegate,- 2);
+	rb_define_method(cRubyPyModule,"initialize", rpModuleInit, 1);
+	rb_define_method(cRubyPyModule,"method_missing", rpModuleDelegate,- 2);
 }

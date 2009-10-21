@@ -3,6 +3,7 @@
 #ifndef _RP_OBJECT_H_
 #define _RP_OBJECT_H_
 
+
 VALUE rp_func_from_function(PyObject*);
 
 int rp_is_func(VALUE);

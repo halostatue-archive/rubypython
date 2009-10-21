@@ -1,7 +1,7 @@
 #include "rtop.h"
 
 RUBY_EXTERN VALUE cRubyPyObject;
-RUBY_EXTERN PyObject* rp_obj_pobject(VALUE self);
+RUBY_EXTERN PyObject* rpObjectGetPyObject(VALUE self);
 
 /*
 *  Note: For the builtin types rubypython creates a copy of the ruby
@@ -13,8 +13,8 @@ PyObject* rtopString(VALUE rString)
 {
 
 	PyObject* pString;
-	char *cString;
-	char *cStringCopy;
+	char* cString;
+	char* cStringCopy;
 
 	cString = STR2CSTR(rString);
 	cStringCopy = malloc(strlen(cString) * sizeof(char));
@@ -196,7 +196,7 @@ PyObject* rtopObject(VALUE rObj, int is_key)
 				// just take the object it wraps. In
 				// this case we are effectively passing
 				// a python object by reference
-				pObj = rp_obj_pobject(rObj);
+				pObj = rpObjectGetPyObject(rObj);
 			}
 			else
 			{

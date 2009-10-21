@@ -1,6 +1,5 @@
 #include "ptor.h"
 
-//TODO: Review naming scheme and rename file?
 
 /* Note:
    The conversion functions for the builtin types are just that,
@@ -17,10 +16,17 @@ VALUE ptorString(PyObject* pString)
 	// Allocate a new string for Ruby and return it.
 	// Note that this is a new object, not a wrapper around a
 	// python object
-	char *cstr;
-	cstr = malloc(PyString_Size(pString) * sizeof(char));
-	strcpy(cstr, PyString_AsString(pString));
-	return rb_str_new2(cstr);
+	char* cStr;
+	char* cStrCopy;
+	
+	cStr = PyString_AsString(pString);
+	
+	cStrCopy = malloc(PyString_Size(pString) * sizeof(char));
+
+	strcpy(cStrCopy, cStr);
+	
+	
+	return rb_str_new2(cStrCopy);
 }
 
 VALUE ptorList(PyObject* pList)
@@ -199,17 +205,17 @@ static VALUE ptorObjectBasic(PyObject *pObj, int destructive)
 	}
 	if(PyFunction_Check(pObj)||PyMethod_Check(pObj)||!PyObject_HasAttrString(pObj,"__dict__"))
 	{
-		return rp_func_from_function(pObj);
+		return rpFunctionFromPyObject(pObj);
 
 	}
 	if(PyInstance_Check(pObj))
 	{
-		rObj = rp_inst_from_instance(pObj);
+		rObj = rpInstanceFromPyObject(pObj);
 		return rObj;
 	}
 
 	// Fallthrough behavior: The object is a class which should be wrapped
-	return rp_cla_from_class(pObj);
+	return rpClassFromPyObject(pObj);
 }
 
 // Convert a Python object to a Ruby object and destroy the original

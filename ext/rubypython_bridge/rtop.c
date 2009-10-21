@@ -14,13 +14,10 @@ PyObject* rtopString(VALUE rString)
 
 	PyObject* pString;
 	char* cString;
-	char* cStringCopy;
 
 	cString = STR2CSTR(rString);
-	cStringCopy = malloc(strlen(cString) * sizeof(char));
-	strcpy(cStringCopy, cString);
 
-	pString = PyString_FromString(cStringCopy);
+	pString = PyString_FromString(cString);
 
 	return pString;
 }

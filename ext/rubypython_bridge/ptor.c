@@ -13,20 +13,11 @@ VALUE ptorString(PyObject* pString)
   // Make sure pString is actually a string
 	if(!PyString_Check(pString)) return Qnil;
 	
-	// Allocate a new string for Ruby and return it.
-	// Note that this is a new object, not a wrapper around a
-	// python object
 	char* cStr;
-	char* cStrCopy;
 	
 	cStr = PyString_AsString(pString);
 	
-	cStrCopy = malloc(PyString_Size(pString) * sizeof(char));
-
-	strcpy(cStrCopy, cStr);
-	
-	
-	return rb_str_new2(cStrCopy);
+	return rb_str_new2(cStr);
 }
 
 VALUE ptorList(PyObject* pList)

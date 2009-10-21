@@ -7,17 +7,14 @@ RUBY_EXTERN VALUE cRubyPyObject;
 PyObject* rtopString(VALUE rString)
 {
 
-	PyObject* pString;
-	char* cString;
-	char* cStringCopy;
+	PyObject* pStr;
+	char* cStr;
 
-	cString = STR2CSTR(rString);
-	cStringCopy = malloc(strlen(cString) * sizeof(char));
-	strcpy(cStringCopy, cString);
+	cStr = STR2CSTR(rString);
 
-	pString = PyString_FromString(cStringCopy);
+	pStr = PyString_FromString(cStr);
 
-	return pString;
+	return pStr;
 }
 
 

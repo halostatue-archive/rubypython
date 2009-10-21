@@ -1,4 +1,4 @@
-#include "rp_error.h"
+#include "py_error.h"
 #include "py_object.h"
 
 VALUE ePythonError;

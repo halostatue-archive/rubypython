@@ -129,18 +129,18 @@ VALUE rpSetAttr(VALUE self, VALUE attrName, VALUE rbPyAttr) {
 }
 
 static
-VALUE rpCallObject(VALUE self, VALUE rbCallable, VALUE args) {
+VALUE rpCallObject(VALUE self, VALUE rbCallable, VALUE rbPyArgs) {
 	PyStruct* cSelf;
 	PyStruct* cReturn;
-	PyObject* argTuple;
+	PyStruct* cArgs;
 	PyObject* pyReturn;
 	VALUE rbReturn;
 	
-	argTuple = rtopObject(args, 1);
+	Data_Get_Struct(rbPyArgs, PyStruct, cArgs);
 	
 	Data_Get_Struct(self, PyStruct, cSelf);
 	
-	pyReturn = PyObject_CallObject(cSelf->pObject, argTuple);
+	pyReturn = PyObject_CallObject(cSelf->pObject, cArgs->pObject);
 	
 	rbReturn = rb_class_new_instance(1, &nilVal, cRubyPyObject);
 	

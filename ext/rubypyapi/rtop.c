@@ -10,7 +10,7 @@ PyObject* rtopString(VALUE rString)
 	PyObject* pStr;
 	char* cStr;
 
-	cStr = STR2CSTR(rString);
+	cStr = StringValueCStr(rString);
 
 	pStr = PyString_FromString(cStr);
 

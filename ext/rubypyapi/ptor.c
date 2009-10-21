@@ -117,8 +117,6 @@ VALUE ptorDict(PyObject* pDict)
 
 	while(PyDict_Next(pDict,&pos,&key,&val))
 	{
-		Py_XINCREF(key);
-		Py_XINCREF(val);
 		rKey = ptorObject(key);
 		rVal = ptorObject(val);
 		if(rKey == Qnil) continue;
@@ -130,7 +128,7 @@ VALUE ptorDict(PyObject* pDict)
 
 VALUE ptorObject(PyObject* pObj)
 {
-	VALUE rObj = NULL;
+	VALUE rObj = (VALUE) NULL;
 
 	// Test the Python object vs various types and convert / wrap it
 	// appropriately. If the destructive flag is set, we destroy

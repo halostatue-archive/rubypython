@@ -1,6 +1,6 @@
 #include "rtop.h"
 
-RUBY_EXTERN VALUE cRubyPyObject;
+RUBY_EXTERN VALUE cRbPyObj;
 RUBY_EXTERN PyObject* rpObjectGetPyObject(VALUE self);
 
 /*
@@ -187,7 +187,7 @@ PyObject* rtopObject(VALUE rObj, int is_key)
 			break;
 		
 		default:
-			if(rb_obj_is_kind_of(rObj, cRubyPyObject) == Qtrue)
+			if(rb_obj_is_kind_of(rObj, cRbPyObj) == Qtrue)
 			{
 				// rObj is a wrapped python object. We
 				// just take the object it wraps. In

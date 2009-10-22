@@ -8,7 +8,7 @@ VALUE cRubyPyModule;
 RUBY_EXTERN VALUE mRubyPythonBridge;
 RUBY_EXTERN VALUE cRubyPyFunction;
 RUBY_EXTERN VALUE cRubyPyClass;
-RUBY_EXTERN VALUE cRubyPyObject;
+RUBY_EXTERN VALUE cRbPyObj;
 
 static
 VALUE rpModuleCallFunction(VALUE self, VALUE func_name, VALUE args)
@@ -153,7 +153,7 @@ to a Python object. RubyPyModule instances should be created through the use of 
 */
 void Init_RubyPyModule()
 {
-	cRubyPyModule = rb_define_class_under(mRubyPythonBridge,"RubyPyModule", cRubyPyObject);
+	cRubyPyModule = rb_define_class_under(mRubyPythonBridge,"RubyPyModule", cRbPyObj);
 	rb_define_method(cRubyPyModule,"initialize", rpModuleInit, 1);
 	rb_define_method(cRubyPyModule,"method_missing", rpModuleDelegate,- 2);
 }

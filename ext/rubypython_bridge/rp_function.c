@@ -2,7 +2,7 @@
 #include "rp_object.h"
 
 RUBY_EXTERN VALUE mRubyPythonBridge;
-RUBY_EXTERN VALUE cRubyPyObject;
+RUBY_EXTERN VALUE cRbPyObj;
 
 VALUE cRubyPyFunction;
 
@@ -27,5 +27,5 @@ VALUE rpFunctionFromPyObject(PyObject *pFunc)
 
 void Init_RubyPyFunction()
 {
-	cRubyPyFunction = rb_define_class_under(mRubyPythonBridge,"RubyPyFunction", cRubyPyObject);
+	cRubyPyFunction = rb_define_class_under(mRubyPythonBridge,"RubyPyFunction", cRbPyObj);
 }

@@ -4,8 +4,6 @@
 RUBY_EXTERN VALUE cRubyPyObject;
 RUBY_EXTERN VALUE mRubyPyApi;
 
-RUBY_EXTERN VALUE nilVal;
-
 static
 VALUE rpPy_Import(VALUE mod, VALUE mname) {
     char* cName;
@@ -17,11 +15,9 @@ VALUE rpPy_Import(VALUE mod, VALUE mname) {
     
     pModule = PyImport_ImportModule(cName);
     
-    rbModule = rb_class_new_instance(1, &nilVal, cRubyPyObject);
-        
-    Data_Get_Struct(rbModule, PyStruct, pyStruct);
+    rbModule = rb_obj_alloc(cRubyPyObject);
     
-    Py_XDECREF(pyStruct->pObject);
+    Data_Get_Struct(rbModule, PyStruct, pyStruct);
     
     pyStruct->pObject = pModule;
     

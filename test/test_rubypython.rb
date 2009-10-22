@@ -1,9 +1,6 @@
 require File.dirname(__FILE__) + '/test_helper.rb'
 
 class TestRubypython < Test::Unit::TestCase
-
-  def setup
-  end
   
 
   def test_simple

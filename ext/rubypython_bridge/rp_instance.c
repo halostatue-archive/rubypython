@@ -5,7 +5,7 @@
 
 RUBY_EXTERN VALUE mRubyPythonBridge;
 
-RUBY_EXTERN VALUE cRubyPyObject;
+RUBY_EXTERN VALUE cRbPyObj;
 RUBY_EXTERN VALUE cRubyPyFunction;
 
 VALUE cRubyPyInstance;
@@ -158,7 +158,7 @@ VALUE rpInstanceDelegate(VALUE self, VALUE args)
 
 void Init_RubyPyInstance()
 {
-	cRubyPyInstance = rb_define_class_under(mRubyPythonBridge,"RubyPyInstance", cRubyPyObject);
+	cRubyPyInstance = rb_define_class_under(mRubyPythonBridge,"RubyPyInstance", cRbPyObj);
 	rb_define_method(cRubyPyInstance,"method_missing", rpInstanceDelegate,- 2);
 }
 

@@ -38,7 +38,7 @@ VALUE rpDictGetItem(VALUE mod, VALUE rbPyDict, VALUE rbPyKey) {
     
     pyRetVal = PyDict_GetItem(cDict->pObject, cKey->pObject);
     
-    retVal = rb_class_new_instance(1, &nilVal, cRubyPyObject);
+    retVal = rb_obj_alloc(cRubyPyObject);
     
     Data_Get_Struct(retVal, PyStruct, cRetVal);
     

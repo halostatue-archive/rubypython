@@ -3,12 +3,34 @@ require "test/unit"
 $:.unshift File.dirname(__FILE__) + "/../ext/rubypyapi"
 require "rubypyapi.so"
 
+class TestRubypyapiBasic < Test::Unit::TestCase
+  def test_start_stop
+    assert(RubyPyApi.start, "Embedded python interpreter failed to start correctly.")
+    
+    assert(!RubyPyApi.start, "Interpreter attempted to start while running.")
+    
+    assert(RubyPyApi.stop, "Interpreter failed to halt.")
+    
+    assert(!RubyPyApi.stop, "Interpreter ran into trouble while halting.")
+  end
+  
+end
+
 class TestRubypyapiExtn < Test::Unit::TestCase
   def setup
     RubyPyApi.start
   end
   
   def teardown
+    RubyPyApi.stop
+  end
+  
+  def test_imports
+    RubyPyApi.start
+    urllib2 = RubyPyApi.import("urllib2")
+    assert_instance_of(RubyPyApi::PyObject,
+                       urllib2,
+                       "Failed to import object.")
     RubyPyApi.stop
   end
   

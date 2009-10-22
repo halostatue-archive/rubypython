@@ -5,7 +5,7 @@
 
 RUBY_EXTERN VALUE mRubyPythonBridge;
 RUBY_EXTERN VALUE ePythonError;
-RUBY_EXTERN VALUE cRubyPyObject;
+RUBY_EXTERN VALUE cRbPyObj;
 RUBY_EXTERN VALUE cBlankObject;
 
 VALUE cRubyPyClass;
@@ -50,7 +50,7 @@ its existence.
 */
 void Init_RubyPyClass()
 {
-	cRubyPyClass = rb_define_class_under(mRubyPythonBridge,"RubyPyClass", cRubyPyObject);
+	cRubyPyClass = rb_define_class_under(mRubyPythonBridge,"RubyPyClass", cRbPyObj);
 	rb_define_method(cRubyPyClass,"method_missing", rpModuleDelegate,- 2);
 	rb_define_method(cRubyPyClass,"new", rpClassNew,- 2);
 }

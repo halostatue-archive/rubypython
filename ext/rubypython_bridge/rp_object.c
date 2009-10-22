@@ -4,7 +4,7 @@ RUBY_EXTERN VALUE ePythonError;
 RUBY_EXTERN VALUE mRubyPythonBridge;
 RUBY_EXTERN VALUE cBlankObject;
 
-VALUE cRubyPyObject;
+VALUE cRbPyObj;
 
 
 static void rpObjectMark(PObj*);
@@ -88,7 +88,7 @@ VALUE rpObjectFromPyObject
 {
 	PObj* self;
 	
-	VALUE rObj = rb_class_new_instance(0, NULL, cRubyPyObject);
+	VALUE rObj = rb_class_new_instance(0, NULL, cRbPyObj);
 	
 	Data_Get_Struct(rObj, PObj, self);
 	
@@ -185,10 +185,10 @@ classes which wrap Python objects of similar names.
 */
 inline void Init_RubyPyObject()
 {
-	cRubyPyObject = rb_define_class_under(mRubyPythonBridge,"RubyPyObject", cBlankObject);
-	rb_define_alloc_func(cRubyPyObject, rpObjectAlloc);
-	rb_define_method(cRubyPyObject,"free_pobj", rpObjectFreePobj, 0);
-	rb_define_method(cRubyPyObject,"__name", rpObjectectGetName, 0);
-	rb_define_method(cRubyPyObject,"respond_to?", rpRespondsTo, 1);
+	cRbPyObj = rb_define_class_under(mRubyPythonBridge,"RubyPyObject", cBlankObject);
+	rb_define_alloc_func(cRbPyObj, rpObjectAlloc);
+	rb_define_method(cRbPyObj,"free_pobj", rpObjectFreePobj, 0);
+	rb_define_method(cRbPyObj,"__name", rpObjectectGetName, 0);
+	rb_define_method(cRbPyObj,"respond_to?", rpRespondsTo, 1);
 	
 }

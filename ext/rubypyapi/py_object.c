@@ -6,7 +6,6 @@
 RUBY_EXTERN VALUE mRubyPyApi;
 
 VALUE cRubyPyObject;
-VALUE nilVal = (VALUE) 4;
 
 static VALUE PyStructAlloc(VALUE);
 static void PyStructFree(PyStruct*);
@@ -60,7 +59,7 @@ VALUE PyStructInit(VALUE self, VALUE rbObject) {
 	
 	Data_Get_Struct(self, PyStruct, cSelf);
 	
-	Py_XDECREF(cSelf->pObject);
+	//Py_XDECREF(cSelf->pObject);
 	cSelf->pObject = pObject;
 
 	return self;
@@ -72,7 +71,7 @@ VALUE rpHasAttr(VALUE self, VALUE attrName) {
 	char* cName;
 	VALUE has;
 	
-	cName = STR2CSTR(attrName);
+	cName = StringValueCStr(attrName);
 	
 	Data_Get_Struct(self, PyStruct, cSelf);
 	
@@ -94,17 +93,15 @@ VALUE rpGetAttr(VALUE self, VALUE attrName) {
 	char* cName;
 	VALUE rbAttr;
 	
-	cName = STR2CSTR(attrName);
+	cName = StringValueCStr(attrName);
 	
 	Data_Get_Struct(self, PyStruct, cSelf);
 	
 	pyAttr = PyObject_GetAttrString(cSelf->pObject, cName);
 	
-	rbAttr = rb_class_new_instance(1, &nilVal, cRubyPyObject);
+	rbAttr = rb_obj_alloc(cRubyPyObject);
 	
 	Data_Get_Struct(rbAttr, PyStruct, cAttr);
-	
-	Py_XDECREF(cAttr->pObject);
 	
 	cAttr->pObject = pyAttr;
 	
@@ -118,7 +115,7 @@ VALUE rpSetAttr(VALUE self, VALUE attrName, VALUE rbPyAttr) {
 	PyStruct* cAttr;
 	char* cName;
 	
-	cName = STR2CSTR(attrName);
+	cName = StringValueCStr(attrName);
 	
 	Data_Get_Struct(self, PyStruct, cSelf);
 	Data_Get_Struct(rbPyAttr, PyStruct, cAttr);
@@ -142,11 +139,9 @@ VALUE rpCallObject(VALUE self, VALUE rbCallable, VALUE rbPyArgs) {
 	
 	pyReturn = PyObject_CallObject(cSelf->pObject, cArgs->pObject);
 	
-	rbReturn = rb_class_new_instance(1, &nilVal, cRubyPyObject);
+	rbReturn = rb_obj_alloc(cRubyPyObject);
 	
 	Data_Get_Struct(rbReturn, PyStruct, cReturn);
-	
-	Py_XDECREF(cReturn->pObject);
 	
 	cReturn->pObject = pyReturn;
 	

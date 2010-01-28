@@ -1,0 +1,6 @@
+syntax:glob
+*.o
+*.so
+*.pyc
+*.log
+ext/*/Makefile

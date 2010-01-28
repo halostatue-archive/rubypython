@@ -1,5 +1,0 @@
-.autotest
-*.o
-*.bundle
-*.so
-.DS_Store

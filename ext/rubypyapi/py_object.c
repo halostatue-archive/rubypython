@@ -126,7 +126,7 @@ VALUE rpSetAttr(VALUE self, VALUE attrName, VALUE rbPyAttr) {
 }
 
 static
-VALUE rpCallObject(VALUE self, VALUE rbCallable, VALUE rbPyArgs) {
+VALUE rpCallObject(VALUE self, VALUE rbPyArgs) {
 	PyStruct* cSelf;
 	PyStruct* cReturn;
 	PyStruct* cArgs;
@@ -181,7 +181,7 @@ inline void Init_RubyPyObject() {
 	rb_define_method(cRubyPyObject, "hasAttr", &rpHasAttr, 1);
 	rb_define_method(cRubyPyObject, "getAttr", &rpGetAttr, 1);
 	rb_define_method(cRubyPyObject, "setAttr", &rpSetAttr, 2);
-	rb_define_method(cRubyPyObject, "callObject", &rpCallObject, 2);
+	rb_define_method(cRubyPyObject, "callObject", &rpCallObject, 1);
 	rb_define_method(cRubyPyObject, "xDecref", &rpXDECREF, 0);
 	rb_define_method(cRubyPyObject, "xIncref", &rpXINCREF, 0);
 }

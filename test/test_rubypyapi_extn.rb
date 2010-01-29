@@ -159,4 +159,61 @@ class TestRubypyapiPyObject < Test::Unit::TestCase
                 pyStringModule.getAttr("ruby").rubify,
                 "Returned data was not the same as set data in new setAttr-getAttr sequence.")
   end
+
+end
+
+
+class TestRubyPyApi_PythonError < Test::Unit::TestCase
+
+  def setup
+    RubyPyApi.start
+  end
+
+  def teardown
+    RubyPyApi.stop
+  end
+
+  def test_error_occurred_negative
+    assert(!PythonError.error?,
+           "PythonError erroneously detected an error.")
+  end
+
+  def test_error_occurred_positive
+    RubyPyApi.import("wat")
+    assert(PythonError.error?,
+           "RubyPython failed to detect error on failed import.")
+    PythonError.clear
+  end
+
+  def test_error_clear
+    RubyPyApi.import("wat")
+    PythonError.clear
+    assert(!PythonError.error?,
+           "PythonError.clear failed to clear error.")
+  end
+
+  def test_error_clear_no_error
+    PythonError.clear
+  end
+
+  def test_error_fetch_type
+    rbType = RubyPyApi::PyObject.new nil
+    rbValue = RubyPyApi::PyObject.new nil
+    rbTraceback = RubyPyApi::PyObject.new nil
+
+    RubyPyApi.import("wat")
+
+
+    PythonError.fetch(rbType, rbValue, rbTraceback)
+    rbValue.xDecref
+    rbTraceback.xDecref
+    eType = rbType.getAttr("__name__").rubify
+    rbType.xDecref
+
+    assert_equal("ImportError",
+                 eType,
+                 "PythonError returned incorrect error type.")
+    
+  end
+
 end

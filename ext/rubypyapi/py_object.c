@@ -173,6 +173,17 @@ VALUE rpXINCREF(VALUE self) {
 	return self;
 }
 
+static
+VALUE rpIsNull(VALUE self) {
+  PyStruct* cSelf;
+  Data_Get_Struct(self, PyStruct, cSelf);
+
+  if(cSelf->pObject)
+    return Qfalse;
+  else
+    return Qtrue;
+}
+
 inline void Init_RubyPyObject() {
 	cRubyPyObject = rb_define_class_under(mRubyPyApi,"PyObject", rb_cObject);
         rb_define_alloc_func(cRubyPyObject, PyStructAlloc);
@@ -184,4 +195,5 @@ inline void Init_RubyPyObject() {
 	rb_define_method(cRubyPyObject, "callObject", &rpCallObject, 1);
 	rb_define_method(cRubyPyObject, "xDecref", &rpXDECREF, 0);
 	rb_define_method(cRubyPyObject, "xIncref", &rpXINCREF, 0);
+	rb_define_method(cRubyPyObject, "null?", &rpIsNull, 0);
 }

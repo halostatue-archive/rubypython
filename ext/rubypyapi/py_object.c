@@ -120,7 +120,7 @@ VALUE rpSetAttr(VALUE self, VALUE attrName, VALUE rbPyAttr) {
 	Data_Get_Struct(self, PyStruct, cSelf);
 	Data_Get_Struct(rbPyAttr, PyStruct, cAttr);
 	
-	PyObject_SettAttrString(cSelf->pObject, cName, cAttr->pObject);
+	PyObject_SetAttrString(cSelf->pObject, cName, cAttr->pObject);
 	
 	return Qtrue;
 }

@@ -16,7 +16,7 @@ class TestRubypyapiBasic < Test::Unit::TestCase
   
 end
 
-class TestRubypyapiExtn < Test::Unit::TestCase
+class TestRubypyapiPyObject < Test::Unit::TestCase
   def setup
     RubyPyApi.start
   end
@@ -26,12 +26,10 @@ class TestRubypyapiExtn < Test::Unit::TestCase
   end
   
   def test_imports
-    RubyPyApi.start
     urllib2 = RubyPyApi.import("urllib2")
     assert_instance_of(RubyPyApi::PyObject,
                        urllib2,
                        "Failed to import object.")
-    RubyPyApi.stop
   end
   
   def test_wrap_string
@@ -107,5 +105,58 @@ class TestRubypyapiExtn < Test::Unit::TestCase
     assert_equal({1 => 1,"a" => 'a', "sym" => 1.0,"STRING" => "STRING"},
                  unwrapped,
                  "Failed to correctly unwrap hash.");
+  end
+
+  def test_has_attr_affirmative
+    pyStringModule = RubyPyApi.import("string");
+    assert(pyStringModule.hasAttr("ascii_letters"),
+           "Hasattr failed to detect ascii_letters in string module.")
+  end
+
+  def test_has_attr_negative
+    pyStringModule = RubyPyApi.import("string")
+    assert(!pyStringModule.hasAttr("nonExistentThing"),
+                 "Hasattr erroneously claimed existence of a non existent thing.")
+  end
+
+  def test_get_attr
+    pyStringModule = RubyPyApi.import("string")
+
+    pyAsciiLetters = pyStringModule.getAttr("ascii_letters")
+    assert_instance_of(RubyPyApi::PyObject,
+                       pyAsciiLetters,
+                       "Failed to fetch RubyPyObject with getAttr")
+    
+    assert_equal("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+                 pyAsciiLetters.rubify,
+                 "Failed to correctly getAttr ascii_letters from string module.")
+  end
+
+  def test_set_attr
+    pyStringModule = RubyPyApi.import("string")
+
+    pyNewLetters = RubyPyApi::PyObject.new("RbPy")
+
+    assert_nothing_raised "Exception raised when trying to setAttr" do
+      pyStringModule.setAttr("ascii_letters", pyNewLetters)
+    end
+
+    assert_equal(pyNewLetters.rubify,
+                pyStringModule.getAttr("ascii_letters").rubify,
+                "Returned data was not the same as set data in setAttr-getAttr sequence.")
+  end
+
+  def test_set_attr_new
+    pyStringModule = RubyPyApi.import("string")
+
+    pyNewString = RubyPyApi::PyObject.new("Python")
+
+    assert_nothing_raised "Exception raised when trying to setAttr new attribute" do
+    pyStringModule.setAttr("ruby", pyNewString)
+      end
+    
+    assert_equal(pyNewString.rubify,
+                pyStringModule.getAttr("ruby").rubify,
+                "Returned data was not the same as set data in new setAttr-getAttr sequence.")
   end
 end

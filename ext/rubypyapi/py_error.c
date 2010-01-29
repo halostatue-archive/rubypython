@@ -35,6 +35,12 @@ VALUE rpFetch(VALUE klass, VALUE rbType, VALUE rbValue, VALUE rbTraceback) {
 }
 
 static
+VALUE rpClear(VALUE klass) {
+  PyErr_Clear();
+  return Qtrue;
+}
+
+static
 VALUE rpErrorOccurred(VALUE klass) {
   if(PyErr_Occurred())
     return Qtrue;
@@ -51,5 +57,6 @@ void Init_RubyPyError()
 {
 	ePythonError = rb_define_class("PythonError", rb_eException);
 	rb_define_module_function(ePythonError, "fetch", &rpFetch, 3);
-	rb_define_module_function(ePythonError, "error?", &rpErrorOccured, 0);
+	rb_define_module_function(ePythonError, "error?", &rpErrorOccurred, 0);
+	rb_define_module_function(ePythonError, "clear", &rpClear, 0);
 }

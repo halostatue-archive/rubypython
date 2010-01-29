@@ -4,8 +4,7 @@
 VALUE ePythonError;
 VALUE eRubyPyError;
 
-void rpPythonError()
-{
+void rpPythonError() {
 	PyObject *pType,*pValue,*pTraceback;
 	PyObject *pTypeName;
 	
@@ -35,6 +34,14 @@ VALUE rpFetch(VALUE klass, VALUE rbType, VALUE rbValue, VALUE rbTraceback) {
 	return Qtrue;
 }
 
+static
+VALUE rpErrorOccurred(VALUE klass) {
+  if(PyErr_Occurred())
+    return Qtrue;
+  else
+    return Qfalse;
+}
+
 /*
 Used to pass error information back into Ruby should an error occur in the embedded Python
 interpreter.
@@ -44,4 +51,5 @@ void Init_RubyPyError()
 {
 	ePythonError = rb_define_class("PythonError", rb_eException);
 	rb_define_module_function(ePythonError, "fetch", &rpFetch, 3);
+	rb_define_module_function(ePythonError, "error?", &rpErrorOccured, 0);
 }

@@ -28,7 +28,7 @@ VALUE rpFetch(VALUE klass, VALUE rbType, VALUE rbValue, VALUE rbTraceback) {
 	
 	Py_XDECREF(cType->pObject);
 	Py_XDECREF(cValue->pObject);
-	PY_XDECREF(cTraceback->pObject);
+	Py_XDECREF(cTraceback->pObject);
 	
 	PyErr_Fetch(&(cType->pObject), &(cValue->pObject), &(cTraceback->pObject));
 	return Qtrue;

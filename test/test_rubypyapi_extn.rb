@@ -261,3 +261,36 @@ class TestRubyPyApi_PythonError < Test::Unit::TestCase
   end
 
 end
+
+
+class TestRubyPyApi_PySys < Test::Unit::TestCase
+
+  def setup
+    RubyPyApi.start
+  end
+
+  def teardown
+    RubyPyApi.stop
+  end
+
+  def test_sysGetObject
+    rbPath = RubyPyApi.sysGetObject("path")
+    rbPath.xIncref #This is a borrowed reference
+
+    assert_not_nil(rbPath,
+                   "sysGetObject returned null path.")
+    
+  end
+
+  def test_sysSetObject
+    rbSetPath = RubyPyApi::PyObject.new(".")
+    RubyPyApi.sysSetObject("path", rbSetPath)
+
+    rbPath = RubyPyApi.sysGetObject("path")
+    rbPath.xIncref
+
+    assert_equal(rbSetPath.rubify,
+                 rbPath.rubify,
+                 "Failed to correctly set path with sysSetObject.")
+  end
+end

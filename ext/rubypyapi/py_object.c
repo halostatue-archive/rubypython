@@ -208,14 +208,19 @@ VALUE rpMakeTuple(VALUE klass, VALUE rbObject) {
   PyStruct* cTuple;
   PyObject* pTuple;
 
+  VALUE rbTuple;
+
   Data_Get_Struct(rbObject, PyStruct, cObject);
   
-  if(PySequence_Check(cObject->pObject))
+  if(PyList_Check(cObject->pObject))
     pTuple = PySequence_Tuple(cObject->pObject);
+  else if (PyTuple_Check(cObject->pObject))
+    pTuple = cObject->pObject;
   else
-    pTuple = PyTuple_Pack(1, rbObject);
+    pTuple = PyTuple_Pack(1, cObject->pObject);
     
     
+  rbTuple = rb_obj_alloc(cRubyPyObject);
   Data_Get_Struct(rbTuple, PyStruct, cTuple);
   cTuple->pObject = pTuple;
 

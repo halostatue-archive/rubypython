@@ -204,6 +204,29 @@ class TestRubypyapiPyObject < Test::Unit::TestCase
     
   end
 
+  def test_make_tuple
+    arg = RubyPyApi::PyObject.new("arg")
+    argt = RubyPyApi::PyObject.makeTuple(arg)
+    assert_equal(["arg"],
+                 argt.rubify,
+                 "Failed to correctly wrap with a tuple.")
+  end
+
+  def test_call_object
+    arg = RubyPyApi::PyObject.new(6)
+    argt = RubyPyApi::PyObject.makeTuple(arg)
+
+    builtin = RubyPyApi.import("__builtin__")
+    string = builtin.getAttr("str")
+    rbString = string.callObject(argt)
+    
+    assert_equal("6",
+                 rbString.rubify,
+                 "Failed to call python function correctly.")
+
+    
+  end
+
 end
 
 

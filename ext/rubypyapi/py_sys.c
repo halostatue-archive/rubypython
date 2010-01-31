@@ -40,7 +40,7 @@ VALUE rpSetObject(VALUE mod, VALUE rbName, VALUE rbObject) {
 
   Data_Get_Struct(rbObject, PyStruct, cObject);
 
-  cReturn = PySys_SetObejct(cName, cObject->pObject);
+  cReturn = PySys_SetObject(cName, cObject->pObject);
 
   rReturn = INT2NUM(cReturn);
 

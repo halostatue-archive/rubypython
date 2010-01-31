@@ -160,6 +160,50 @@ class TestRubypyapiPyObject < Test::Unit::TestCase
                 "Returned data was not the same as set data in new setAttr-getAttr sequence.")
   end
 
+  def test_compare_equal
+    a = RubyPyApi::PyObject.new(10)
+    b = RubyPyApi::PyObject.new(10)
+
+    assert_equal(0,
+                 a.cmp(b),
+                 "Rubypython faired to determine equality.")
+  end
+
+  def test_compare_bidirectional
+    less = RubyPyApi::PyObject.new(5)
+    lessb = RubyPyApi::PyObject.new(5)
+    greater = RubyPyApi::PyObject.new(10)
+    
+
+    assert_equal(less.cmp(greater),
+                 -greater.cmp(less),
+                 "Comparison is not mutual.")
+
+    assert_equal(less.cmp(lessb),
+                 lessb.cmp(less),
+                 "Comparison is not mutual.")
+
+  end
+
+  def test_compare_less_than
+    less = RubyPyApi::PyObject.new(5)
+    greater = RubyPyApi::PyObject.new(10)
+
+    assert_equal(-1,
+                 less.cmp(greater),
+                 "Failed to correctly evaluate less than.")
+  end
+
+  def test_compare_greater_than
+    less = RubyPyApi::PyObject.new(5)
+    greater = RubyPyApi::PyObject.new(10)
+
+    assert_equal(1,
+                 greater.cmp(less),
+                 "Failed to correctly evaluate greater than.")
+    
+  end
+
 end
 
 

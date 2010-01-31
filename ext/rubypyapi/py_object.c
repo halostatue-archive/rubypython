@@ -184,6 +184,23 @@ VALUE rpIsNull(VALUE self) {
     return Qtrue;
 }
 
+static
+VALUE rpCompare(VALUE self, VALUE other) {
+  PyStruct *cSelf, *cOther;
+  VALUE rResult;
+  int cResult;
+  
+  Data_Get_Struct(self, PyStruct, cSelf);
+  Data_Get_Struct(other, PyStruct, cOther);
+
+  cResult = PyObject_Compare(cSelf->pObject, cOther->pObject);
+
+  rResult = INT2NUM(cResult);
+
+  return rResult;
+  
+}
+
 inline void Init_RubyPyObject() {
 	cRubyPyObject = rb_define_class_under(mRubyPyApi,"PyObject", rb_cObject);
         rb_define_alloc_func(cRubyPyObject, PyStructAlloc);
@@ -196,4 +213,5 @@ inline void Init_RubyPyObject() {
 	rb_define_method(cRubyPyObject, "xDecref", &rpXDECREF, 0);
 	rb_define_method(cRubyPyObject, "xIncref", &rpXINCREF, 0);
 	rb_define_method(cRubyPyObject, "null?", &rpIsNull, 0);
+	rb_define_method(cRubyPyObject, "cmp", &rpCompare, 1);
 }

@@ -201,6 +201,28 @@ VALUE rpCompare(VALUE self, VALUE other) {
   
 }
 
+static
+VALUE rpMakeTuple(VALUE klass, VALUE rbObject) {
+  PyStruct* cTuple;
+  VALUE rbTemp;
+  VALUE rbTuple;
+  PyObject* pTuple;
+
+  if(TYPE(rbObject) == T_ARRAY)
+    rbTemp = rbObject;
+  else {
+    rbTemp = rb_ary_new();
+    rb_ary_push(rbTemp, rbObject);
+  }
+
+  pTuple = rtopArrayToTuple(rbTemp);
+    
+  Data_Get_Struct(rbTuple, PyStruct, cTuple);
+  cTuple->pObject = pTuple;
+
+  return rbTuple;
+}
+
 inline void Init_RubyPyObject() {
 	cRubyPyObject = rb_define_class_under(mRubyPyApi,"PyObject", rb_cObject);
         rb_define_alloc_func(cRubyPyObject, PyStructAlloc);
@@ -214,4 +236,5 @@ inline void Init_RubyPyObject() {
 	rb_define_method(cRubyPyObject, "xIncref", &rpXINCREF, 0);
 	rb_define_method(cRubyPyObject, "null?", &rpIsNull, 0);
 	rb_define_method(cRubyPyObject, "cmp", &rpCompare, 1);
+	rb_define_module_function(cRubyPyObject, "makeTuple", &rpMakeTuple, 1);
 }

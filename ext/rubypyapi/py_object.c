@@ -227,6 +227,33 @@ VALUE rpMakeTuple(VALUE klass, VALUE rbObject) {
   return rbTuple;
 }
 
+static
+VALUE rpNewList(VALUE klass, VALUE rbArray) {
+  PyStruct* cElement;
+  
+  PyStruct* cList;
+  VALUE rbList;
+
+  int i;
+  int arrLength = RARRAY_LEN(rbArray);
+
+  rbList = rb_obj_alloc(cRubyPyObject);
+
+  Data_Get_Struct(rbList, PyStruct, cList);
+
+  cList->pObject = PyList_New(arrLength);
+
+  for(i = 0; i < arrLength; i++) {
+    Data_Get_Struct(rb_ary_entry(rbArray,i), PyStruct, cElement);
+    PyList_SetItem(cList->pObject, i, cElement->pObject);
+  }
+
+  return rbList;
+
+}
+  
+
+
 inline void Init_RubyPyObject() {
 	cRubyPyObject = rb_define_class_under(mRubyPyApi,"PyObject", rb_cObject);
         rb_define_alloc_func(cRubyPyObject, PyStructAlloc);

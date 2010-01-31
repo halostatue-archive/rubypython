@@ -268,5 +268,5 @@ inline void Init_RubyPyObject() {
 	rb_define_method(cRubyPyObject, "null?", &rpIsNull, 0);
 	rb_define_method(cRubyPyObject, "cmp", &rpCompare, 1);
 	rb_define_module_function(cRubyPyObject, "makeTuple", &rpMakeTuple, 1);
-	rb_define_module_function(cRubyPyOBject, "newList", &rpNewList, -2);
+	rb_define_module_function(cRubyPyObject, "newList", &rpNewList, -2);
 }

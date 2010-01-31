@@ -11,30 +11,31 @@ class RubyPyApi::RubyPyProxy
 
   def method_missing(name, *args, &block)
     if(!@pObject.hasAttr(name.to_s))
-      raise NoMethodError
+      raise NoMethodError.new(name.to_s)
     end
 
     args.map! do |arg|
       if(arg.instance_of? RubyPyApi::PyObject)
         arg
       elsif(arg.instance_of?(RubyPyApi::RubyPyProxy))
-        if(arg.null?)
-          raise NullPObjectError("Null pObject pointer.")
+        if(arg.pObject.null?)
+          raise NullPObjectError.new("Null pObject pointer.")
         else
           arg.pObject
         end
-             
       else
         RubyPyApi::PyObject.new(arg)
       end
     end
 
-    pList = RubyPyApi::PyObject.newList(args)
+    pList = RubyPyApi::PyObject.newList(*args)
     pTuple = RubyPyApi::PyObject.makeTuple(pList)
 
-    pReturn = @pObject.callObject(pTuple)
+    pFunc = @pObject.getAttr(name.to_s)
 
-    return RubyPyProxy.new(pReturn)
+    pReturn = pFunc.callObject(pTuple)
+
+    return RubyPyApi::RubyPyProxy.new(pReturn)
   end
       
 

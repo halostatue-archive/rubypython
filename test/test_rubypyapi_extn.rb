@@ -17,6 +17,7 @@ class TestRubypyapiBasic < Test::Unit::TestCase
 end
 
 class TestRubypyapiPyObject < Test::Unit::TestCase
+
   def setup
     RubyPyApi.start
   end
@@ -227,6 +228,18 @@ class TestRubypyapiPyObject < Test::Unit::TestCase
     
   end
 
+  def test_new_list
+    a = RubyPyApi::PyObject.new("a")
+    b = RubyPyApi::PyObject.new("b")
+
+    pList = RubyPyApi::PyObject.newList(a,b)
+
+    assert_equal(["a","b"],
+                 pList.rubify,
+                 "newList function produced unexpected behavior.")
+  end
+              
+
 end
 
 
@@ -316,4 +329,42 @@ class TestRubyPyApi_PySys < Test::Unit::TestCase
                  rbPath.rubify,
                  "Failed to correctly set path with sysSetObject.")
   end
+end
+
+class TestRubyPyApy_PyProxy < Test::Unit::TestCase
+
+  def initialize(name)
+    super(name)
+    require File.dirname(__FILE__) + "/../lib/rubypython/rubypyproxy"
+  end
+
+
+  def setup
+    RubyPyApi.start
+  end
+
+
+  def teardown
+    RubyPyApi.stop
+  end
+
+
+  def test_initialize_pyproxy
+    rbString = RubyPyApi::PyObject.new("string")
+    rbProxy = RubyPyApi::RubyPyProxy.new(rbString)
+  end
+
+  def test_call_method
+    a = RubyPyApi::PyObject.new("a")
+    b = RubyPyApi::PyObject.new("b")
+    aProxy = RubyPyApi::RubyPyProxy.new(a)
+    bProxy = RubyPyApi::RubyPyProxy.new(b)
+    abProxy = aProxy.__add__(bProxy)
+
+    assert_equal("ab",
+                 abProxy.pObject.rubify,
+                 "PyProxy failed to handle method call correctly.")
+    
+  end
+
 end

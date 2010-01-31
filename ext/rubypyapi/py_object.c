@@ -203,19 +203,18 @@ VALUE rpCompare(VALUE self, VALUE other) {
 
 static
 VALUE rpMakeTuple(VALUE klass, VALUE rbObject) {
+  PyStruct* cObject;
+
   PyStruct* cTuple;
-  VALUE rbTemp;
-  VALUE rbTuple;
   PyObject* pTuple;
 
-  if(TYPE(rbObject) == T_ARRAY)
-    rbTemp = rbObject;
-  else {
-    rbTemp = rb_ary_new();
-    rb_ary_push(rbTemp, rbObject);
-  }
-
-  pTuple = rtopArrayToTuple(rbTemp);
+  Data_Get_Struct(rbObject, PyStruct, cObject);
+  
+  if(PySequence_Check(cObject->pObject))
+    pTuple = PySequence_Tuple(cObject->pObject);
+  else
+    pTuple = PyTuple_Pack(1, rbObject);
+    
     
   Data_Get_Struct(rbTuple, PyStruct, cTuple);
   cTuple->pObject = pTuple;

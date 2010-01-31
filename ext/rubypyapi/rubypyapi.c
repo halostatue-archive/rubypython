@@ -52,4 +52,5 @@ Init_rubypyapi()
   Init_RubyPyImport();
   Init_RubyPyError();
   Init_RubyPyDict();
+  Init_RubyPySys();
 }

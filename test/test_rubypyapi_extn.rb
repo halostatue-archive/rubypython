@@ -367,4 +367,24 @@ class TestRubyPyApy_PyProxy < Test::Unit::TestCase
     
   end
 
+  def test_call_nomethod
+    rbString = RubyPyApi::PyObject.new("string")
+    rbStringProxy = RubyPyApi::RubyPyProxy.new(rbString)
+
+    assert_raise NoMethodError do
+      rbStringProxy.wat []
+    end
+  end
+
+  def test_call_noargs
+    builtin = RubyPyApi.import("__builtin__")
+    builtinProxy = RubyPyApi::RubyPyProxy.new(builtin)
+
+    rbStr = builtinProxy.str
+
+    assert_equal("",
+                 rbStr.pObject.rubify,
+                 "Failed to call method str with no args.")
+  end
+
 end

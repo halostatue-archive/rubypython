@@ -1,4 +1,4 @@
-require 'rubypython_bridge.so'
+require 'rubypython_bridge'
 require 'rubypython/wrapper_extensions'
 
 

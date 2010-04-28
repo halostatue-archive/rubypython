@@ -29,16 +29,21 @@ class RubyPyApi::RubyPyProxy
     end
 
     
-    args=RubyPyApi.pythonifyObjects(*args)
+    args=RubyPyApi::PyObject.convert(*args)
 
     if(setter)
       return _setAttr(name,*args)
     end
 
-    pTuple=RubyPyApi.buildArgTuple(*args)
-    pFunc = @pObject.getAttr(name)
 
-    pReturn = pFunc.callObject(pTuple)
+    pFunc = @pObject.getAttr(name)
+    
+    if(pFunc.callable?)
+      pTuple=RubyPyApi::PyObject.buildArgTuple(*args)
+      pReturn = pFunc.callObject(pTuple)
+    else
+      pReturn = pFunc
+    end
 
     return RubyPyApi::RubyPyProxy.new(pReturn)
   end

@@ -395,7 +395,7 @@ class TestRubyPyApi_PyProxy < Test::Unit::TestCase
     pyLettersProxy=pyStringProxy.letters
 
     assert_equal(pyAsciiLetters.rubify,
-                 pyStringProxy.pObject.letters,
+                 pyStringProxy.letters.pObject.rubify,
                  "Different methods of getting attr return different values.")
 
   end

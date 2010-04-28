@@ -82,8 +82,8 @@ class RubyPythonBridge::RubyPyInstance
   
 end
 
-module RubyPyApi
-  def self.pythonifyObjects(*args)
+class RubyPyApi::PyObject
+  def self.convert(*args)
     args.map! do |arg|
       if(arg.instance_of? RubyPyApi::PyObject)
         arg
@@ -101,7 +101,7 @@ module RubyPyApi
 
   def self.buildArgTuple(*args)
     pList = RubyPyApi::PyObject.newList(*args)
-    PyObject.makeTuple(pList)
+    RubyPyApi::PyObject.makeTuple(pList)
   end
 
 end

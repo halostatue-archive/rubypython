@@ -13,6 +13,9 @@ class RubyPyApi::RubyPyProxy
     @pObject.setAttr(name, args[0])
   end
 
+  def _wrap(pyobject)
+    RubyPyApi::RubyPyProxy.new(pyobject)
+  end
 
   def method_missing(name, *args, &block)
     name=name.to_s
@@ -45,9 +48,7 @@ class RubyPyApi::RubyPyProxy
       pReturn = pFunc
     end
 
-    return RubyPyApi::RubyPyProxy.new(pReturn)
+    return _wrap(pReturn)
   end
       
-
-
 end

@@ -1,4 +1,3 @@
-require 'rubypython_bridge.so'
 require 'rubypython/wrapper_extensions'
 
 
@@ -72,55 +71,6 @@ the text of the raised PythonError.
   	from (irb):2
 =end
 module RubyPython
-  
-  # Used to started the python interpreter. Delegates to RubyPythonBridge
-  # 
-  #   RubyPython.start
-  #   --Some python code--
-  #   RubyPython.stop
-  #   
-  # Also see, _stop_
-  def self.start() #=> true||false
-    RubyPythonBridge.start
-  end
-  
-  
-
-  # Used to end the python session. Adds some cleanup on top of RubyPythonBridge.stop
-  def self.stop() #=> true,false
-    ObjectSpace.each_object(RubyPythonBridge::RubyPyObject) do |o|
-      o.free_pobj
-    end
-    PyMain.main=nil
-    PyMain.builtin=nil
-    RubyPythonBridge.stop
-  end
-  
-  # Import the python module +mod+ and return it wrapped as a ruby object
-  def self.import(mod)
-    RubyPythonBridge.import(mod)
-  end
-  
-  # Handles the setup and cleanup involved with using the interpreter for you.
-  # Note that all Python object will be effectively scope to within the block
-  # as the embedded interpreter will be halted at its end. The supplied block is
-  # run within the scope of the RubyPython module.
-  #
-  # Alternatively the user may prefer RubyPython.session which simples handles
-  # initialization and cleanup of the interpreter.
-  def self.run(&block)
-    start
-      module_eval(&block)
-    stop
-  end
-  
-  # Simply starts the interpreter, runs the supplied block, and stops the interpreter.
-  def self.session(&block)
-    start
-    retval = block.call
-    stop
-    return retval
-  end
 end
 
 

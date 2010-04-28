@@ -1,11 +1,10 @@
 #include <ruby.h>
 
+
 VALUE mRubyPyApi;
 
 
 /*
-* call - seq: start()
-*
 * Starts the python interpreter
 */
 static
@@ -23,8 +22,6 @@ VALUE rp_start(VALUE self)
 }
 
 /*
-* call - seq: stop()
-*
 * Stop the python interpreter
 */
 static
@@ -40,8 +37,10 @@ VALUE rp_stop(VALUE self)
 	
 }
 
-
-void
+/*
+ * RubyPyApi module
+ */
+void 
 Init_rubypyapi()
 {
   mRubyPyApi = rb_define_module("RubyPyApi");

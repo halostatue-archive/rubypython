@@ -3,12 +3,13 @@
 #include "ptor.h"
 #include "rtop.h"
 
-RUBY_EXTERN VALUE mRubyPyApi;
+RUBY_EXTERN VALUE mRubyPyApi; 
 
 VALUE cRubyPyObject;
 
 static VALUE PyStructAlloc(VALUE);
 static void PyStructFree(PyStruct*);
+
 
 
 //Create a new PyStruct
@@ -35,6 +36,13 @@ void PyStructFree(PyStruct* self)
 	free(self);
 }
 
+
+/* Document-method: rubify
+ * call-seq: rubify()
+ *
+ * Convert the wrapped Python Object into a corresponding native
+ * ruby type.
+ */
 static
 VALUE rpRubify(VALUE self) {
     VALUE rbObject;
@@ -279,12 +287,14 @@ VALUE rpIsCallable(VALUE self) {
 
   
 
-
-inline void Init_RubyPyObject() {
+/* Document-class: RubyPyApi::PyObject
+ */
+inline void 
+Init_RubyPyObject() {
 	cRubyPyObject = rb_define_class_under(mRubyPyApi,"PyObject", rb_cObject);
         rb_define_alloc_func(cRubyPyObject, PyStructAlloc);
 	rb_define_method(cRubyPyObject, "initialize", &PyStructInit, 1);
-        rb_define_method(cRubyPyObject, "rubify", &rpRubify, 0);
+        rb_define_method(cRubyPyObject, "rubify", &rpRubify, 0); //in py_object.c
 	rb_define_method(cRubyPyObject, "hasAttr", &rpHasAttr, 1);
 	rb_define_method(cRubyPyObject, "getAttr", &rpGetAttr, 1);
 	rb_define_method(cRubyPyObject, "setAttr", &rpSetAttr, 2);

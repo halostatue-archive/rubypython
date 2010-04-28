@@ -3,4 +3,5 @@ syntax:glob
 *.so
 *.pyc
 *.log
+doc/*
 ext/*/Makefile

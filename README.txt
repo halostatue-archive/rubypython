@@ -4,7 +4,9 @@
 
 == DESCRIPTION:
 
-	RubyPython is a C bridge between Ruby and Python with a Ruby interface. It's aim is to make the power of the Python's great standard library available to Ruby programmers from within Ruby.
+	RubyPython is a C bridge between Ruby and Python with a Ruby interface. 
+It's aim is to make the power of the Python's great standard library available 
+to Ruby programmers from within Ruby.
 
 == FEATURES/PROBLEMS:
 
@@ -25,8 +27,7 @@
 	
 	* Python >=2.4, < 3.0
 	
-	Note: Rubypython has been test on Mac OS 10.5.x and 10.6.1 as well
-	as Ubuntu Jaunty 9.04.
+	Note: Rubypython has been tested on Mac OS 10.5.x and 10.6.1 as well as Ubuntu Jaunty 9.04.
 	
 	
 == INSTALL:

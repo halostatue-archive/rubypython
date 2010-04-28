@@ -30,6 +30,12 @@ namespace :extconf do
     Dir.chdir(ext) do ruby "extconf.rb" end
   end
 
+  file "lib/#{extension}.#{Config::CONFIG['DLEXT']}"  => ext_so do
+    require "fileutils"
+    puts "Copying #{ext_so} into lib directory for testing."
+    FileUtils.cp(ext_so,"lib/#{extension}.#{Config::CONFIG['DLEXT']}")
+  end
+
   file ext_so => ext_files do
     Dir.chdir(ext) do
       sh(PLATFORM =~ /win32/ ? 'nmake' : 'make') do |ok, res|

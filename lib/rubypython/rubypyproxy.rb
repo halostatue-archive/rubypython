@@ -9,29 +9,34 @@ class RubyPyApi::RubyPyProxy
     @pObject = pObject
   end
 
+  def _setAttr(name, *args)
+    @pObject.setAttr(name, args[0])
+  end
+
+
   def method_missing(name, *args, &block)
-    if(!@pObject.hasAttr(name.to_s))
-      raise NoMethodError.new(name.to_s)
+    name=name.to_s
+    
+    if(name.end_with? "=")
+      setter=true
+      name.chomp! "="
+    else
+      setter=false
+    end
+    
+    if(!@pObject.hasAttr(name))
+      raise NoMethodError.new(name)
     end
 
-    args.map! do |arg|
-      if(arg.instance_of? RubyPyApi::PyObject)
-        arg
-      elsif(arg.instance_of?(RubyPyApi::RubyPyProxy))
-        if(arg.pObject.null?)
-          raise NullPObjectError.new("Null pObject pointer.")
-        else
-          arg.pObject
-        end
-      else
-        RubyPyApi::PyObject.new(arg)
-      end
+    
+    args=RubyPyApi.pythonifyObjects(*args)
+
+    if(setter)
+      return _setAttr(name,*args)
     end
 
-    pList = RubyPyApi::PyObject.newList(*args)
-    pTuple = RubyPyApi::PyObject.makeTuple(pList)
-
-    pFunc = @pObject.getAttr(name.to_s)
+    pTuple=RubyPyApi.buildArgTuple(*args)
+    pFunc = @pObject.getAttr(name)
 
     pReturn = pFunc.callObject(pTuple)
 

@@ -331,7 +331,7 @@ class TestRubyPyApi_PySys < Test::Unit::TestCase
   end
 end
 
-class TestRubyPyApy_PyProxy < Test::Unit::TestCase
+class TestRubyPyApi_PyProxy < Test::Unit::TestCase
 
   def initialize(name)
     super(name)
@@ -385,6 +385,31 @@ class TestRubyPyApy_PyProxy < Test::Unit::TestCase
     assert_equal("",
                  rbStr.pObject.rubify,
                  "Failed to call method str with no args.")
+  end
+
+  def test_get_object
+    pyStringModule = RubyPyApi.import("string")
+    pyAsciiLetters = pyStringModule.getAttr("ascii_letters")    
+    
+    pyStringProxy = RubyPyApi::RubyPyProxy.new(pyStringModule)
+    pyLettersProxy=pyStringProxy.letters
+
+    assert_equal(pyAsciiLetters.rubify,
+                 pyStringProxy.pObject.letters,
+                 "Different methods of getting attr return different values.")
+
+  end
+
+  def test_set_object
+    stringMod=RubyPyApi.import("string")
+    stringModProxy=RubyPyApi::RubyPyProxy.new(stringMod)
+    
+    stringModProxy.letters="a"
+    
+    assert_equal("a",
+                 stringModProxy.letters.pObject.rubify,
+                 "Failed to set attribute of python object via proxy.")
+
   end
 
 end

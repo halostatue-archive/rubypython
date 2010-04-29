@@ -20,6 +20,17 @@ Example:
   RubyPython.stop
 =end
 module RubyPython
+  def self.start
+    RubyPyApi.start
+  end
+
+  def self.stop
+    RubyPyApi.stop
+  end
+
+  def self.import(mod)
+    RubyPyApi::RubyPyObject.new(RubyPyApi.import(mod))
+  end
 end
 
 

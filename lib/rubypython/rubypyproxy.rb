@@ -49,6 +49,8 @@ class RubyPyApi::RubyPyProxy
         rbValue = RubyPyApi::PyObject.new nil
         rbTraceback = RubyPyApi::PyObject.new nil
 
+        #Decrease the reference count. This will happen anyway when they go
+        #out of scope but might as well.
         rbValue.xDecref
         rbTraceback.xDecref
         pyName = rbType.getAttr("__name__")

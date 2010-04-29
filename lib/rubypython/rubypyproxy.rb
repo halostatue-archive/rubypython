@@ -44,6 +44,23 @@ class RubyPyApi::RubyPyProxy
     if(pFunc.callable?)
       pTuple=RubyPyApi::PyObject.buildArgTuple(*args)
       pReturn = pFunc.callObject(pTuple)
+      if(PythonError.error?)
+        rbType = RubyPyApi::PyObject.new nil
+        rbValue = RubyPyApi::PyObject.new nil
+        rbTraceback = RubyPyApi::PyObject.new nil
+
+        rbValue.xDecref
+        rbTraceback.xDecref
+        pyName = rbType.getAttr("__name__")
+        rbType.xDecref
+        rbName=pyName.rubify
+        pyName.xDecref
+        
+        PythonError.fetch(rbType,rbValue,rbTraceback)
+        PythonError.clear
+
+        raise PythonError.new(rbName)
+      end
     else
       pReturn = pFunc
     end

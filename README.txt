@@ -33,6 +33,9 @@ to Ruby programmers from within Ruby.
 == INSTALL:
 
 	sudo gem install rubypython
+
+== DOCUMENTATION:
+	Just a quick note on the documentation. Don't trust RDoc on anything, involving the C extensions. It is kind of stupid and misses a lot of methods. If you want to know about that stuff have a look at the code.
 	
 == LICENSE:
 

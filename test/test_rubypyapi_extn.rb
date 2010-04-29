@@ -413,3 +413,23 @@ class TestRubyPyApi_PyProxy < Test::Unit::TestCase
   end
 
 end
+
+
+class TestRubyPyApi_CustomTestObject < Test::Unit::TestCase
+  def setup
+    RubyPyApi.start
+  end
+
+
+  def teardown
+    RubyPyApi.stop
+  end
+
+  def test_load_custom_file
+    rbSys=RubyPyApi::RubyPyProxy.new(RubyPyApi.import("sys"))
+    rbPath=rbSys.path
+    rbPath.append("./test/python_helpers/")
+    RubyPyApi.import "objects"
+  end
+
+end

@@ -29,7 +29,17 @@ module RubyPython
   end
 
   def self.import(mod)
-    RubyPyApi::RubyPyObject.new(RubyPyApi.import(mod))
+    pymod=RubyPyApi.import(mod)
+    if(PythonError.error?)
+      rbType = RubyPyApi::PyObject.new nil
+      rbValue = RubyPyApi::PyObject.new nil
+      rbTraceback = RubyPyApi::PyObject.new nil
+      PythonError.fetch(rbType,rbValue,rbTraceback)
+      PythonError.clear
+      raise PythonError.new(rbType.getAttr("__name__").rubify)
+    end
+    RubyPyApi::RubyPyProxy.new(pymod)
+
   end
 end
 

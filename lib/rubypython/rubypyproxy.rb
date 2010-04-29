@@ -1,7 +1,7 @@
 class RubyPyApi::NullPObjectError < RuntimeError
 end
 
-class RubyPyApi::RubyPyProxy
+class RubyPyApi::RubyPyProxy 
 
   attr_reader :pObject
 
@@ -68,6 +68,10 @@ class RubyPyApi::RubyPyProxy
     end
 
     return _wrap(pReturn)
+  end
+
+  def rubify
+    @pObject.rubify
   end
       
 end

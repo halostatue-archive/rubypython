@@ -1,4 +1,5 @@
 require 'rubypython/blankobject'
+require 'rubypyapi'
 require 'singleton'
 
 #This object is an opaque wrapper around the C PyObject* type used by the python

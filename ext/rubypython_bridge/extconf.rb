@@ -27,10 +27,11 @@ if(!system("which python-config"))
   exit -1
 end
 
-unless find_library("python2.6",nil)||find_library("python2.5",nil)||find_library("python2.4",nil)
-  puts "Could not find python libraries"
-  exit -1
-end
+#unless find_library("python2.6",nil)||find_library("python2.5",nil)||find_library("python2.4",nil)
+#  puts "Could not find python libraries"
+#  exit -1
+#end
+$LDFLAGS << " " + `python-config --ldflags`
 
 if RUBY_VERSION=~/1\.9/ then
 	puts "Building for Ruby 1.9"

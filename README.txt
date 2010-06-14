@@ -26,6 +26,7 @@ to Ruby programmers from within Ruby.
 == REQUIREMENTS:
 	
 	* Python >=2.4, < 3.0
+	* Ruby >=1.8.7
 	
 	Note: Rubypython has been tested on Mac OS 10.5.x and 10.6.1 as well as Ubuntu Jaunty 9.04.
 	

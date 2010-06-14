@@ -1,6 +1,7 @@
 syntax:glob
 *.o
 *.so
+*.bundle
 *.pyc
 *.log
 *~

@@ -1,77 +1,80 @@
-class RubyPyApi::NullPObjectError < RuntimeError
-end
+module RubyPyApi
 
-class RubyPyApi::RubyPyProxy 
-
-  attr_reader :pObject
-
-  def initialize(pObject)
-    @pObject = pObject
+  class NullPObjectError < RuntimeError
   end
 
-  def _setAttr(name, *args)
-    @pObject.setAttr(name, args[0])
-  end
+  class RubyPyProxy 
 
-  def _wrap(pyobject)
-    RubyPyApi::RubyPyProxy.new(pyobject)
-  end
+    attr_reader :pObject
 
-  def method_missing(name, *args, &block)
-    name=name.to_s
-    
-    if(name.end_with? "=")
-      setter=true
-      name.chomp! "="
-    else
-      setter=false
-    end
-    
-    if(!@pObject.hasAttr(name))
-      raise NoMethodError.new(name)
+    def initialize(pObject)
+      @pObject = pObject
     end
 
-    
-    args=RubyPyApi::PyObject.convert(*args)
-
-    if(setter)
-      return _setAttr(name,*args)
+    def _setAttr(name, *args)
+      @pObject.setAttr(name, args[0])
     end
 
-
-    pFunc = @pObject.getAttr(name)
-    
-    if(pFunc.callable?)
-      pTuple=RubyPyApi::PyObject.buildArgTuple(*args)
-      pReturn = pFunc.callObject(pTuple)
-      if(PythonError.error?)
-        rbType = RubyPyApi::PyObject.new nil
-        rbValue = RubyPyApi::PyObject.new nil
-        rbTraceback = RubyPyApi::PyObject.new nil
-
-        #Decrease the reference count. This will happen anyway when they go
-        #out of scope but might as well.
-        rbValue.xDecref
-        rbTraceback.xDecref
-        pyName = rbType.getAttr("__name__")
-        rbType.xDecref
-        rbName=pyName.rubify
-        pyName.xDecref
-        
-        PythonError.fetch(rbType,rbValue,rbTraceback)
-        PythonError.clear
-
-        raise PythonError.new(rbName)
-      end
-    else
-      pReturn = pFunc
+    def _wrap(pyobject)
+      RubyPyApi::RubyPyProxy.new(pyobject)
     end
 
-    return _wrap(pReturn)
-  end
-
-  def rubify
-    @pObject.rubify
-  end
+    def method_missing(name, *args, &block)
+      name=name.to_s
       
+      if(name.end_with? "=")
+	setter=true
+	name.chomp! "="
+      else
+	setter=false
+      end
+      
+      if(!@pObject.hasAttr(name))
+	raise NoMethodError.new(name)
+      end
+
+      
+      args=RubyPyApi::PyObject.convert(*args)
+
+      if(setter)
+	return _setAttr(name,*args)
+      end
+
+
+      pFunc = @pObject.getAttr(name)
+      
+      if(pFunc.callable?)
+	pTuple=RubyPyApi::PyObject.buildArgTuple(*args)
+	pReturn = pFunc.callObject(pTuple)
+	if(PythonError.error?)
+	  rbType = RubyPyApi::PyObject.new nil
+	  rbValue = RubyPyApi::PyObject.new nil
+	  rbTraceback = RubyPyApi::PyObject.new nil
+
+	  #Decrease the reference count. This will happen anyway when they go
+	  #out of scope but might as well.
+	  rbValue.xDecref
+	  rbTraceback.xDecref
+	  pyName = rbType.getAttr("__name__")
+	  rbType.xDecref
+	  rbName=pyName.rubify
+	  pyName.xDecref
+	  
+	  PythonError.fetch(rbType,rbValue,rbTraceback)
+	  PythonError.clear
+
+	  raise PythonError.new(rbName)
+	end
+      else
+	pReturn = pFunc
+      end
+
+      return _wrap(pReturn)
+    end
+
+    def rubify
+      @pObject.rubify
+    end
+	
+  end
 end

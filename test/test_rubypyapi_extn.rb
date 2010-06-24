@@ -1,7 +1,4 @@
-require "test/unit"
-
-$:.unshift File.dirname(__FILE__) + "/../ext/rubypyapi"
-require "rubypyapi.so"
+require File.dirname(__FILE__) + '/test_helper.rb'
 
 class TestRubypyapiBasic < Test::Unit::TestCase
   def test_start_stop

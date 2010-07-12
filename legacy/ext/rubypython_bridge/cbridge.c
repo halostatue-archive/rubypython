@@ -1,6 +1,8 @@
 #include "cbridge.h"
 
-#import "rtop.h"
+#include "rtop.h"
+#include "ptor.h"
+#include "rp_error.h"
 
 /* Attempt to initialize the embedded python interpreter.
   Return 1 if we initialize it here and 0 if the interpreter is
@@ -8,7 +10,7 @@
 */
 int rpSafeStart()
 {
-	int here;
+	int here = 0;
 	
 	if(!Py_IsInitialized())
 	{
@@ -73,10 +75,9 @@ VALUE rpCall(PyObject* pFunc,  VALUE args)
 VALUE rpCallWithModule(VALUE module, VALUE name, VALUE args)
 {
 
-	VALUE rArgs;
 	VALUE rReturn;
 
-	PyObject *pModule, *pFunc, *pArgs, *pReturn;
+	PyObject *pModule, *pFunc;
 
 
 	// Load the requested python module

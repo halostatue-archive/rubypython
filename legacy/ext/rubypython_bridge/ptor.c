@@ -1,5 +1,10 @@
 #include "ptor.h"
 
+#include "rp_error.h"
+#include "rp_function.h"
+#include "rp_instance.h"
+#include "rp_class.h"
+
 
 /* Note:
    The conversion functions for the builtin types are just that,

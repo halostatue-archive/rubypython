@@ -13,9 +13,6 @@ h2. Is it in active development?
        problem should arise. So don't hesitate to contact me if you
        have trouble.
 
-       Also, should anyone wish to take on the main drive of the
-       project and move forward with it, send me an email and we'll talk.
-
 h2. What
 
 	RubyPython is a C bridge between Ruby and Python with a Ruby interface. It's aim is to make the power of the Python's great standard library available to Ruby programmers from within Ruby.
@@ -46,12 +43,6 @@ h2. How to submit patches
 Read the "8 steps for fixing other people's code":http://drnicwilliams.com/2007/06/01/8-steps-for-fixing-other-peoples-code/ and for section "8b: Submit patch to Google Groups":http://drnicwilliams.com/2007/06/01/8-steps-for-fixing-other-peoples-code/#8b-google-groups, use the Google Group above.
 
 You can fetch the source from:
-
-"http://rubyforge.org/scm/?group_id=6737":http://rubyforge.org/scm/?group_id=6737
-
-<pre>git clone git://rubyforge.org/rubypython.git</pre>
-
-or pick it up from github (it's a mirror)
 
 <pre> git clone git://github.org/sentient6/rubypython.git</pre>
 

@@ -19,4 +19,5 @@ VALUE rpObjectFromPyObject(PyObject*);
 int rpHasSymbol(VALUE, ID);
 
 VALUE rpRespondsTo(VALUE, VALUE);
+inline void Init_RubyPyObject();
 #endif

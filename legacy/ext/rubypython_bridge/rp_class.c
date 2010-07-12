@@ -48,7 +48,7 @@ from within ruby. Most users need not concern themselves with anything about thi
 its existence.
 
 */
-void Init_RubyPyClass()
+inline void Init_RubyPyClass()
 {
 	cRubyPyClass = rb_define_class_under(mRubyPythonBridge,"RubyPyClass", cRbPyObj);
 	rb_define_method(cRubyPyClass,"method_missing", rpModuleDelegate,- 2);

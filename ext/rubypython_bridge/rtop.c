@@ -55,7 +55,7 @@ PyObject* rtopArrayToTuple(VALUE rArray)
 
 PyObject* rtopHash(VALUE rHash)
 {
-	PyObject *pDict,*pKey,*pVal;
+	PyObject *pDict;
 	VALUE rKeys;
 	VALUE rKey, rVal;
 	int i;

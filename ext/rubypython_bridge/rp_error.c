@@ -1,4 +1,5 @@
 #include "rp_error.h"
+#include "ptor.h"
 
 VALUE ePythonError;
 VALUE eRubyPyError;
@@ -26,7 +27,7 @@ void rpRubyPyError(char* eString) {
 Used to pass error information back into Ruby should an error occur in the embedded Python
 interpreter.
 */
-void Init_RubyPyError()
+inline void Init_RubyPyError()
 {
 	ePythonError = rb_define_class("PythonError", rb_eException);
 	eRubyPyError = rb_define_class("RubyPyError", rb_eException);

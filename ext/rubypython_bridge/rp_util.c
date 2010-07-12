@@ -2,6 +2,8 @@
 
 #include "rp_object.h"
 #include "rp_function.h"
+#include "rp_instance.h"
+#include "rp_class.h"
 
 RUBY_EXTERN VALUE mRubyPythonBridge;
 RUBY_EXTERN VALUE ePythonError;

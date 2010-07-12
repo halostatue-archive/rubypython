@@ -2,6 +2,7 @@
 
 #include "rp_object.h"
 #include "rp_function.h"
+#include "rp_util.h"
 
 RUBY_EXTERN VALUE mRubyPythonBridge;
 
@@ -39,10 +40,8 @@ VALUE rpInstanceFromPyObject(PyObject* pInst)
 static
 VALUE rpInstanceSetAttr(VALUE self, VALUE args)
 {
-	VALUE name, name_string, rClassDict, result, rInstDict;
-	VALUE ret;
+	VALUE name, name_string, rClassDict, rInstDict;
 	
-	int instance;
 	char* cname;
 	
 	PObj *pClassDict,*pInstDict,*pDict;
@@ -156,7 +155,7 @@ VALUE rpInstanceDelegate(VALUE self, VALUE args)
 }
 
 
-void Init_RubyPyInstance()
+inline void Init_RubyPyInstance()
 {
 	cRubyPyInstance = rb_define_class_under(mRubyPythonBridge,"RubyPyInstance", cRubyPyObject);
 	rb_define_method(cRubyPyInstance,"method_missing", rpInstanceDelegate,- 2);

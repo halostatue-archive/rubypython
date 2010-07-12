@@ -10,6 +10,7 @@
 #include "rp_module.h"
 #include "rp_class.h"
 #include "rp_function.h"
+#include "rp_instance.h"
 
 VALUE mRubyPythonBridge;
 

@@ -2,6 +2,7 @@
 
 #include "rp_object.h"
 #include "rp_function.h"
+#include "rp_util.h"
 
 VALUE cRubyPyModule;
 
@@ -10,21 +11,21 @@ RUBY_EXTERN VALUE cRubyPyFunction;
 RUBY_EXTERN VALUE cRubyPyClass;
 RUBY_EXTERN VALUE cRubyPyObject;
 
-static
-VALUE rpModuleCallFunction(VALUE self, VALUE func_name, VALUE args)
-{
-	PyObject *pModule,*pFunc;
-	VALUE rReturn;
-	
-	pModule = rpObjectGetPyObject(self);
-	
-	pFunc = rpGetFunctionWithModule(pModule, func_name);
-	rReturn = rpCall(pFunc, args);
-	Py_XDECREF(pFunc);
-	
-	return rReturn;
-	
-}
+//static
+//VALUE rpModuleCallFunction(VALUE self, VALUE func_name, VALUE args)
+//{
+//	PyObject *pModule,*pFunc;
+//	VALUE rReturn;
+//	
+//	pModule = rpObjectGetPyObject(self);
+//	
+//	pFunc = rpGetFunctionWithModule(pModule, func_name);
+//	rReturn = rpCall(pFunc, args);
+//	Py_XDECREF(pFunc);
+//	
+//	return rReturn;
+//	
+//}
 
 //:nodoc:
 static
@@ -151,7 +152,7 @@ return either the equivalent attribute converted to a native Ruby type, or wrapp
 to a Python object. RubyPyModule instances should be created through the use of RubyPython.import.
 
 */
-void Init_RubyPyModule()
+inline void Init_RubyPyModule()
 {
 	cRubyPyModule = rb_define_class_under(mRubyPythonBridge,"RubyPyModule", cRubyPyObject);
 	rb_define_method(cRubyPyModule,"initialize", rpModuleInit, 1);

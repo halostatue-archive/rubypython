@@ -32,12 +32,12 @@ end
 #  exit -1
 #end
 $LDFLAGS << " " + `python-config --ldflags`
+$CPPFLAGS << " " + `python-config --includes`.chomp
 
 if RUBY_VERSION=~/1\.9/ then
 	puts "Building for Ruby 1.9"
 	$CPPFLAGS += " -DRUBY_19"
 end
 
-find_header("Python.h",*`python-config --includes`.split.map{|s| s[2..-1]<<"/"})
 
 create_makefile("rubypython_bridge")

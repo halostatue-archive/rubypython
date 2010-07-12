@@ -6,5 +6,6 @@
 void rpPythonError();
 
 void rpRubyPyError(char*);
+inline void Init_RubyPyError();
 
 #endif /* _RP_ERROR_H_ */

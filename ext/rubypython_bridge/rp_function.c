@@ -25,7 +25,7 @@ VALUE rpFunctionFromPyObject(PyObject *pFunc)
 // This is used internally to aid RubyPyClass in delegating method calls.
 // 
 
-void Init_RubyPyFunction()
+inline void Init_RubyPyFunction()
 {
 	cRubyPyFunction = rb_define_class_under(mRubyPythonBridge,"RubyPyFunction", cRubyPyObject);
 }

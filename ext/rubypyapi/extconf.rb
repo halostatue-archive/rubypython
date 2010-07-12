@@ -34,14 +34,13 @@ end
 #  exit -1
 #end
 
-$LDFLAGS << " " + `python-config --ldflags`
+$LDFLAGS << " " + `python-config --ldflags`.chomp
+$CPPFLAGS << " " + `python-config --includes`.chomp
 
 if RUBY_VERSION=~/1\.9/ then
 	puts "Building for Ruby 1.9"
 	$CPPFLAGS += " -DRUBY_19"
 end
-
-find_header("Python.h",*`python-config --includes`.split.map{|s| s[2..-1]<<"/"})
 
 
 create_makefile("rubypyapi")

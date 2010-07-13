@@ -1,3 +1,7 @@
+== 0.2.11 2010-07-12
+* Bug Fixes
+	* Fixed some issues with building the extension under ruby 1.9. Sould now be truly 1.9 compatible.
+
 == 0.2.10 2010-07-08
 * Bug Fixes
 	* Made some changes to how the native extension is configured and build.

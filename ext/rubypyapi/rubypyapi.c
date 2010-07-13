@@ -44,8 +44,8 @@ void
 Init_rubypyapi()
 {
   mRubyPyApi = rb_define_module("RubyPyApi");
-  rb_define_module_function(mRubyPyApi, "start", rp_start, 0);
-  rb_define_module_function(mRubyPyApi, "stop", rp_stop, 0);
+  //rb_define_module_function(mRubyPyApi, "start", rp_start, 0);
+  //rb_define_module_function(mRubyPyApi, "stop", rp_stop, 0);
 
   Init_RubyPyObject();
   Init_RubyPyImport();

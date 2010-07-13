@@ -241,7 +241,6 @@ end
 
 
 class TestRubyPyApi_PythonError < Test::Unit::TestCase
-
   def setup
     RubyPyApi.start
   end
@@ -389,10 +388,9 @@ class TestRubyPyApi_PyProxy < Test::Unit::TestCase
     pyAsciiLetters = pyStringModule.getAttr("ascii_letters")    
     
     pyStringProxy = RubyPyApi::RubyPyProxy.new(pyStringModule)
-    pyLettersProxy=pyStringProxy.letters
 
     assert_equal(pyAsciiLetters.rubify,
-                 pyStringProxy.letters.pObject.rubify,
+                 pyStringProxy.ascii_letters.pObject.rubify,
                  "Different methods of getting attr return different values.")
 
   end
@@ -414,6 +412,7 @@ end
 
 class TestRubyPyApi_CustomTestObject < Test::Unit::TestCase
   def setup
+    require File.dirname(__FILE__) + "/../lib/rubypython/rubypyproxy"
     RubyPyApi.start
   end
 

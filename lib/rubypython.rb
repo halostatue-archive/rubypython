@@ -1,4 +1,5 @@
 require 'rubypython/wrapper_extensions'
+require 'rubypython/rubypyproxy'
 
 =begin rdoc
 This module provides the direct user interface for the RubyPython extension.
@@ -25,6 +26,8 @@ module RubyPython
 
   def self.stop
     RubyPyApi.stop
+    PyMain.main = nil
+    PyMain.builtin = nil
   end
 
   def self.import(mod)

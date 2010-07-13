@@ -131,8 +131,7 @@ VALUE ptorObject(PyObject* pObj)
 	VALUE rObj = (VALUE) NULL;
 
 	// Test the Python object vs various types and convert / wrap it
-	// appropriately. If the destructive flag is set, we destroy
-	// the original.
+	// appropriately.
 
 	if(PyObject_TypeCheck(pObj,&PyString_Type))
 	{
@@ -174,7 +173,7 @@ VALUE ptorObject(PyObject* pObj)
 	{
 		rObj = Qnil;
 	}
-	if(!rObj)
+	if(!pObj)
 		rObj = Qnil;
 
 	// Fallthrough behavior: The object is a class which should be wrapped

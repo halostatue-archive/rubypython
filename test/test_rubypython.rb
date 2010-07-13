@@ -37,10 +37,10 @@ class TestRubypython < Test::Unit::TestCase
   end
 
   def test_pymain_delegation
-    pyFloat = PyMain.float(42.0)
+    pyFloat = PyMain.float(42)
     assert_equal(42.to_f,
-                 pyFloat.pObject.rubify,
-                 "Integer conversion problems in Python.")
+		 pyFloat.pObject.rubify,
+		 "Integer conversion problems in Python.")
     
   end
 
@@ -49,11 +49,9 @@ class TestRubypython < Test::Unit::TestCase
     returned = PyMain.float(22) do |f|
       f.rubify*2
     end
-    
     assert_equal(44.0,
                  returned,
                  "Wrapped Python object failed to correctly utilize block syntax.")
-    
   end
     
   def test_setter_ary

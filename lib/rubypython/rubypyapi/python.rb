@@ -21,21 +21,33 @@ module RubyPyApi
 
     #String Conversion
     attach_function :PyString_AsString, [:pointer], :string
+    attach_function :PyString_FromString, [:string], :pointer
 
     #List Conversion
     attach_function :PyList_GetItem, [:pointer, :int], :pointer
     attach_function :PyList_Size, [:pointer], :int
+    attach_function :PyList_New, [:int], :pointer
+    attach_function :PyList_SetItem, [:pointer, :int, :pointer], :void
 
     #Integer Conversion
     attach_function :PyInt_AsLong, [:pointer], :long
+    attach_function :PyInt_FromLong, [:long], :pointer
 
     attach_function :PyLong_AsLong, [:pointer], :long
+    attach_function :PyLong_FromLong, [:pointer], :long
 
     #Float Conversion
+    attach_function :PyFloat_AsDouble, [:pointer], :double
+    attach_function :PyFloat_FromDouble, [:double], :pointer
+
+    #Tuple Conversion
     attach_function :PySequence_List, [:pointer], :pointer
+    attach_function :PySequence_Tuple, [:pointer], :pointer
 
     #Dict/Hash Conversion
     attach_function :PyDict_Next, [:pointer, :pointer, :pointer, :pointer], :int
+    attach_function :PyDict_New, [], :pointer
+    attach_function :PyDict_SetItem, [:pointer, :pointer, :pointer], :void
 
     #Type Objects
     attach_variable :PyString_Type, :pointer

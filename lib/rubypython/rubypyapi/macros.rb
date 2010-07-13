@@ -14,7 +14,9 @@ module RubyPyApi
     attach_function :rpPyObject_mTypeCheck, [:pointer, :pointer], :int
 
     attach_function :rpPy_mTrue, [], :pointer
+    attach_function :rpPy_mRETURN_TRUE, [], :pointer
     attach_function :rpPy_mFalse, [], :pointer
+    attach_function :rpPy_mRETURN_FALSE, [], :pointer
     attach_function :rpPy_mNone, [], :pointer
 
     attach_function :rpPy_mXINCREF, [:pointer], :void

@@ -1,5 +1,7 @@
 require 'rubypython/rubypyapi/python'
 require 'rubypython/rubypyapi/macros'
+require 'rubypython/rubypyapi/ptor'
+require 'rubypython/rubypyapi/rtop'
 
 module RubyPyApi
 

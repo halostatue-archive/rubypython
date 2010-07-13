@@ -4,6 +4,12 @@ require 'rubypython/rubypyapi/ptor'
 require 'rubypython/rubypyapi/rtop'
 
 module RubyPyApi
+  class FFIPyObject
+    attr :pObject
+    def initialize(pobject)
+      @pObject = pobject
+    end
+  end
 
   def self.start
     if Python.Py_IsInitialized != 0
@@ -19,6 +25,20 @@ module RubyPyApi
       return true
     end
     false
+  end
+
+  def dictContains(rbPyDict, rbPyKey)
+    Python.PyDict_Contains(rbPyDict.pObject, rbPyKey.pObject) != 0
+  end
+
+  def dictGetItem(rbPyDict, rbPyKey)
+    pyRetVal = Python.PyDict_GetItem(rbPyDict.pObject, rbPyKey.pObject)
+    FFIPyObject.new pyRetVal
+  end
+
+  def dictSetItem(rbPyDict, rbPyKey, rbPyItem)
+    status = PyDict_SetItem rbPyDict.pObject, rbyPyKey.pObject, rbPyItem.pObject
+    status != 0
   end
 
 end

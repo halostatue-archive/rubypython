@@ -19,35 +19,37 @@ module RubyPyApi
 
     ###Python To Ruby Conversion
 
-    #String Conversion
+    #String Methods
     attach_function :PyString_AsString, [:pointer], :string
     attach_function :PyString_FromString, [:string], :pointer
 
-    #List Conversion
+    #List Methods
     attach_function :PyList_GetItem, [:pointer, :int], :pointer
     attach_function :PyList_Size, [:pointer], :int
     attach_function :PyList_New, [:int], :pointer
     attach_function :PyList_SetItem, [:pointer, :int, :pointer], :void
 
-    #Integer Conversion
+    #Integer Methods
     attach_function :PyInt_AsLong, [:pointer], :long
     attach_function :PyInt_FromLong, [:long], :pointer
 
     attach_function :PyLong_AsLong, [:pointer], :long
     attach_function :PyLong_FromLong, [:pointer], :long
 
-    #Float Conversion
+    #Float Methods
     attach_function :PyFloat_AsDouble, [:pointer], :double
     attach_function :PyFloat_FromDouble, [:double], :pointer
 
-    #Tuple Conversion
+    #Tuple Methods
     attach_function :PySequence_List, [:pointer], :pointer
     attach_function :PySequence_Tuple, [:pointer], :pointer
 
-    #Dict/Hash Conversion
+    #Dict/Hash Methods
     attach_function :PyDict_Next, [:pointer, :pointer, :pointer, :pointer], :int
     attach_function :PyDict_New, [], :pointer
-    attach_function :PyDict_SetItem, [:pointer, :pointer, :pointer], :void
+    attach_function :PyDict_SetItem, [:pointer, :pointer, :pointer], :int
+    attach_function :PyDict_Contains, [:pointer, :pointer], :int
+    attach_function :PyDict_GetItem, [:pointer, :pointer], :pointer
 
     #Type Objects
     attach_variable :PyString_Type, :pointer

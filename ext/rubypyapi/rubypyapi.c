@@ -1,4 +1,5 @@
 #include <ruby.h>
+#include "py_macro.h"
 
 
 VALUE mRubyPyApi;

@@ -24,6 +24,7 @@ module RubyPyApi
 
     #List Conversion
     attach_function :PyList_GetItem, [:pointer, :int], :pointer
+    attach_function :PyList_Size, [:pointer], :int
 
     #Integer Conversion
     attach_function :PyInt_AsLong, [:pointer], :long
@@ -36,7 +37,13 @@ module RubyPyApi
     #Dict/Hash Conversion
     attach_function :PyDict_Next, [:pointer, :pointer, :pointer, :pointer], :int
 
-    #Type Check
-
+    #Type Objects
+    attach_variable :PyString_Type, :pointer
+    attach_variable :PyList_Type, :pointer
+    attach_variable :PyInt_Type, :pointer
+    attach_variable :PyLong_Type, :pointer
+    attach_variable :PyFloat_Type, :pointer
+    attach_variable :PyTuple_Type, :pointer
+    attach_variable :PyDict_Type, :pointer
   end
 end

@@ -1,3 +1,6 @@
+require 'rubypython/rubypyapi/py_error'
+require 'rubypython/rubypyapi/py_object'
+
 module RubyPyApi
 
   class NullPObjectError < RuntimeError

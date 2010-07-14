@@ -1,5 +1,7 @@
 require 'rubypython/rubypyapi'
 require 'rubypython/rubypyproxy'
+require 'rubypython/blankobject'
+require 'singleton'
 
 =begin rdoc
 This module provides the direct user interface for the RubyPython extension.

@@ -58,13 +58,13 @@ module RubyPyApi
     end
 
     def functionOrMethod?
-      isFunc = (Macros.rbPyObject_mTypeCheck(@pObject, Python.PyFunction_Type.to_ptr) != 0)
-      isMethod = (Macros.rbPyObject_mTypeCheck(@pObject, Python.PyMethod_Type.to_ptr) != 0)
+      isFunc = (Macros.rpPyObject_mTypeCheck(@pObject, Python.PyFunction_Type.to_ptr) != 0)
+      isMethod = (Macros.rpPyObject_mTypeCheck(@pObject, Python.PyMethod_Type.to_ptr) != 0)
       isFunc or isMethod
     end
 
     def callable?
-      Macros.rbPyCallable_mCheck @pObject
+      Macros.rpPyCallable_mCheck @pObject
     end
 
     def self.makeTuple(rbObject)
@@ -75,9 +75,9 @@ module RubyPyApi
       listType.write_pointer Python.PyList_Type
       tupleType.write_pointer Python.PyTuple_Type
 
-      if Macros.rbPyObject_mTypeCheck(rbObject.pObject, listType) != 0
+      if Macros.rpPyObject_mTypeCheck(rbObject.pObject, listType) != 0
         pTuple = Python.PySequence_Tuple(rbObject.pObject)
-      elsif Macros.rbPyObject_mTypeCheck(rbObject.pObject, tupleType) != 0
+      elsif Macros.rpPyObject_mTypeCheck(rbObject.pObject, tupleType) != 0
         ptuple = rbObject.pObject
       else
         pTuple = Python.PyTuple_Pack(1, rbObject.pObject)

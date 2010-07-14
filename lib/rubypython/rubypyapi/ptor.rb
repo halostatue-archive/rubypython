@@ -57,26 +57,24 @@ module RubyPyApi
 	rb_hash[rKey] = rVal
       end
 
-      return rb_hash
+      rb_hash
     end
 
       
     def self.ptorObject(pObj)
-      rObj = nil
-
-      if Macros.rpPyObject_mTypeCheck(pObj, Python.PyString_Type.to_ptr)
+      if Macros.rpPyObject_mTypeCheck(pObj, Python.PyString_Type.to_ptr) != 0
 	ptorString pObj
-      elsif Macros.rpPyObject_mTypeCheck(pObj, Python.PyList_Type.to_ptr)
+      elsif Macros.rpPyObject_mTypeCheck(pObj, Python.PyList_Type.to_ptr) != 0
 	ptorList pObj
-      elsif Macros.rpPyObject_mTypeCheck(pObj, Python.PyInt_Type.to_ptr)
+      elsif Macros.rpPyObject_mTypeCheck(pObj, Python.PyInt_Type.to_ptr) != 0
 	ptorInt pObj
-      elsif Macros.rpPyObject_mTypeCheck(pObj, Python.PyLong_Type.to_ptr)
+      elsif Macros.rpPyObject_mTypeCheck(pObj, Python.PyLong_Type.to_ptr) != 0
 	ptorLong pObj
-      elsif Macros.rpPyObject_mTypeCheck(pObj, Python.PyFloat_Type.to_ptr)
+      elsif Macros.rpPyObject_mTypeCheck(pObj, Python.PyFloat_Type.to_ptr) != 0
 	ptorFloat pObj
-      elsif Macros.rpPyObject_mTypeCheck(pObj, Python.PyTuple_Type.to_ptr)
+      elsif Macros.rpPyObject_mTypeCheck(pObj, Python.PyTuple_Type.to_ptr) != 0
 	ptorTuple pObj
-      elsif Macros.rpPyObject_mTypeCheck(pObj, Python.PyDict_Type.to_ptr)
+      elsif Macros.rpPyObject_mTypeCheck(pObj, Python.PyDict_Type.to_ptr) != 0
 	ptorDict pObj
       elsif pObj == Macros.rpPy_mTrue
 	true

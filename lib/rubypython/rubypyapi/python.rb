@@ -36,6 +36,7 @@ module RubyPyApi
     attach_function :PyObject_Compare, [:pointer, :pointer], :int
 
     attach_function :PyObject_CallObject, [:pointer, :pointer], :int
+    attach_function :PyCallable_Check, [:pointer], :int
 
     ###Python To Ruby Conversion
     #String Methods
@@ -86,6 +87,10 @@ module RubyPyApi
     attach_variable :PyDict_Type, DummyStruct.by_value
     attach_variable :PyFunction_Type, DummyStruct.by_value
     attach_variable :PyMethod_Type, DummyStruct.by_value
+
+    attach_variable :Py_TrueStruct, :_Py_TrueStruct, DummyStruct.by_value
+    attach_variable :Py_ZeroStruct, :_Py_ZeroStruct, DummyStruct.by_value
+    attach_variable :Py_NoneStruct, :_Py_NoneStruct, DummyStruct.by_value
 
     class PyObjectStruct < FFI::Struct
       layout :ob_refcnt, :int,

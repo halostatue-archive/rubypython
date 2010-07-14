@@ -81,5 +81,12 @@ module RubyPyApi
     attach_variable :PyDict_Type, DummyStruct.by_value
     attach_variable :PyFunction_Type, DummyStruct.by_value
     attach_variable :PyMethod_Type, DummyStruct.by_value
+
+
+    class PyObjectStruct < FFI::Struct
+      layout :ob_refcnt, :int,
+        :ob_type, :pointer
+    end
+
   end
 end

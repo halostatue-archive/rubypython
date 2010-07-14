@@ -32,15 +32,15 @@ module RubyPyApi
     end
 
     def self.rtopFixnum(rNum)
-      PyInt_FromLong(rNum)
+      Python.PyInt_FromLong(rNum)
     end
 
     def self.rtopBigNum(rNum)
-      PyLong_FromLong(cNum)
+      Python.PyLong_FromLong(cNum)
     end
 
     def self.rtopFloat(rNum)
-      PyFloat_FromDouble(rNum)
+      Python.PyFloat_FromDouble(rNum)
     end
 
     def self.rtopFalse

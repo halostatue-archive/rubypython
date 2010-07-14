@@ -58,12 +58,8 @@ module RubyPyApi
     end
 
     def functionOrMethod?
-      funcType = FFI::MemoryPointer.new :pointer
-      methodType = FFI::MemoryPointer.new :pointer
-      funcType.write_pointer Python.PyFunction_Type
-      methodType.write_pointer Python.PyMethod_Type
-      isFunc = (Macros.rbPyObject_mTypeCheck(@pObject, funcType) != 0)
-      isMethod = (Macros.rbPyObject_mTypeCheck(@pObject, methodType) != 0)
+      isFunc = (Macros.rbPyObject_mTypeCheck(@pObject, Python.PyFunction_Type.to_ptr) != 0)
+      isMethod = (Macros.rbPyObject_mTypeCheck(@pObject, Python.PyMethod_Type.to_ptr) != 0)
       isFunc or isMethod
     end
 

@@ -62,57 +62,29 @@ module RubyPyApi
 
       
     def ptorObject(pObj)
-      pointer = FFI::MemoryPointer.new :pointer
       rObj = nil
 
-      pointer.write_pointer Python.PyString_Type
-      if Macros.rpPyObject_mTypeCheck(pObj, pointer)
-	rObj = ptorString pObj
+      if Macros.rpPyObject_mTypeCheck(pObj, Python.PyString_Type.to_ptr)
+	ptorString pObj
+      elsif Macros.rpPyObject_mTypeCheck(pObj, Python.PyList_Type.to_ptr)
+	ptorList pObj
+      elsif Macros.rpPyObject_mTypeCheck(pObj, Python.PyInt_Type.to_ptr)
+	ptorInt pObj
+      elsif Macros.rpPyObject_mTypeCheck(pObj, Python.PyLong_Type.to_ptr)
+	ptorLong pObj
+      elsif Macros.rpPyObject_mTypeCheck(pObj, Python.PyFloat_Type.to_ptr)
+	ptorFloat pObj
+      elsif Macros.rpPyObject_mTypeCheck(pObj, Python.PyTuple_Type.to_ptr)
+	ptorTuple pObj
+      elsif Macros.rpPyObject_mTypeCheck(pObj, Python.PyDict_Type.to_ptr)
+	ptorDict pObj
+      elsif pObj == Macros.rpPy_mTrue
+	true
+      elsif pObj == Macros.rpPy_mFalse
+	false
+      elsif pObj == Macros.rpPy_mNone
+	nil
       end
-
-      pointer.write_pointer Python.PyList_Type
-      if Macros.rpPyObject_mTypeCheck(pObj, pointer)
-	rObj = ptorList pObj
-      end
-
-      pointer.write_pointer Python.PyInt_Type
-      if Macros.rpPyObject_mTypeCheck(pObj, pointer)
-	rObj = ptorInt pObj
-      end
-
-      pointer.write_pointer Python.PyLong_Type
-      if Macros.rpPyObject_mTypeCheck(pObj, pointer)
-	rObj = ptorLong pObj
-      end
-
-      pointer.write_pointer Python.PyFloat_Type
-      if Macros.rpPyObject_mTypeCheck(pObj, pointer)
-	rObj = ptorFloat pObj
-      end
-
-      pointer.write_pointer Python.PyTuple_Type
-      if Macros.rpPyObject_mTypeCheck(pObj, pointer)
-	rObj = ptorTuple pObj
-      end
-
-      pointer.write_pointer Python.PyDict_Type
-      if Macros.rpPyObject_mTypeCheck(pObj, pointer)
-	rObj = ptorDict pObj
-      end
-
-      if pObj == Macros.rpPy_mTrue
-	rObj = true
-      end
-
-      if pObj == Macros.rpPy_mFalse
-	rObj = false
-      end
-
-      if pObj == Macros.rpPy_mNone
-	rObj = nil
-      end
-
-      rObj
     end
 
   end

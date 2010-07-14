@@ -12,6 +12,10 @@ module RubyPyApi
      "/lib/#{PYTHON_NAME}/config/#{LIB_NAME}.#{LIB_EXT}"
     ffi_lib LIB
 
+    class DummyStruct < FFI::Struct
+      layout :dummy_var, :int
+    end
+
     #Python interpreter startup and shutdown
     attach_function :Py_IsInitialized, [], :int
     attach_function :Py_Initialize, [], :void
@@ -59,14 +63,14 @@ module RubyPyApi
     attach_function :PyDict_GetItem, [:pointer, :pointer], :pointer
 
     #Type Objects
-    attach_variable :PyString_Type, :pointer
-    attach_variable :PyList_Type, :pointer
-    attach_variable :PyInt_Type, :pointer
-    attach_variable :PyLong_Type, :pointer
-    attach_variable :PyFloat_Type, :pointer
-    attach_variable :PyTuple_Type, :pointer
-    attach_variable :PyDict_Type, :pointer
-    attach_variable :PyFunction_Type, :pointer
-    attach_variable :PyMethod_Type, :pointer
+    attach_variable :PyString_Type, DummyStruct.by_value
+    attach_variable :PyList_Type, DummyStruct.by_value
+    attach_variable :PyInt_Type, DummyStruct.by_value
+    attach_variable :PyLong_Type, DummyStruct.by_value
+    attach_variable :PyFloat_Type, DummyStruct.by_value
+    attach_variable :PyTuple_Type, DummyStruct.by_value
+    attach_variable :PyDict_Type, DummyStruct.by_value
+    attach_variable :PyFunction_Type, DummyStruct.by_value
+    attach_variable :PyMethod_Type, DummyStruct.by_value
   end
 end

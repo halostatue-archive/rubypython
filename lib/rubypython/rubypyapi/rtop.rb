@@ -3,11 +3,11 @@ require 'rubypython/rubypyapi/macros'
 
 module RubyPyApi
   module RTOP
-    def rtopString(rString)
+    def self.rtopString(rString)
       Python.PyString_FromString(rString)
     end
 
-    def rtopArrayToList(rArray)
+    def self.rtopArrayToList(rArray)
       size = rArray.length
       pList = Python.PyList_New size
       rArray.each_with_index do |el, i|
@@ -16,14 +16,14 @@ module RubyPyApi
       pList
     end
 
-    def rtopArrayToTuple(rArray)
+    def self.rtopArrayToTuple(rArray)
       pList = rtopArrayToList(rArray)
       pTuple = Python.PySequence_Tuple(pList)
       Macros.rpPy_mXDECREF(pList)
       pTuple
     end
 
-    def rtopHash(rHash)
+    def self.rtopHash(rHash)
       pDict = Python.PyDict_New
       rHash.each do |k,v|
         Python.PyDict_SetItem pDict, rtopObject(k, key=true), rtopObject(v)
@@ -31,31 +31,31 @@ module RubyPyApi
       pDict
     end
 
-    def rtopFixnum(rNum)
+    def self.rtopFixnum(rNum)
       PyInt_FromLong(rNum)
     end
 
-    def rtopBigNum(rNum)
+    def self.rtopBigNum(rNum)
       PyLong_FromLong(cNum)
     end
 
-    def rtopFloat(rNum)
+    def self.rtopFloat(rNum)
       PyFloat_FromDouble(rNum)
     end
 
-    def rtopFalse
+    def self.rtopFalse
       Macros.rpPy_mRETURN_FALSE
     end
 
-    def rtopTrue
+    def self.rtopTrue
       Macros.rpPy_mRETURN_TRUE
     end
 
-    def rtopSymbol(rSymbol)
+    def self.rtopSymbol(rSymbol)
       Python.PyString_FromString rSymbol.to_s
     end
 
-    def rtopObject(rObj, is_key=false)
+    def self.rtopObject(rObj, is_key=false)
       case rObj
       when String
         rtopString rObj

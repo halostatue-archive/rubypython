@@ -4,11 +4,11 @@ require 'rubypython/rubypyapi/macros'
 module RubyPyApi
   module PTOR
 
-    def ptorString(pString)
+    def self.ptorString(pString)
       Python.PyString_AsString(pString)
     end
 
-    def ptorList(pList)
+    def self.ptorList(pList)
       rb_array = []
       list_size = Python.PyList_Size(pList)
       
@@ -22,27 +22,27 @@ module RubyPyApi
       rb_array
     end
 
-    def ptorInt(pNum)
+    def self.ptorInt(pNum)
       Python.PyInt_AsLong pNum
     end
 
-    def ptorLong(pNum)
+    def self.ptorLong(pNum)
       Python.PyLong_AsLong(pNum)
       #TODO Overflow Checking
     end
 
-    def ptorFloat(pNum)
+    def self.ptorFloat(pNum)
       Python.PyFloat_AsDouble(pNum)
     end
 
-    def ptorTuple(pTuple)
+    def self.ptorTuple(pTuple)
       pList = Python.PySequence_List pTuple
       rArray = ptorList pList
       Macros.rpPy_mXDECREF pList
       rArray
     end
 
-    def ptorDict(pDict)
+    def self.ptorDict(pDict)
       rb_hash = {}
 
       pos = FFI::MemoryPointer.new :int
@@ -61,7 +61,7 @@ module RubyPyApi
     end
 
       
-    def ptorObject(pObj)
+    def self.ptorObject(pObj)
       rObj = nil
 
       if Macros.rpPyObject_mTypeCheck(pObj, Python.PyString_Type.to_ptr)

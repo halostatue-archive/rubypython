@@ -71,6 +71,11 @@ module RubyPyApi
     attach_function :PyDict_Contains, [:pointer, :pointer], :int
     attach_function :PyDict_GetItem, [:pointer, :pointer], :pointer
 
+    #Error Methods
+    attach_function :PyErr_Fetch, [:pointer, :pointer, :pointer], :void
+    attach_function :PyErr_Occurred, [], :pointer
+    attach_function :PyErr_Clear, [], :void
+
     #Type Objects
     attach_variable :PyString_Type, DummyStruct.by_value
     attach_variable :PyList_Type, DummyStruct.by_value
@@ -81,7 +86,6 @@ module RubyPyApi
     attach_variable :PyDict_Type, DummyStruct.by_value
     attach_variable :PyFunction_Type, DummyStruct.by_value
     attach_variable :PyMethod_Type, DummyStruct.by_value
-
 
     class PyObjectStruct < FFI::Struct
       layout :ob_refcnt, :int,

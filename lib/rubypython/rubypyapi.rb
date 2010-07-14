@@ -37,7 +37,7 @@ module RubyPyApi
 
   def self.dictGetItem(rbPyDict, rbPyKey)
     pyRetVal = Python.PyDict_GetItem(rbPyDict.pObject, rbPyKey.pObject)
-    FFIPyObject.new pyRetVal
+    PyObject.new pyRetVal
   end
 
   def self.dictSetItem(rbPyDict, rbPyKey, rbPyItem)

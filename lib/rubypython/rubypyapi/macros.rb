@@ -1,5 +1,4 @@
 require 'ffi'
-require 'rubypython/rubypyapi/python'
 
 module RubyPyApi
   module Macros

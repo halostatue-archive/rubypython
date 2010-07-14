@@ -7,7 +7,7 @@ require 'ffi'
 module RubyPyApi
 
   class PyObject
-    attr :pObject
+    attr_accessor :pObject
 
     def initialize(rObject, has_pobject=true)
       if has_pobject
@@ -69,15 +69,10 @@ module RubyPyApi
 
     def self.makeTuple(rbObject)
       pTuple = nil
-      listType = FFI::MemoryPointer.new :pointer
-      tupleType = FFI::MemoryPointer.new :pointer
 
-      listType.write_pointer Python.PyList_Type
-      tupleType.write_pointer Python.PyTuple_Type
-
-      if Macros.rpPyObject_mTypeCheck(rbObject.pObject, listType) != 0
+      if Macros.rpPyObject_mTypeCheck(rbObject.pObject, Python.PyList_Type.to_ptr) != 0
         pTuple = Python.PySequence_Tuple(rbObject.pObject)
-      elsif Macros.rpPyObject_mTypeCheck(rbObject.pObject, tupleType) != 0
+      elsif Macros.rpPyObject_mTypeCheck(rbObject.pObject, Python.PyTuple_Type.to_ptr) != 0
         ptuple = rbObject.pObject
       else
         pTuple = Python.PyTuple_Pack(1, rbObject.pObject)

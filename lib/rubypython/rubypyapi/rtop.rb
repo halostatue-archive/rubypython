@@ -63,13 +63,13 @@ module RubyPyApi
         # If this object is going to be used as a
         # hash key we should make it a tuple instead
         # of a list
-        if is_key pObj
-          rtopArrayToTuple(rObj)
+        if is_key
+          rtopArrayToTuple rObj
         else
-          rtopArrayToList(robj)
+          rtopArrayToList rObj
         end
       when Hash
-        rtopHash(rObj)
+        rtopHash rObj
       when Fixnum
         rtopFixnum rObj
       when Bignum

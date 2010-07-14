@@ -5,18 +5,10 @@ module RubyPyApi
   module PTOR
 
     def ptorString(pString)
-      if Macros.rpPyString_mCheck(pString) == 0
-	return nil
-      end
-
-      return Python.PyString_AsString(pString)
+      Python.PyString_AsString(pString)
     end
 
     def ptorList(pList)
-      if Macros.rpPyList_mCheck(pList) == 0
-	return nil
-      end
-
       rb_array = []
       list_size = Python.PyList_Size(pList)
       
@@ -31,47 +23,26 @@ module RubyPyApi
     end
 
     def ptorInt(pNum)
-      if Macros.rpPyInt_mCheck(pNum) == 0
-	return nil
-      end
-
       Python.PyInt_AsLong pNum
     end
 
     def ptorLong(pNum)
-      if Macros.rpPyLong_mCheck(pNum) == 0
-	return nil
-      end
-
       Python.PyLong_AsLong(pNum)
       #TODO Overflow Checking
     end
 
     def ptorFloat(pNum)
-      if Macros.rpPyFloat_mCheck(pNum) == 0
-	return nil
-      end
-
       Python.PyFloat_AsDouble(pNum)
     end
 
     def ptorTuple(pTuple)
-      if Macros.rpPyTuple_mCheck(pNum) == 0
-	return nil
-      end
-
       pList = Python.PySequence_List pTuple
       rArray = ptorList pList
       Macros.rpPy_mXDECREF pList
-
       rArray
     end
 
     def ptorDict(pDict)
-      if Macros.rpPyDict_Check(pDict) == 0
-	return Qnil
-      end
-
       rb_hash = {}
 
       pos = FFI::MemoryPointer.new :int

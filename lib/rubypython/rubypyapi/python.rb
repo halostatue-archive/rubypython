@@ -17,8 +17,14 @@ module RubyPyApi
     attach_function :Py_Initialize, [], :void
     attach_function :Py_Finalize, [], :void
 
-    ###Python To Ruby Conversion
+    #Object Methods
+    attach_function :PyObject_HasAttrString, [:pointer, :string], :int
+    attach_function :PyObject_GetAttrString, [:pointer, :string], :pointer
+    attach_function :PyObject_SetAttrString, [:pointer, :string, :pointer], :int
 
+    attach_function :PyObject_Compare, [:pointer, :pointer], :int
+
+    ###Python To Ruby Conversion
     #String Methods
     attach_function :PyString_AsString, [:pointer], :string
     attach_function :PyString_FromString, [:string], :pointer
@@ -43,6 +49,7 @@ module RubyPyApi
     #Tuple Methods
     attach_function :PySequence_List, [:pointer], :pointer
     attach_function :PySequence_Tuple, [:pointer], :pointer
+    attach_function :PyTuple_Pack, [:int, :varargs], :pointer
 
     #Dict/Hash Methods
     attach_function :PyDict_Next, [:pointer, :pointer, :pointer, :pointer], :int
@@ -59,5 +66,7 @@ module RubyPyApi
     attach_variable :PyFloat_Type, :pointer
     attach_variable :PyTuple_Type, :pointer
     attach_variable :PyDict_Type, :pointer
+    attach_variable :PyFunction_Type, :pointer
+    attach_variable :PyMethod_Type, :pointer
   end
 end

@@ -2,6 +2,7 @@
 #define __PY_MACRO_H_
 #include "config.h"
 
+int rpPyCallable_mCheck(PyObject*);
 int rpPyObject_mTypeCheck(PyObject*, PyTypeObject*);
 PyObject* rpPy_mTrue();
 PyObject* rpPy_mRETURN_TRUE();

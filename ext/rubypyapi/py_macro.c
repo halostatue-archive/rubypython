@@ -1,5 +1,9 @@
 #include "py_macro.h"
 
+int rpPyCallable_mCheck(PyObject* obj) {
+        return PyCallable_Check(obj);
+}
+
 int rpPyObject_mTypeCheck(PyObject* obj, PyTypeObject* type) {
 	return PyObject_TypeCheck(obj, type);
 }

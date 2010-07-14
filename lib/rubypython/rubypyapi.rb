@@ -2,15 +2,9 @@ require 'rubypython/rubypyapi/python'
 require 'rubypython/rubypyapi/macros'
 require 'rubypython/rubypyapi/ptor'
 require 'rubypython/rubypyapi/rtop'
+require 'rubypython/rubypyapi/py_object'
 
 module RubyPyApi
-  class FFIPyObject
-    attr :pObject
-    def initialize(pobject)
-      @pObject = pobject
-    end
-  end
-
   def self.start
     if Python.Py_IsInitialized != 0
       return false

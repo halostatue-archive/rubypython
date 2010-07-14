@@ -10,7 +10,7 @@ module RubyPyApi
     def rtopArrayToList(rArray)
       size = rArray.length
       pList = Python.PyList_New size
-      rArray.each_w_index do |i, el|
+      rArray.each_with_index do |el, i|
         Python.PyList_SetItem pList, i, rtopObject(el)
       end
       pList

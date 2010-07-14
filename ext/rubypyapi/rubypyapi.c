@@ -48,8 +48,8 @@ Init_rubypyapi()
   //rb_define_module_function(mRubyPyApi, "start", rp_start, 0);
   //rb_define_module_function(mRubyPyApi, "stop", rp_stop, 0);
 
-  Init_RubyPyObject();
-  Init_RubyPyImport();
+  //Init_RubyPyObject();
+  //Init_RubyPyImport();
   Init_RubyPyError();
   //Init_RubyPyDict();
   Init_RubyPySys();

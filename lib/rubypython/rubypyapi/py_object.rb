@@ -6,7 +6,7 @@ require 'ffi'
 
 module RubyPyApi
 
-  class FFIPyObject
+  class PyObject
     attr :pObject
 
     def initialize(rObject, has_pobject=true)

@@ -21,6 +21,16 @@ module RubyPyApi
     false
   end
 
+  #py_import
+
+  def import(mname)
+    pModule = Python.PyImport_ImportModule mname
+    rModule = PyObject.new nil, false
+    rModule.pObject = pModule
+    rModule
+  end
+
+  #py_dict
   def dictContains(rbPyDict, rbPyKey)
     Python.PyDict_Contains(rbPyDict.pObject, rbPyKey.pObject) != 0
   end

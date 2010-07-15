@@ -1,3 +1,6 @@
+require 'rubypython/rubypyapi/py_error'
+require 'rubypython/rubypyapi/py_object'
+
 module RubyPyApi
 
   class NullPObjectError < RuntimeError
@@ -51,16 +54,18 @@ module RubyPyApi
 	  rbValue = RubyPyApi::PyObject.new nil
 	  rbTraceback = RubyPyApi::PyObject.new nil
 
+	  PythonError.fetch(rbType,rbValue,rbTraceback)
+
 	  #Decrease the reference count. This will happen anyway when they go
 	  #out of scope but might as well.
 	  rbValue.xDecref
 	  rbTraceback.xDecref
 	  pyName = rbType.getAttr("__name__")
+
 	  rbType.xDecref
 	  rbName=pyName.rubify
 	  pyName.xDecref
 	  
-	  PythonError.fetch(rbType,rbValue,rbTraceback)
 	  PythonError.clear
 
 	  raise PythonError.new(rbName)

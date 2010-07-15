@@ -331,7 +331,6 @@ class TestRubyPyApi_PyProxy < Test::Unit::TestCase
 
   def initialize(name)
     super(name)
-    require File.dirname(__FILE__) + "/../lib/rubypython/rubypyproxy"
   end
 
 
@@ -412,7 +411,6 @@ end
 
 class TestRubyPyApi_CustomTestObject < Test::Unit::TestCase
   def setup
-    require File.dirname(__FILE__) + "/../lib/rubypython/rubypyproxy"
     RubyPyApi.start
   end
 

@@ -45,12 +45,12 @@ module RubyPyApi
     def self.ptorDict(pDict)
       rb_hash = {}
 
-      pos = FFI::MemoryPointer.new :int
+      pos = FFI::MemoryPointer.new :ssize_t
       pos.write_int 0
       key = FFI::MemoryPointer.new :pointer
       val = FFI::MemoryPointer.new :pointer
 
-      while Python.PyDict_Next(pDict, pos, key, val)
+      while Python.PyDict_Next(pDict, pos, key, val) != 0
 	pKey = key.read_pointer
 	pVal = val.read_pointer
 	rKey = ptorObject(pKey)

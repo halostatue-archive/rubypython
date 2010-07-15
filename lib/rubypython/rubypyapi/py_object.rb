@@ -67,7 +67,7 @@ module RubyPyApi
     end
 
     def callable?
-      Python.PyCallable_Check @pObject
+      Python.PyCallable_Check(@pObject) != 0
     end
 
     def self.makeTuple(rbObject)

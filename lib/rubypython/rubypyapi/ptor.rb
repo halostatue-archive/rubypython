@@ -46,6 +46,7 @@ module RubyPyApi
       rb_hash = {}
 
       pos = FFI::MemoryPointer.new :int
+      pos.write_int 0
       key = FFI::MemoryPointer.new :pointer
       val = FFI::MemoryPointer.new :pointer
 
@@ -82,6 +83,8 @@ module RubyPyApi
 	false
       elsif pObj == Macros.rpPy_mNone
 	nil
+      else
+        nil
       end
     end
 

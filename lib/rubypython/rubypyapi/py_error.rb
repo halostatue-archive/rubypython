@@ -14,6 +14,10 @@ class PythonError < Exception
     tracebackPointer = FFI::MemoryPointer.new :pointer
 
     RubyPyApi::Python.PyErr_Fetch typePointer, valuePointer, tracebackPointer
+
+    rbType.pObject = typePointer.read_pointer
+    rbValue.pObject = valuePointer.read_pointer
+    rbTraceback.pObject = tracebackPointer.read_pointer
     true
   end
 

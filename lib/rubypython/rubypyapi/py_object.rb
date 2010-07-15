@@ -78,7 +78,7 @@ module RubyPyApi
       elsif Macros.rpPyObject_mTypeCheck(rbObject.pObject, Python.PyTuple_Type.to_ptr) != 0
         ptuple = rbObject.pObject
       else
-        pTuple = Python.PyTuple_Pack(1, rbObject.pObject)
+        pTuple = Python.PyTuple_Pack(1, :pointer, rbObject.pObject)
       end
 
       rbTuple = self.new nil, false

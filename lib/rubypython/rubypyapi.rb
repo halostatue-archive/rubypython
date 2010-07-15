@@ -22,7 +22,6 @@ module RubyPyApi
   end
 
   #py_import
-
   def self.import(mname)
     pModule = Python.PyImport_ImportModule mname
     rModule = PyObject.new nil, false

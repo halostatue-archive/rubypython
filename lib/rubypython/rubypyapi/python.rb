@@ -35,7 +35,7 @@ module RubyPyApi
 
     attach_function :PyObject_Compare, [:pointer, :pointer], :int
 
-    attach_function :PyObject_CallObject, [:pointer, :pointer], :int
+    attach_function :PyObject_CallObject, [:pointer, :pointer], :pointer
     attach_function :PyCallable_Check, [:pointer], :int
 
     ###Python To Ruby Conversion

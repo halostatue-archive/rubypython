@@ -36,7 +36,7 @@ module RubyPyApi
     end
 
     def self.rtopBigNum(rNum)
-      Python.PyLong_FromLong(cNum)
+      Python.PyLong_FromLong(rNum)
     end
 
     def self.rtopFloat(rNum)

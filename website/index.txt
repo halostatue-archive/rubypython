@@ -44,7 +44,7 @@ Read the "8 steps for fixing other people's code":http://drnicwilliams.com/2007/
 
 You can fetch the source from:
 
-<pre> hg clone https://raineszm@bitbucket.org/raineszm/rubypython/pre>
+<pre> hg clone https://raineszm@bitbucket.org/raineszm/rubypython </pre>
 
 
 h3. Build and test instructions

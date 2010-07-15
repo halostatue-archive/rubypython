@@ -10,7 +10,7 @@ module RubyPyApi
     LIB_EXT = "dylib"
     LIB = `python-config --prefix`.chomp +
      "/lib/#{PYTHON_NAME}/config/#{LIB_NAME}.#{LIB_EXT}"
-    ffi_lib LIB
+    @ffi_libs = [FFI::DynamicLibrary.open(LIB, FFI::DynamicLibrary::RTLD_LAZY|FFI::DynamicLibrary::RTLD_GLOBAL)]
 
     class DummyStruct < FFI::Struct
       layout :dummy_var, :int

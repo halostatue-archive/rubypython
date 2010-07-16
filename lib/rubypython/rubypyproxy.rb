@@ -11,7 +11,11 @@ module RubyPyApi
     attr_reader :pObject
 
     def initialize(pObject)
-      @pObject = pObject
+      if pObject.kind_of? RubyPyApi::PyObject
+        @pObject = pObject
+      else
+        @pObject = RubyPyApi::PyObject.new pObject
+      end
     end
 
     def _setAttr(name, *args)

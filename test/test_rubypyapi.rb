@@ -406,6 +406,28 @@ class TestRubyPyApi_PyProxy < Test::Unit::TestCase
 
   end
 
+  def test_rubify
+    pyStringModule = RubyPyApi.import("string")
+    pyStringProxy = RubyPyApi::RubyPyProxy.new(pyStringModule)
+    lettersProxy = pyStringProxy.ascii_letters
+
+    assert_equal(lettersProxy.pObject.rubify,
+                lettersProxy.rubify,
+                "Rubification of RubyPyProxy does not equal that of wrapped object")
+
+
+  end
+
+  def test_from_ruby_type
+    expected = "STRING"
+    proxy = RubyPyApi::RubyPyProxy.new expected
+
+    assert_equal(expected,
+                proxy.rubify,
+                "Error creating RubyPyProxy directly from a ruby string.")
+
+  end
+
 end
 
 

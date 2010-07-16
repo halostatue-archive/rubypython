@@ -53,7 +53,7 @@ module RubyPyApi
     end
 
     def null?
-      @pObject.address == 0
+      @pObject.null?
     end
 
     def cmp(other)

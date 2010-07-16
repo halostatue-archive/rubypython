@@ -60,13 +60,13 @@ module RubyPyApi
     end
 
     def self.rpPy_mXINCREF(pObject)
-      if pObject.address != 0
+      if !pObject.null?
         rpPy_mINCREF pObject
       end
     end
 
     def self.rpPy_mXDECREF(pObject)
-      if pObject.address != 0
+      if !pObject.null?
         rpPy_mDECREF pObject
       end
     end

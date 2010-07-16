@@ -35,12 +35,7 @@ module RubyPython
   def self.import(mod)
     pymod=RubyPyApi.import(mod)
     if(PythonError.error?)
-      rbType = RubyPyApi::PyObject.new nil
-      rbValue = RubyPyApi::PyObject.new nil
-      rbTraceback = RubyPyApi::PyObject.new nil
-      PythonError.fetch(rbType,rbValue,rbTraceback)
-      PythonError.clear
-      raise PythonError.new(rbType.getAttr("__name__").rubify)
+      raise PythonError.handle_error
     end
     RubyPyApi::RubyPyProxy.new(pymod)
 

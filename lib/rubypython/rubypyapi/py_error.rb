@@ -3,11 +3,41 @@ require 'rubypython/rubypyapi/macros'
 
 
 class PythonError < Exception
+  
+  def initialize(typeName, msg)
+    @type = typeName
+    super([typeName, msg].join ': ')
+  end
 
-  def self.fetch(rbType, rbValue, rbTraceback)
-    rbType.xDecref
+  def self.handle_error
+    rbType, rbValue, rbTraceback = fetch()
+
+    if not rbValue.null?
+      msg = rbValue.getAttr("__str__").callObject RubyPyApi::PyObject.buildArgTuple
+      msg = msg.rubify
+    else
+      msg = nil
+    end
+    
+    #Decrease the reference count. This will happen anyway when they go
+    #out of scope but might as well.
     rbValue.xDecref
     rbTraceback.xDecref
+    pyName = rbType.getAttr("__name__")
+
+    rbType.xDecref
+    rbName = pyName.rubify
+    pyName.xDecref
+
+    PythonError.clear
+
+    PythonError.new(rbName, msg)
+  end
+
+  def self.fetch
+    rbType = RubyPyApi::PyObject.new nil, false
+    rbValue = RubyPyApi::PyObject.new nil, false
+    rbTraceback = RubyPyApi::PyObject.new nil, false
 
     typePointer = FFI::MemoryPointer.new :pointer
     valuePointer = FFI::MemoryPointer.new :pointer
@@ -18,7 +48,7 @@ class PythonError < Exception
     rbType.pObject = typePointer.read_pointer
     rbValue.pObject = valuePointer.read_pointer
     rbTraceback.pObject = tracebackPointer.read_pointer
-    true
+    [rbType, rbValue, rbTraceback]
   end
 
   def self.error?

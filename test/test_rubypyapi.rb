@@ -273,14 +273,9 @@ class TestRubyPyApi_PythonError < Test::Unit::TestCase
   end
 
   def test_error_fetch_type
-    rbType = RubyPyApi::PyObject.new nil
-    rbValue = RubyPyApi::PyObject.new nil
-    rbTraceback = RubyPyApi::PyObject.new nil
-
     RubyPyApi.import("wat")
 
-
-    PythonError.fetch(rbType, rbValue, rbTraceback)
+    rbType, rbValue, rbTraceback = PythonError.fetch()
     rbValue.xDecref
     rbTraceback.xDecref
     eType = rbType.getAttr("__name__").rubify

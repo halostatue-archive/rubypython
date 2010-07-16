@@ -54,25 +54,7 @@ module RubyPyApi
 	pTuple=RubyPyApi::PyObject.buildArgTuple(*args)
 	pReturn = pFunc.callObject(pTuple)
 	if(PythonError.error?)
-	  rbType = RubyPyApi::PyObject.new nil
-	  rbValue = RubyPyApi::PyObject.new nil
-	  rbTraceback = RubyPyApi::PyObject.new nil
-
-	  PythonError.fetch(rbType,rbValue,rbTraceback)
-
-	  #Decrease the reference count. This will happen anyway when they go
-	  #out of scope but might as well.
-	  rbValue.xDecref
-	  rbTraceback.xDecref
-	  pyName = rbType.getAttr("__name__")
-
-	  rbType.xDecref
-	  rbName=pyName.rubify
-	  pyName.xDecref
-	  
-	  PythonError.clear
-
-	  raise PythonError.new(rbName)
+          raise PythonError.handle_error
 	end
       else
 	pReturn = pFunc

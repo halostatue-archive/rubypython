@@ -35,19 +35,15 @@ class PythonError < Exception
   end
 
   def self.fetch
-    rbType = RubyPyApi::PyObject.new nil, false
-    rbValue = RubyPyApi::PyObject.new nil, false
-    rbTraceback = RubyPyApi::PyObject.new nil, false
-
     typePointer = FFI::MemoryPointer.new :pointer
     valuePointer = FFI::MemoryPointer.new :pointer
     tracebackPointer = FFI::MemoryPointer.new :pointer
 
     RubyPyApi::Python.PyErr_Fetch typePointer, valuePointer, tracebackPointer
 
-    rbType.pointer = typePointer.read_pointer
-    rbValue.pointer = valuePointer.read_pointer
-    rbTraceback.pointer = tracebackPointer.read_pointer
+    rbType = RubyPyApi::PyObject.new typePointer.read_pointer
+    rbValue = RubyPyApi::PyObject.new valuePointer.read_pointer
+    rbTraceback = RubyPyApi::PyObject.new tracebackPointer.read_pointer
     [rbType, rbValue, rbTraceback]
   end
 

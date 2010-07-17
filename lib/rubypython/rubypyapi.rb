@@ -24,9 +24,7 @@ module RubyPyApi
   #py_import
   def self.import(mname)
     pModule = Python.PyImport_ImportModule mname
-    rModule = PyObject.new nil, false
-    rModule.pointer = pModule
-    rModule
+    PyObject.new pModule
   end
 end
 

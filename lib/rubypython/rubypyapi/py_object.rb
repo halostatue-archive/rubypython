@@ -12,11 +12,11 @@ module RubyPyApi
   class PyObject
     attr_accessor :pointer
 
-    def initialize(rObject, has_pobject=true)
-      if has_pobject
-        @pointer = RTOP.rtopObject rObject
+    def initialize(rObject)
+      if rObject.kind_of? FFI::Pointer 
+        @pointer = rObject
       else
-        @pointer = FFI::Pointer::NULL
+        @pointer = RTOP.rtopObject rObject
       end
     end
 
@@ -30,9 +30,7 @@ module RubyPyApi
 
     def getAttr(attrName)
       pyAttr = Python.PyObject_GetAttrString @pointer, attrName
-      rbAttr = self.class.new nil, false
-      rbAttr.pointer = pyAttr
-      rbAttr
+      self.class.new pyAttr
     end
 
     def setAttr(attrName, rbPyAttr)
@@ -41,9 +39,7 @@ module RubyPyApi
 
     def callObject(rbPyArgs)
       pyReturn = Python.PyObject_CallObject(@pointer, rbPyArgs.pointer)
-      rbReturn = self.class.new nil, false
-      rbReturn.pointer = pyReturn
-      rbReturn
+      self.class.new pyReturn
     end
 
     def xDecref
@@ -84,14 +80,11 @@ module RubyPyApi
         pTuple = Python.PyTuple_Pack(1, :pointer, rbObject.pointer)
       end
 
-      rbTuple = self.new nil, false
-      rbTuple.pointer = pTuple
-      rbTuple
+      self.new pTuple
     end
 
     def self.newList(*args)
-      rbList = self.new nil, false
-      rbList.pointer = Python.PyList_New args.length
+      rbList = self.new Python.PyList_New args.length
 
       args.each_with_index do |el, i|
         Python.PyList_SetItem rbList.pointer, i, el.pointer

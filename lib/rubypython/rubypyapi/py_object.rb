@@ -10,90 +10,90 @@ module RubyPyApi
   #C API. This class <em>should not</em> be used by the end user. They should instead
   #make use of the RubyPyApi::RubyPyProxy class and its subclasses.
   class PyObject
-    attr_accessor :pObject
+    attr_accessor :pointer
 
     def initialize(rObject, has_pobject=true)
       if has_pobject
-        @pObject = RTOP.rtopObject rObject
+        @pointer = RTOP.rtopObject rObject
       end
     end
 
     def rubify
-      PTOR.ptorObject @pObject
+      PTOR.ptorObject @pointer
     end
 
     def hasAttr(attrName)
-      Python.PyObject_HasAttrString(@pObject, attrName) == 1
+      Python.PyObject_HasAttrString(@pointer, attrName) == 1
     end
 
     def getAttr(attrName)
-      pyAttr = Python.PyObject_GetAttrString @pObject, attrName
+      pyAttr = Python.PyObject_GetAttrString @pointer, attrName
       rbAttr = self.class.new nil, false
-      rbAttr.pObject = pyAttr
+      rbAttr.pointer = pyAttr
       rbAttr
     end
 
     def setAttr(attrName, rbPyAttr)
-      Python.PyObject_SetAttrString(@pObject, attrName, rbPyAttr.pObject) != -1
+      Python.PyObject_SetAttrString(@pointer, attrName, rbPyAttr.pointer) != -1
     end
 
     def callObject(rbPyArgs)
-      pyReturn = Python.PyObject_CallObject(@pObject, rbPyArgs.pObject)
+      pyReturn = Python.PyObject_CallObject(@pointer, rbPyArgs.pointer)
       rbReturn = self.class.new nil, false
-      rbReturn.pObject = pyReturn
+      rbReturn.pointer = pyReturn
       rbReturn
     end
 
     def xDecref
-      return if @pObject.nil?
-      Macros.rpPy_mXDECREF @pObject
-      @pObject = nil
+      return if @pointer.nil?
+      Macros.rpPy_mXDECREF @pointer
+      @pointer = nil
     end
 
     def xIncref
-      Macros.rpPy_mXINCREF @pObject
+      Macros.rpPy_mXINCREF @pointer
     end
 
     def null?
-      @pObject.null?
+      @pointer.null?
     end
 
     def cmp(other)
-      Python.PyObject_Compare @pObject, other.pObject 
+      Python.PyObject_Compare @pointer, other.pointer 
     end
 
     def functionOrMethod?
-      isFunc = (Macros.rpPyObject_mTypeCheck(@pObject, Python.PyFunction_Type.to_ptr) != 0)
-      isMethod = (Macros.rpPyObject_mTypeCheck(@pObject, Python.PyMethod_Type.to_ptr) != 0)
+      isFunc = (Macros.rpPyObject_mTypeCheck(@pointer, Python.PyFunction_Type.to_ptr) != 0)
+      isMethod = (Macros.rpPyObject_mTypeCheck(@pointer, Python.PyMethod_Type.to_ptr) != 0)
       isFunc or isMethod
     end
 
     def callable?
-      Python.PyCallable_Check(@pObject) != 0
+      Python.PyCallable_Check(@pointer) != 0
     end
 
     def self.makeTuple(rbObject)
       pTuple = nil
 
-      if Macros.rpPyObject_mTypeCheck(rbObject.pObject, Python.PyList_Type.to_ptr) != 0
-        pTuple = Python.PySequence_Tuple(rbObject.pObject)
-      elsif Macros.rpPyObject_mTypeCheck(rbObject.pObject, Python.PyTuple_Type.to_ptr) != 0
-        ptuple = rbObject.pObject
+      if Macros.rpPyObject_mTypeCheck(rbObject.pointer, Python.PyList_Type.to_ptr) != 0
+        pTuple = Python.PySequence_Tuple(rbObject.pointer)
+      elsif Macros.rpPyObject_mTypeCheck(rbObject.pointer, Python.PyTuple_Type.to_ptr) != 0
+        ptuple = rbObject.pointer
       else
-        pTuple = Python.PyTuple_Pack(1, :pointer, rbObject.pObject)
+        pTuple = Python.PyTuple_Pack(1, :pointer, rbObject.pointer)
       end
 
       rbTuple = self.new nil, false
-      rbTuple.pObject = pTuple
+      rbTuple.pointer = pTuple
       rbTuple
     end
 
     def self.newList(*args)
       rbList = self.new nil, false
-      rbList.pObject = Python.PyList_New args.length
+      rbList.pointer = Python.PyList_New args.length
 
       args.each_with_index do |el, i|
-        Python.PyList_SetItem rbList.pObject, i, el.pObject
+        Python.PyList_SetItem rbList.pointer, i, el.pointer
       end
 
       rbList
@@ -105,7 +105,7 @@ module RubyPyApi
           arg
         elsif(arg.instance_of?(RubyPyApi::RubyPyProxy))
           if(arg.pObject.null?)
-            raise NullPObjectError.new("Null pObject pointer.")
+            raise NullPObjectError.new("Null pointer pointer.")
           else
             arg.pObject
           end

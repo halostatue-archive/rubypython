@@ -45,9 +45,9 @@ class PythonError < Exception
 
     RubyPyApi::Python.PyErr_Fetch typePointer, valuePointer, tracebackPointer
 
-    rbType.pObject = typePointer.read_pointer
-    rbValue.pObject = valuePointer.read_pointer
-    rbTraceback.pObject = tracebackPointer.read_pointer
+    rbType.pointer = typePointer.read_pointer
+    rbValue.pointer = valuePointer.read_pointer
+    rbTraceback.pointer = tracebackPointer.read_pointer
     [rbType, rbValue, rbTraceback]
   end
 

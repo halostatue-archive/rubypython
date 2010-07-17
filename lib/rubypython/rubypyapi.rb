@@ -25,22 +25,22 @@ module RubyPyApi
   def self.import(mname)
     pModule = Python.PyImport_ImportModule mname
     rModule = PyObject.new nil, false
-    rModule.pObject = pModule
+    rModule.pointer = pModule
     rModule
   end
 
   #py_dict
   def self.dictContains(rbPyDict, rbPyKey)
-    Python.PyDict_Contains(rbPyDict.pObject, rbPyKey.pObject) != 0
+    Python.PyDict_Contains(rbPyDict.pointer, rbPyKey.pointer) != 0
   end
 
   def self.dictGetItem(rbPyDict, rbPyKey)
-    pyRetVal = Python.PyDict_GetItem(rbPyDict.pObject, rbPyKey.pObject)
+    pyRetVal = Python.PyDict_GetItem(rbPyDict.pointer, rbPyKey.pointer)
     PyObject.new pyRetVal
   end
 
   def self.dictSetItem(rbPyDict, rbPyKey, rbPyItem)
-    status = PyDict_SetItem rbPyDict.pObject, rbyPyKey.pObject, rbPyItem.pObject
+    status = PyDict_SetItem rbPyDict.pointer, rbyPyKey.pointer, rbPyItem.pointer
     status != 0
   end
 
@@ -48,12 +48,12 @@ module RubyPyApi
   def self.sysGetObject(rbName)
     pReturn = Python.PySys_GetObject rbName
     rReturn = PyObject.new nil, false
-    rReturn.pObject = pReturn
+    rReturn.pointer = pReturn
     rReturn
   end
 
   def self.sysSetObject(rbName, rbObject)
-    Python.PySys_SetObject rbName, rbObject.pObject
+    Python.PySys_SetObject rbName, rbObject.pointer
   end
 
 end

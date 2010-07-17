@@ -45,7 +45,9 @@ module RubyPyApi
     end
 
     def xDecref
+      return if @pObject.nil?
       Macros.rpPy_mXDECREF @pObject
+      @pObject = nil
     end
 
     def xIncref

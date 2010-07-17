@@ -48,7 +48,7 @@ class PythonError < Exception
   end
 
   def self.error?
-    RubyPyApi::Python.PyErr_Occurred.address != 0
+    !RubyPyApi::Python.PyErr_Occurred.null?
   end
 
   def self.clear

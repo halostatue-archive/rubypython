@@ -28,33 +28,5 @@ module RubyPyApi
     rModule.pointer = pModule
     rModule
   end
-
-  #py_dict
-  def self.dictContains(rbPyDict, rbPyKey)
-    Python.PyDict_Contains(rbPyDict.pointer, rbPyKey.pointer) != 0
-  end
-
-  def self.dictGetItem(rbPyDict, rbPyKey)
-    pyRetVal = Python.PyDict_GetItem(rbPyDict.pointer, rbPyKey.pointer)
-    PyObject.new pyRetVal
-  end
-
-  def self.dictSetItem(rbPyDict, rbPyKey, rbPyItem)
-    status = PyDict_SetItem rbPyDict.pointer, rbyPyKey.pointer, rbPyItem.pointer
-    status != 0
-  end
-
-  #py_sys
-  def self.sysGetObject(rbName)
-    pReturn = Python.PySys_GetObject rbName
-    rReturn = PyObject.new nil, false
-    rReturn.pointer = pReturn
-    rReturn
-  end
-
-  def self.sysSetObject(rbName, rbObject)
-    Python.PySys_SetObject rbName, rbObject.pointer
-  end
-
 end
 

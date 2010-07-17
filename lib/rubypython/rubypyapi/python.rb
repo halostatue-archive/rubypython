@@ -24,10 +24,6 @@ module RubyPyApi
     #Module methods
     attach_function :PyImport_ImportModule, [:string], :pointer
 
-    #Sys methods
-    attach_function :PySys_GetObject, [:string], :pointer
-    attach_function :PySys_SetObject, [:string, :pointer], :int
-
     #Object Methods
     attach_function :PyObject_HasAttrString, [:pointer, :string], :int
     attach_function :PyObject_GetAttrString, [:pointer, :string], :pointer

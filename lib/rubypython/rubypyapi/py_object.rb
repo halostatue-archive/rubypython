@@ -15,6 +15,8 @@ module RubyPyApi
     def initialize(rObject, has_pobject=true)
       if has_pobject
         @pointer = RTOP.rtopObject rObject
+      else
+        @pointer = FFI::Pointer::NULL
       end
     end
 
@@ -45,9 +47,8 @@ module RubyPyApi
     end
 
     def xDecref
-      return if @pointer.nil?
       Macros.rpPy_mXDECREF @pointer
-      @pointer = nil
+      @pointer = FFI::Pointer::NULL
     end
 
     def xIncref

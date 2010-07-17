@@ -3,6 +3,15 @@ require 'rubypython/rubypyproxy'
 require 'rubypython/blankobject'
 require 'singleton'
 
+if RUBY_VERSION == "1.8.6"
+  class String
+    def end_with?(c)
+      self[-1].chr == c
+    end
+  end
+end
+
+
 =begin rdoc
 This module provides the direct user interface for the RubyPython extension.
 

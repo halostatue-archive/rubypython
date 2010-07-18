@@ -47,13 +47,13 @@ module RubyPyApi
     end
 
     def xDecref
-      Macros.rpPy_mXDECREF @pointer
+      Macros.Py_XDECREF @pointer
       @pointer = FFI::Pointer::NULL
       @@ref_dict.delete object_id
     end
 
     def xIncref
-      Macros.rpPy_mXINCREF @pointer
+      Macros.Py_XINCREF @pointer
     end
 
     def null?
@@ -65,8 +65,8 @@ module RubyPyApi
     end
 
     def functionOrMethod?
-      isFunc = (Macros.rpPyObject_mTypeCheck(@pointer, Python.PyFunction_Type.to_ptr) != 0)
-      isMethod = (Macros.rpPyObject_mTypeCheck(@pointer, Python.PyMethod_Type.to_ptr) != 0)
+      isFunc = (Macros.PyObject_TypeCheck(@pointer, Python.PyFunction_Type.to_ptr) != 0)
+      isMethod = (Macros.PyObject_TypeCheck(@pointer, Python.PyMethod_Type.to_ptr) != 0)
       isFunc or isMethod
     end
 
@@ -77,9 +77,9 @@ module RubyPyApi
     def self.makeTuple(rbObject)
       pTuple = nil
 
-      if Macros.rpPyObject_mTypeCheck(rbObject.pointer, Python.PyList_Type.to_ptr) != 0
+      if Macros.PyObject_TypeCheck(rbObject.pointer, Python.PyList_Type.to_ptr) != 0
         pTuple = Python.PySequence_Tuple(rbObject.pointer)
-      elsif Macros.rpPyObject_mTypeCheck(rbObject.pointer, Python.PyTuple_Type.to_ptr) != 0
+      elsif Macros.PyObject_TypeCheck(rbObject.pointer, Python.PyTuple_Type.to_ptr) != 0
         ptuple = rbObject.pointer
       else
         pTuple = Python.PyTuple_Pack(1, :pointer, rbObject.pointer)
@@ -120,7 +120,7 @@ module RubyPyApi
     end
 
     def self.make_finalizer(pointer)
-      proc {|obj_id| Macros.rpPy_mXDECREF pointer if @@ref_dict.has_key? obj_id}
+      proc {|obj_id| Macros.Py_XDECREF pointer if @@ref_dict.has_key? obj_id}
     end
   end
 

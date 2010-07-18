@@ -14,7 +14,7 @@ module RubyPyApi
       
       list_size.times do |i|
 	element = Python.PyList_GetItem(pList, i)
-	Macros.rpPy_mXINCREF element
+	Macros.Py_XINCREF element
 	rObject = ptorObject(element)
 	rb_array.push rObject
       end
@@ -38,7 +38,7 @@ module RubyPyApi
     def self.ptorTuple(pTuple)
       pList = Python.PySequence_List pTuple
       rArray = ptorList pList
-      Macros.rpPy_mXDECREF pList
+      Macros.Py_XDECREF pList
       rArray
     end
 
@@ -63,25 +63,25 @@ module RubyPyApi
 
       
     def self.ptorObject(pObj)
-      if Macros.rpPyObject_mTypeCheck(pObj, Python.PyString_Type.to_ptr) != 0
+      if Macros.PyObject_TypeCheck(pObj, Python.PyString_Type.to_ptr) != 0
 	ptorString pObj
-      elsif Macros.rpPyObject_mTypeCheck(pObj, Python.PyList_Type.to_ptr) != 0
+      elsif Macros.PyObject_TypeCheck(pObj, Python.PyList_Type.to_ptr) != 0
 	ptorList pObj
-      elsif Macros.rpPyObject_mTypeCheck(pObj, Python.PyInt_Type.to_ptr) != 0
+      elsif Macros.PyObject_TypeCheck(pObj, Python.PyInt_Type.to_ptr) != 0
 	ptorInt pObj
-      elsif Macros.rpPyObject_mTypeCheck(pObj, Python.PyLong_Type.to_ptr) != 0
+      elsif Macros.PyObject_TypeCheck(pObj, Python.PyLong_Type.to_ptr) != 0
 	ptorLong pObj
-      elsif Macros.rpPyObject_mTypeCheck(pObj, Python.PyFloat_Type.to_ptr) != 0
+      elsif Macros.PyObject_TypeCheck(pObj, Python.PyFloat_Type.to_ptr) != 0
 	ptorFloat pObj
-      elsif Macros.rpPyObject_mTypeCheck(pObj, Python.PyTuple_Type.to_ptr) != 0
+      elsif Macros.PyObject_TypeCheck(pObj, Python.PyTuple_Type.to_ptr) != 0
 	ptorTuple pObj
-      elsif Macros.rpPyObject_mTypeCheck(pObj, Python.PyDict_Type.to_ptr) != 0
+      elsif Macros.PyObject_TypeCheck(pObj, Python.PyDict_Type.to_ptr) != 0
 	ptorDict pObj
-      elsif pObj == Macros.rpPy_mTrue
+      elsif pObj == Macros.Py_True
 	true
-      elsif pObj == Macros.rpPy_mFalse
+      elsif pObj == Macros.Py_False
 	false
-      elsif pObj == Macros.rpPy_mNone
+      elsif pObj == Macros.Py_None
 	nil
       else
         nil

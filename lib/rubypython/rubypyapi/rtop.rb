@@ -19,7 +19,7 @@ module RubyPyApi
     def self.rtopArrayToTuple(rArray)
       pList = rtopArrayToList(rArray)
       pTuple = Python.PySequence_Tuple(pList)
-      Macros.rpPy_mXDECREF(pList)
+      Macros.Py_XDECREF(pList)
       pTuple
     end
 
@@ -44,11 +44,11 @@ module RubyPyApi
     end
 
     def self.rtopFalse
-      Macros.rpPy_mRETURN_FALSE
+      Macros.Py_RETURN_FALSE
     end
 
     def self.rtopTrue
-      Macros.rpPy_mRETURN_TRUE
+      Macros.Py_RETURN_TRUE
     end
 
     def self.rtopSymbol(rSymbol)
@@ -83,8 +83,8 @@ module RubyPyApi
       when Symbol
         rtopSymbol rObj
       else
-        pObj = Macros.rpPy_mNone
-        Macros.rpPy_mXINCREF pObj
+        pObj = Macros.Py_None
+        Macros.Py_XINCREF pObj
         pObj
       end
     end

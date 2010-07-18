@@ -3,14 +3,14 @@ require 'rubypython/rubypyapi/python'
 
 module RubyPyApi
   module Macros
-    #attach_function :rpPy_mTrue, [], :pointer
-    #attach_function :rpPy_mRETURN_TRUE, [], :pointer
-    #attach_function :rpPy_mFalse, [], :pointer
-    #attach_function :rpPy_mRETURN_FALSE, [], :pointer
-    #attach_function :rpPy_mNone, [], :pointer
+    #attach_function :Py_True, [], :pointer
+    #attach_function :Py_RETURN_TRUE, [], :pointer
+    #attach_function :Py_False, [], :pointer
+    #attach_function :Py_RETURN_FALSE, [], :pointer
+    #attach_function :Py_None, [], :pointer
 
-    #attach_function :rpPy_mXINCREF, [:pointer], :void
-    #attach_function :rpPy_mXDECREF, [:pointer], :void
+    #attach_function :Py_XINCREF, [:pointer], :void
+    #attach_function :Py_XDECREF, [:pointer], :void
 
 
     #Useful Python Macros reimplemented in Ruby
@@ -19,7 +19,7 @@ module RubyPyApi
       pStruct[:ob_type]
     end
 
-    def self.rpPyObject_mTypeCheck(pObject, pTypePointer)
+    def self.PyObject_TypeCheck(pObject, pTypePointer)
       if mPy_TYPE(pObject) == pTypePointer
         1
       else
@@ -27,47 +27,47 @@ module RubyPyApi
       end
     end
 
-    def self.rpPy_mTrue
+    def self.Py_True
       Python.Py_TrueStruct.to_ptr
     end
 
-    def self.rpPy_mFalse
+    def self.Py_False
       Python.Py_ZeroStruct.to_ptr
     end
 
-    def self.rpPy_mNone
+    def self.Py_None
       Python.Py_NoneStruct.to_ptr
     end
 
-    def self.rpPy_mRETURN_FALSE
-      rpPy_mXINCREF(rpPy_mFalse)
-      rpPy_mFalse
+    def self.Py_RETURN_FALSE
+      Py_XINCREF(Py_False)
+      Py_False
     end
 
-    def self.rpPy_mRETURN_TRUE
-      rpPy_mXINCREF(rpPy_mTrue)
-      rpPy_mTrue
+    def self.Py_RETURN_TRUE
+      Py_XINCREF(Py_True)
+      Py_True
     end
 
-    def self.rpPy_mINCREF(pObject)
+    def self.Py_INCREF(pObject)
       pStruct = Python::PyObjectStruct.new pObject
       pStruct[:ob_refcnt] += 1
     end
 
-    def self.rpPy_mDECREF(pObject)
+    def self.Py_DECREF(pObject)
       pStruct = Python::PyObjectStruct.new pObject
       pStruct[:ob_refcnt] -= 1
     end
 
-    def self.rpPy_mXINCREF(pObject)
+    def self.Py_XINCREF(pObject)
       if !pObject.null?
-        rpPy_mINCREF pObject
+        Py_INCREF pObject
       end
     end
 
-    def self.rpPy_mXDECREF(pObject)
+    def self.Py_XDECREF(pObject)
       if !pObject.null?
-        rpPy_mDECREF pObject
+        Py_DECREF pObject
       end
     end
 

@@ -41,7 +41,7 @@ module RubyPyApi
       end
 
       
-      args=RubyPyApi::PyObject.convert(*args)
+      args = RubyPyApi::PyObject.convert(*args)
 
       if(setter)
 	return _setAttr(name,*args)
@@ -51,7 +51,7 @@ module RubyPyApi
       pFunc = @pObject.getAttr(name)
       
       if(pFunc.callable?)
-	pTuple=RubyPyApi::PyObject.buildArgTuple(*args)
+	pTuple = RubyPyApi::PyObject.buildArgTuple(*args)
 	pReturn = pFunc.callObject(pTuple)
 	if(PythonError.error?)
           raise PythonError.handle_error

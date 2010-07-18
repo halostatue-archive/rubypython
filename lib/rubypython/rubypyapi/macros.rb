@@ -3,16 +3,6 @@ require 'rubypython/rubypyapi/python'
 
 module RubyPyApi
   module Macros
-    #attach_function :Py_True, [], :pointer
-    #attach_function :Py_RETURN_TRUE, [], :pointer
-    #attach_function :Py_False, [], :pointer
-    #attach_function :Py_RETURN_FALSE, [], :pointer
-    #attach_function :Py_None, [], :pointer
-
-    #attach_function :Py_XINCREF, [:pointer], :void
-    #attach_function :Py_XDECREF, [:pointer], :void
-
-
     #Useful Python Macros reimplemented in Ruby
     def self.mPy_TYPE(pObjPointer)
       pStruct = Python::PyObjectStruct.new pObjPointer

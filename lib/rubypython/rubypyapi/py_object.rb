@@ -10,13 +10,21 @@ module RubyPyApi
   #C API. This class <em>should not</em> be used by the end user. They should instead
   #make use of the RubyPyApi::RubyPyProxy class and its subclasses.
   class PyObject
+
+    class AutoPyPointer < FFI::AutoPointer
+      def self.release(pointer)
+        Macros.Py_XDECREF pointer
+      end
+    end
+
     attr_reader :pointer
 
     def initialize(rObject)
       if rObject.kind_of? FFI::Pointer 
-        @pointer = rObject
+        @pointer = AutoPyPointer.new rObject
+        xIncref if rObject.is_a? AutoPyPointer
       else
-        @pointer = RTOP.rtopObject rObject
+        @pointer = AutoPyPointer.new RTOP.rtopObject(rObject)
       end
     end
 
@@ -43,7 +51,6 @@ module RubyPyApi
     end
 
     def xDecref
-      Macros.Py_XDECREF @pointer
       @pointer = FFI::Pointer::NULL
     end
 
@@ -75,7 +82,7 @@ module RubyPyApi
       if Macros.PyObject_TypeCheck(rbObject.pointer, Python.PyList_Type.to_ptr) != 0
         pTuple = Python.PySequence_Tuple(rbObject.pointer)
       elsif Macros.PyObject_TypeCheck(rbObject.pointer, Python.PyTuple_Type.to_ptr) != 0
-        ptuple = rbObject.pointer
+        pTuple = rbObject.pointer
       else
         pTuple = Python.PyTuple_Pack(1, :pointer, rbObject.pointer)
       end
@@ -84,9 +91,10 @@ module RubyPyApi
     end
 
     def self.newList(*args)
-      rbList = self.new Python.PyList_New args.length
+      rbList = self.new Python.PyList_New(args.length)
 
       args.each_with_index do |el, i|
+        el.xIncref
         Python.PyList_SetItem rbList.pointer, i, el.pointer
       end
 
@@ -95,16 +103,16 @@ module RubyPyApi
 
     def self.convert(*args)
       args.map! do |arg|
-        if(arg.instance_of? RubyPyApi::PyObject)
+        if arg.instance_of? RubyPyApi::PyObject
           arg
-        elsif(arg.instance_of?(RubyPyApi::RubyPyProxy))
+        elsif(arg.instance_of? RubyPyApi::RubyPyProxy)
           if(arg.pObject.null?)
-            raise NullPObjectError.new("Null pointer pointer.")
+            raise NullPObjectError.new("Null pointer.")
           else
             arg.pObject
           end
         else
-          RubyPyApi::PyObject.new(arg)
+          RubyPyApi::PyObject.new arg
         end
       end
     end

@@ -51,6 +51,10 @@ module RubyPyApi
       Macros.Py_RETURN_TRUE
     end
 
+    def self.rtopNone
+      Macros.PY_RETURN_NONE
+    end
+
     def self.rtopSymbol(rSymbol)
       Python.PyString_FromString rSymbol.to_s
     end
@@ -83,9 +87,7 @@ module RubyPyApi
       when Symbol
         rtopSymbol rObj
       else
-        pObj = Macros.Py_None
-        Macros.Py_XINCREF pObj
-        pObj
+        rtopNone
       end
     end
 

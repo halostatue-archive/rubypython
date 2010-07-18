@@ -4,13 +4,13 @@ require 'rubypython/rubypyapi/python'
 module RubyPyApi
   module Macros
     #Useful Python Macros reimplemented in Ruby
-    def self.mPy_TYPE(pObjPointer)
+    def self.Py_TYPE(pObjPointer)
       pStruct = Python::PyObjectStruct.new pObjPointer
       pStruct[:ob_type]
     end
 
     def self.PyObject_TypeCheck(pObject, pTypePointer)
-      if mPy_TYPE(pObject) == pTypePointer
+      if Py_TYPE(pObject) == pTypePointer
         1
       else
         0
@@ -30,13 +30,18 @@ module RubyPyApi
     end
 
     def self.Py_RETURN_FALSE
-      Py_XINCREF(Py_False)
+      Py_INCREF(Py_False)
       Py_False
     end
 
     def self.Py_RETURN_TRUE
-      Py_XINCREF(Py_True)
+      Py_INCREF(Py_True)
       Py_True
+    end
+
+    def self.Py_RETURN_NONE
+      Py_INCREF(Py_None)
+      Py_None
     end
 
     def self.Py_INCREF(pObject)

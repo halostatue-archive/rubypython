@@ -10,7 +10,9 @@ module RubyPyApi
   #C API. This class <em>should not</em> be used by the end user. They should instead
   #make use of the RubyPyApi::RubyPyProxy class and its subclasses.
   class PyObject
-    attr_accessor :pointer
+    @@ref_dict = {}
+
+    attr_reader :pointer
 
     def initialize(rObject)
       if rObject.kind_of? FFI::Pointer 
@@ -18,6 +20,8 @@ module RubyPyApi
       else
         @pointer = RTOP.rtopObject rObject
       end
+      @@ref_dict[object_id] = true
+      ObjectSpace.define_finalizer(self, PyObject.make_finalizer(@pointer))
     end
 
     def rubify
@@ -45,6 +49,7 @@ module RubyPyApi
     def xDecref
       Macros.rpPy_mXDECREF @pointer
       @pointer = FFI::Pointer::NULL
+      @@ref_dict.delete object_id
     end
 
     def xIncref
@@ -112,6 +117,10 @@ module RubyPyApi
     def self.buildArgTuple(*args)
       pList = RubyPyApi::PyObject.newList(*args)
       RubyPyApi::PyObject.makeTuple(pList)
+    end
+
+    def self.make_finalizer(pointer)
+      proc {|obj_id| Macros.rpPy_mXDECREF pointer if @@ref_dict.has_key? obj_id}
     end
   end
 

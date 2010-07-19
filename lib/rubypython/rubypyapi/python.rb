@@ -87,6 +87,8 @@ module RubyPyApi
     attach_variable :PyDict_Type, DummyStruct.by_value
     attach_variable :PyFunction_Type, DummyStruct.by_value
     attach_variable :PyMethod_Type, DummyStruct.by_value
+    attach_variable :PyType_Type, DummyStruct.by_value
+    attach_variable :PyClass_Type, DummyStruct.by_value
 
     attach_variable :Py_TrueStruct, :_Py_TrueStruct, DummyStruct.by_value
     attach_variable :Py_ZeroStruct, :_Py_ZeroStruct, DummyStruct.by_value

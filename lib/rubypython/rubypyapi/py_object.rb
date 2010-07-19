@@ -76,6 +76,12 @@ module RubyPyApi
       Python.PyCallable_Check(@pointer) != 0
     end
 
+    def class?
+      isClassObj = (Macros.PyObject_TypeCheck(@pointer, Python.PyClass_Type.to_ptr) == 1)
+      isTypeObj = (Macros.PyObject_TypeCheck(@pointer, Python.PyType_Type.to_ptr) == 1)
+      isTypeObj or isClassObj
+    end
+
     def self.makeTuple(rbObject)
       pTuple = nil
 

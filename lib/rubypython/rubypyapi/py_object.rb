@@ -13,7 +13,7 @@ module RubyPyApi
 
     class AutoPyPointer < FFI::AutoPointer
       def self.release(pointer)
-        #Python.Py_DecRef pointer
+        Python.Py_DecRef pointer if Python.IsInitialized == 1 
       end
     end
 

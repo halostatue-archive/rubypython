@@ -19,7 +19,7 @@ module RubyPyApi
     def self.rtopArrayToTuple(rArray)
       pList = rtopArrayToList(rArray)
       pTuple = Python.PySequence_Tuple(pList)
-      Macros.Py_XDECREF(pList)
+      Python.Py_DecRef(pList)
       pTuple
     end
 

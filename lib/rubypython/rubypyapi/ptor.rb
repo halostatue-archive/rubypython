@@ -14,7 +14,7 @@ module RubyPyApi
       
       list_size.times do |i|
 	element = Python.PyList_GetItem(pList, i)
-	Macros.Py_XINCREF element
+	Python.Py_IncRef element
 	rObject = ptorObject(element)
 	rb_array.push rObject
       end
@@ -38,7 +38,7 @@ module RubyPyApi
     def self.ptorTuple(pTuple)
       pList = Python.PySequence_List pTuple
       rArray = ptorList pList
-      Macros.Py_XDECREF pList
+      Python.Py_DecRef pList
       rArray
     end
 

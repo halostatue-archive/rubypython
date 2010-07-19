@@ -73,6 +73,10 @@ module RubyPyApi
     attach_function :PyErr_Occurred, [], :pointer
     attach_function :PyErr_Clear, [], :void
 
+    #Reference Counting
+    attach_function :Py_IncRef, [:pointer], :void
+    attach_function :Py_DecRef, [:pointer], :void
+
     #Type Objects
     attach_variable :PyString_Type, DummyStruct.by_value
     attach_variable :PyList_Type, DummyStruct.by_value

@@ -13,7 +13,7 @@ module RubyPyApi
 
     class AutoPyPointer < FFI::AutoPointer
       def self.release(pointer)
-        Macros.Py_XDECREF pointer
+        #Python.Py_DecRef pointer
       end
     end
 
@@ -55,7 +55,7 @@ module RubyPyApi
     end
 
     def xIncref
-      Macros.Py_XINCREF @pointer
+      Python.Py_IncRef @pointer
     end
 
     def null?
@@ -94,7 +94,6 @@ module RubyPyApi
       rbList = self.new Python.PyList_New(args.length)
 
       args.each_with_index do |el, i|
-        el.xIncref
         Python.PyList_SetItem rbList.pointer, i, el.pointer
       end
 

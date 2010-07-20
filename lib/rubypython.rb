@@ -47,7 +47,14 @@ module RubyPython
       raise PythonError.handle_error
     end
     RubyPyApi::RubyPyProxy.new(pymod)
+  end
 
+  def self.legacy_mode=(on_off)
+    RubyPyApi.legacy_mode = on_off
+  end
+
+  def self.legacy_mode
+    RubyPyApi.legacy_mode
   end
 end
 

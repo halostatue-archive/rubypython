@@ -5,6 +5,15 @@ require 'rubypython/rubypyapi/rtop'
 require 'rubypython/rubypyapi/py_object'
 
 module RubyPyApi
+  @@legacy_mode = false
+  def self.legacy_mode=(on_off)
+    @@legacy_mode = on_off
+  end
+
+  def self.legacy_mode
+    @@legacy_mode
+  end
+
   def self.start
     if Python.Py_IsInitialized != 0
       return false

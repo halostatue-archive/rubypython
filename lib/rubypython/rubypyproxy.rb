@@ -23,7 +23,10 @@ module RubyPyApi
     end
 
     def _wrap(pyobject)
-      RubyPyApi::RubyPyProxy.new(pyobject)
+      if RubyPyApi.legacy_mode
+        ret = pyobject.rubify
+      end
+      ret or RubyPyApi::RubyPyProxy.new(pyobject)
     end
 
     def method_missing(name, *args, &block)

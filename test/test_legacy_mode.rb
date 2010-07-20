@@ -7,6 +7,10 @@ class TestRubypythonLegacy < Test::Unit::TestCase
     RubyPython.legacy_mode = true
   end
 
+  def teardown
+    RubyPython.legacy_mode = false
+  end
+
   def test_delegation
     RubyPython.start
     cPickle = RubyPython.import("cPickle")
@@ -173,7 +177,7 @@ end
 
 class TestLegacyWithCustomObject < Test::Unit::TestCase
   def setup
-    RubyPython.legacy_mode = 1
+    RubyPython.legacy_mode = true
     RubyPython.start
     sys = RubyPython.import 'sys'
     sys.path = ['./test/python_helpers']
@@ -182,6 +186,7 @@ class TestLegacyWithCustomObject < Test::Unit::TestCase
   
   def teardown
     RubyPython.stop
+    RubyPython.legacy_mode = false
   end
   
   def test_string_access

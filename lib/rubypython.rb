@@ -56,6 +56,13 @@ module RubyPython
   def self.legacy_mode
     RubyPyApi.legacy_mode
   end
+
+  def self.session
+    start
+    result = yield
+    stop
+    result
+  end
 end
 
 

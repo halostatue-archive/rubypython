@@ -63,6 +63,13 @@ module RubyPython
     stop
     result
   end
+
+  def self.run(&block)
+    start
+    result = module_eval &block
+    stop
+    result
+  end
 end
 
 

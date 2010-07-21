@@ -23,17 +23,19 @@ module RubyPyApi
     end
 
     def _wrap(pyobject)
-      if RubyPyApi.legacy_mode
+      if pyobject.class?
+        ret = RubyPyApi::RubyPyClass.new pyobject
+      elsif RubyPyApi.legacy_mode
         ret = pyobject.rubify
       end
-      ret or RubyPyApi::RubyPyProxy.new(pyobject)
+      ret or RubyPyApi::RubyPyProxy.new pyobject
     end
 
     def method_missing(name, *args, &block)
-      name=name.to_s
+      name = name.to_s
       
       if(name.end_with? "=")
-	setter=true
+	setter = true
 	name.chomp! "="
       else
 	setter=false
@@ -46,19 +48,22 @@ module RubyPyApi
       
       args = RubyPyApi::PyObject.convert(*args)
 
-      if(setter)
+      if setter
 	return _setAttr(name,*args)
       end
 
-
       pFunc = @pObject.getAttr(name)
       
-      if(pFunc.callable?)
-	pTuple = RubyPyApi::PyObject.buildArgTuple(*args)
-	pReturn = pFunc.callObject(pTuple)
-	if(PythonError.error?)
-          raise PythonError.handle_error
-	end
+      if pFunc.callable?
+        if args.empty? and pFunc.class?
+          pReturn = pFunc
+        else
+          pTuple = RubyPyApi::PyObject.buildArgTuple(*args)
+          pReturn = pFunc.callObject(pTuple)
+          if(PythonError.error?)
+            raise PythonError.handle_error
+          end
+        end
       else
 	pReturn = pFunc
       end
@@ -70,5 +75,20 @@ module RubyPyApi
       @pObject.rubify
     end
 	
+  end
+
+
+  class RubyPyClass < RubyPyProxy
+
+    def new(*args)
+      args = RubyPyApi::PyObject.convert(*args)
+      pTuple = RubyPyApi::PyObject.buildArgTuple(*args)
+      pReturn = @pObject.callObject(pTuple)
+      if PythonError.error?
+        raise PythonError.handle_error
+      end
+      _wrap pReturn
+    end
+
   end
 end

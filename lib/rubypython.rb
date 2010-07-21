@@ -29,16 +29,25 @@ RubyPythonBridge = RubyPyApi
 #  puts cPickle.dumps "RubyPython is awesome!"
 #  RubyPython.stop
 module RubyPython
+
+  #Starts ups the Python interpreter. This method _must_ be run
+  #before using any Python code. The only alternatives are use of the
+  #::session and ::run methods.
   def self.start
     RubyPyApi.start
   end
 
+  #Stops the Python interpreter if it is running. Returns true if the
+  #intepreter is stopped by this invocation. All wrapped Python objects
+  #should be considered invalid after invocation of this method.
   def self.stop
     PyMain.main = nil
     PyMain.builtin = nil
     RubyPyApi.stop
   end
 
+  #Import a Python module into the interpreter and return a proxy object
+  #for it. This is the preferred way to gain access to Python object.
   def self.import(mod)
     pymod = RubyPyApi.import(mod)
     if(PythonError.error?)
@@ -47,14 +56,24 @@ module RubyPython
     RubyPyApi::RubyPyModule.new(pymod)
   end
 
+  #Switch RubyPython into a mode compatible with versions < 0.3.0. All
+  #Python objects returned by method invocations are automatically converted
+  #to natve Ruby Types if RubyPython knows how to do this. Only if no such
+  #conversion is known are the objects wrapped in proxy objects.
   def self.legacy_mode=(on_off)
     RubyPyApi.legacy_mode = on_off
   end
 
+  #Set RubyPython to automatically wrap all returned objects as an instance
+  #of RubyPyApi::RubyPyProxy or one of its subclasses.
   def self.legacy_mode
     RubyPyApi.legacy_mode
   end
 
+  #Execute the given block, starting the Python interperter before its execution
+  #and stopping the interpreter after its execution. The last expression of the
+  #block is returned; be careful that this is not a Python object as it will
+  #become invalid when the interpreter is stopped.
   def self.session
     start
     result = yield
@@ -62,6 +81,8 @@ module RubyPython
     result
   end
 
+  #The same as ::session except that the block is executed within the scope 
+  #of the RubyPython module.
   def self.run(&block)
     start
     result = module_eval(&block)

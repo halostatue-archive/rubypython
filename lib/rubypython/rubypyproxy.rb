@@ -31,6 +31,10 @@ module RubyPyApi
       ret or RubyPyApi::RubyPyProxy.new(pyobject)
     end
 
+    def respond_to?(mname)
+      @pObject.hasAttr(mname.to_s)
+    end
+
     def method_missing(name, *args, &block)
       name = name.to_s
       

@@ -77,6 +77,8 @@ module RubyPyApi
 	
   end
 
+  class RubyPyModule < RubyPyProxy
+  end
 
   class RubyPyClass < RubyPyProxy
 

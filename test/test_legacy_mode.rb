@@ -37,11 +37,6 @@ class TestRubypythonLegacy < Test::Unit::TestCase
                        cPickle.PicklingError,
                        "Wrapped Python class was not of type RubyPyClass.")
     
-    cPickle.free_pobj
-    
-    ObjectSpace.each_object(RubyPythonBridge::RubyPyObject) do |o|
-      o.free_pobj
-    end
     
     assert(RubyPython.stop,"Interpreter did not halt correctly.")
   end

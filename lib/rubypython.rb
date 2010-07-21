@@ -44,11 +44,11 @@ module RubyPython
   end
 
   def self.import(mod)
-    pymod=RubyPyApi.import(mod)
+    pymod = RubyPyApi.import(mod)
     if(PythonError.error?)
       raise PythonError.handle_error
     end
-    RubyPyApi::RubyPyProxy.new(pymod)
+    RubyPyApi::RubyPyModule.new(pymod)
   end
 
   def self.legacy_mode=(on_off)

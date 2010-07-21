@@ -208,3 +208,77 @@ class TestLegacyWithCustomObject < Test::Unit::TestCase
   end
 end
 
+class TestLegacyWithCPickle < Test::Unit::TestCase
+  def setup
+    RubyPython.legacy_mode = true
+    RubyPython.start
+    @cPickle=RubyPython.import "cPickle"
+  end
+  
+  def teardown
+    RubyPython.stop
+    RubyPython.legacy_mode = false
+  end
+  
+  def test_mod_respond_to
+    assert(@cPickle.respond_to?(:loads),
+           "Ruby respond to method not working on wrapped module.")
+  end
+  
+  def test_data_passing
+    assert_equal({"a"=>"n", [1, "2"]=>4},
+                 @cPickle.loads( "(dp1\nS'a'\nS'n'\ns(I1\nS'2'\ntp2\nI4\ns."),
+                 "Data returned from wrapped cPickle is incorrect." )
+    
+    orig_array = [1,2,3,4]
+    dumped_array = @cPickle.dumps(orig_array)
+    
+    assert_equal(orig_array,
+                 @cPickle.loads(dumped_array),
+                 "Array returned from cPickle is not equivalent to input array.")
+  end
+  
+  def test_unknown_method
+    assert_raise(NoMethodError, "Missing method failed to raise NoMethodError") do
+      @cPickle.splack
+    end
+  end
+  
+  def test_class_wrapping
+    assert_instance_of(RubyPythonBridge::RubyPyClass,
+                       @cPickle.PicklingError,
+                       "Wrapped class is not an instance of RubyPyClass.")
+  end
+  
+  def test_module_wrapping
+    assert_instance_of(RubyPythonBridge::RubyPyModule,
+                       @cPickle,
+                       "Wrapped module is not of class RubyPyModule.")
+  end
+  
+end
+
+
+class TestLegacyWithUrllib2 < Test::Unit::TestCase
+  def setup
+    RubyPython.legacy_mode = true
+    RubyPython.start
+    @urllib2=RubyPython.import "urllib2"
+  end
+  
+  def teardown
+    RubyPython.stop
+    RubyPython.legacy_mode = false
+  end
+  
+  def test_class_respond_to
+    assert(@urllib2.Request.respond_to?(:get_data),
+          "respond_to? method call failed on RubyPyClass")
+  end
+  
+  def test_instance_respond_to
+    assert(@urllib2.Request.new("google.com").respond_to?(:get_data),
+          "respond_to? method call failed on RubyPyInstance")
+  end
+  
+end

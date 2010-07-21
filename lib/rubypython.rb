@@ -68,7 +68,7 @@ module RubyPython
 
   def self.run(&block)
     start
-    result = module_eval &block
+    result = module_eval(&block)
     stop
     result
   end

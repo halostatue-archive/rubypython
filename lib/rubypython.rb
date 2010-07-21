@@ -11,6 +11,8 @@ if RUBY_VERSION == "1.8.6"
   end
 end
 
+RubyPythonBridge = RubyPyApi
+
 
 =begin rdoc
 This module provides the direct user interface for the RubyPython extension.

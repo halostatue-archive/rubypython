@@ -38,9 +38,9 @@ module RubyPython
   end
 
   def self.stop
-    RubyPyApi.stop
     PyMain.main = nil
     PyMain.builtin = nil
+    RubyPyApi.stop
   end
 
   def self.import(mod)

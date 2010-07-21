@@ -338,7 +338,8 @@ class TestRubyPyApi_PyProxy < Test::Unit::TestCase
     builtin = RubyPyApi.import("__builtin__")
     builtinProxy = RubyPyApi::RubyPyProxy.new(builtin)
 
-    rbStr = builtinProxy.str
+    rbStrClass = builtinProxy.str
+    rbStr = rbStrClass.new
 
     assert_equal("",
                  rbStr.pObject.rubify,
@@ -409,33 +410,6 @@ class TestRubyPyApi_CustomTestObject < Test::Unit::TestCase
     rbPath=rbSys.path
     rbPath.append("./test/python_helpers/")
     RubyPyApi.import "objects"
-  end
-
-end
-class TestRubyPyApi_DynamicTypes < Test::Unit::TestCase
-
-  def setup
-    RubyPyApi.start
-  end
-
-  def teardown
-    RubyPyApi.stop
-  end
-
-  def test_module_wraps_as_module
-    urllib2 = RubyPyApi.import('urllib2')
-    assert_instance_of(RubyPyApi::RubyPyModule,
-                       urllib2,
-                       "Wrapped Python class not of correct type.")
-
-  end
-
-  def test_class_wraps_as_class
-    urllib2 = RubyPyApi.import('urllib2')
-    assert_instance_of(RubyPyApi::RubyPyClass,
-                       urllib2.Request,
-                       "Wrapped Python class not of correct type.")
-
   end
 
 end

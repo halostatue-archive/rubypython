@@ -24,11 +24,11 @@ module RubyPyApi
 
     def _wrap(pyobject)
       if pyobject.class?
-        ret = RubyPyApi::RubyPyClass.new pyobject
+        ret = RubyPyApi::RubyPyClass.new(pyobject)
       elsif RubyPyApi.legacy_mode
         ret = pyobject.rubify
       end
-      ret or RubyPyApi::RubyPyProxy.new pyobject
+      ret or RubyPyApi::RubyPyProxy.new(pyobject)
     end
 
     def method_missing(name, *args, &block)

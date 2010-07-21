@@ -125,3 +125,30 @@ class TestWithCustomObject < Test::Unit::TestCase
   end
 end
 
+class TestRubyPython_DynamicTypes < Test::Unit::TestCase
+
+  def setup
+    RubyPython.start
+  end
+
+  def teardown
+    RubyPython.stop
+  end
+
+  def test_module_wraps_as_module
+    urllib2 = RubyPython.import('urllib2')
+    assert_instance_of(RubyPyApi::RubyPyModule,
+                       urllib2,
+                       "Wrapped Python class not of correct type.")
+
+  end
+
+  def test_class_wraps_as_class
+    urllib2 = RubyPython.import('urllib2')
+    assert_instance_of(RubyPyApi::RubyPyClass,
+                       urllib2.Request,
+                       "Wrapped Python class not of correct type.")
+
+  end
+
+end

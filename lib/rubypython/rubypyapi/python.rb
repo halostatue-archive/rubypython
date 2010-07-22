@@ -2,7 +2,7 @@ require 'ffi'
 require 'open3'
 
 module RubyPyApi
-  module Python
+  module Python #:nodoc:all
     extend FFI::Library
     PYTHON_VERSION = Open3.popen3("python --version") { |i,o,e| e.read}.chomp.split[1].to_f
     PYTHON_NAME = "python#{PYTHON_VERSION}"

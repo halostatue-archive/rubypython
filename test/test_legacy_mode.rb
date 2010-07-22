@@ -120,8 +120,6 @@ class TestRubypythonLegacy < Test::Unit::TestCase
       
       cPickle = RubyPython.import "cPickle"
       
-      cPickle.inspect
-      
       assert_equal({"a"=>"n", [1, "2"]=>4},
                    cPickle.loads("(dp1\nS'a'\nS'n'\ns(I1\nS'2'\ntp2\nI4\ns."),
                    "cPickle misbehaved in session block.")

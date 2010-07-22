@@ -86,6 +86,24 @@ class TestRubypython < Test::Unit::TestCase
                  "Ruby failed to modify Python object as expected.")
     
   end
+
+  def test_session_function_error_resistance
+    RubyPython.session do
+      raise "ERROR"
+    end
+  rescue
+    assert(!RubyPython.stop,
+          "Session method failed to stop Python interpreter on error")
+  end
+
+  def test_session_function
+    RubyPython.session do
+      cPickle = RubyPython.import "cPickle"
+      assert_equal({"a"=>"n", [1, "2"]=>4},
+                   cPickle.loads("(dp1\nS'a'\nS'n'\ns(I1\nS'2'\ntp2\nI4\ns.").rubify,
+                   "cPickle misbehaved in session block.")
+    end
+  end
 end
 
 

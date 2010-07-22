@@ -76,8 +76,11 @@ module RubyPython
   #become invalid when the interpreter is stopped.
   def self.session
     start
-    result = yield
-    stop
+    begin
+      result = yield
+    ensure
+      stop
+    end
     result
   end
 
@@ -85,8 +88,11 @@ module RubyPython
   #of the RubyPython module.
   def self.run(&block)
     start
-    result = module_eval(&block)
-    stop
+    begin
+      result = module_eval(&block)
+    ensure
+      stop
+    end
     result
   end
 end

@@ -100,7 +100,24 @@ class TestWithCustomObject < Test::Unit::TestCase
   def teardown
     RubyPython.stop
   end
-  
+
+  def test_identity_function
+    ruby_objects = [0, 1.0, 'STRING', [1, 2, 'LIST'], {'dict' => 'element'}]
+    ruby_objects.each do |obj|
+      assert_equal(obj,
+                  @objects.identity(obj).rubify,
+                  "Indentity function is python is identity in ruby.")
+
+    end
+  end
+
+  def test_create_new_class_object
+    mockObject = @objects.RubyPythonMockObject.new
+    assert_instance_of(mockObject,
+                   RubyPyApi::RubyPyProxy,
+                   "Could not get new class instance from python.")
+  end
+
   def test_string_access
     assert_equal("STRING",
            @objects.RubyPythonMockObject.STRING.rubify,
@@ -122,6 +139,22 @@ class TestWithCustomObject < Test::Unit::TestCase
     assert_equal("NEW_STRING",
                 @objects.RubyPythonMockObject.STRING_LIST.rubify()[2],
                 "Failed to add object to list.")
+  end
+
+  def test_square_elements
+    rbList = [1, 2, 3, 4, 5]
+    mockObjectInstance = @objects.RubyPythonMockObject.new
+    assert_equal(rbList.map {|x| x**2},
+                mockObjectInstance.square_elements(rbList).rubify,
+                "List operations not equivalent between ruby and python")
+  end
+
+  def test_sum_elements
+    rbList = [1, 2, 3, 4, 5]
+    mockObjectInstance = @objects.RubyPythonMockObject.new
+    assert_equal(rbList.inject(0) {|tot, x| tot += x},
+                mockObjectInstance.sum_elements(rbList).rubify,
+                "List operations not equivalent between ruby and python")
   end
 end
 

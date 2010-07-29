@@ -4,39 +4,37 @@
 
 == DESCRIPTION:
 
-	RubyPython is a C bridge between Ruby and Python with a Ruby interface. 
-It's aim is to make the power of the Python's great standard library available 
-to Ruby programmers from within Ruby.
-
+	RubyPython is a bridge between the Ruby and Python interpreters. It embeds a running Python interpreter in the applications process using FFI and provides a means for wrapping and converting Python objects.
+ 
 == FEATURES/PROBLEMS:
 
 	Features:
-	* Can handle simple conversion of Python builtin types to ruby builtin types and vice versa
-	* Can import python modules
+	* Can handle simple conversion of Python builtin types to Ruby builtin types and vice versa
+	* Can import Python modules
 	* Can execute arbitrary methods on imported modules and return the result
 	* Python objects can be treated as Ruby objects!
-	* Python's standard library available to you from within ruby.
+	* Python's standard library available to you from within Ruby.
 
 == SYNOPSIS:
 	RubyPython.start
-	cPickle=RubyPython.import("cPickle")
+	cPickle = RubyPython.import("cPickle")
 	p cPickle.dumps("RubyPython is awesome!")
 	RubyPython.stop
 	
 == REQUIREMENTS:
 	
-	* Python >=2.4, < 3.0
-	* Ruby >=1.8.7
+	* Python >= 2.4, < 3.0
+	* Ruby >= 1.8.6
 	
-	Note: Rubypython has been tested on Mac OS 10.5.x and 10.6.1 as well as Ubuntu Jaunty 9.04.
+	Note: RubyPython has been tested on Mac OS 10.5.x
 	
 	
 == INSTALL:
 
-	sudo gem install rubypython
+	[sudo] gem install rubypython
 
 == DOCUMENTATION:
-	Just a quick note on the documentation. Don't trust RDoc on anything, involving the C extensions. It is kind of stupid and misses a lot of methods. If you want to know about that stuff have a look at the code.
+	The RDoc should provide a reasonable description of how to use RubyPython. Starting with version 0.3.x there are two modes of operation: default and legacy. These are described in the RDoc.
 	
 == LICENSE:
 

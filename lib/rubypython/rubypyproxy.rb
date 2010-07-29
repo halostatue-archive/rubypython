@@ -1,5 +1,6 @@
 require 'rubypython/rubypyapi/py_error'
 require 'rubypython/rubypyapi/py_object'
+require 'rubypython/rubypyapi/ptor'
 
 module RubyPyApi
 
@@ -32,11 +33,14 @@ module RubyPyApi
 
     def _wrap(pyobject) #:nodoc:
       if pyobject.class?
-        ret = RubyPyApi::RubyPyClass.new(pyobject)
+        RubyPyApi::RubyPyClass.new(pyobject)
       elsif RubyPyApi.legacy_mode
-        ret = pyobject.rubify
+        pyobject.rubify
+      else
+        RubyPyApi::RubyPyProxy.new(pyobject)
       end
-      ret or RubyPyApi::RubyPyProxy.new(pyobject)
+    rescue PTOR::UnsupportedConversion => exc
+      RubyPyApi::RubyPyProxy.new pyobject
     end
 
     #RubyPython checks the attribute dictionary of the wrapped object

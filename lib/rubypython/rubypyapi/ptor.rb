@@ -3,6 +3,7 @@ require 'rubypython/rubypyapi/macros'
 
 module RubyPyApi
   module PTOR
+    class UnsupportedConversion < Exception; end
 
     def self.ptorString(pString)
       Python.PyString_AsString(pString)
@@ -84,9 +85,8 @@ module RubyPyApi
       elsif pObj == Macros.Py_None
 	nil
       else
-        nil
+        raise UnsupportedConversion.new 'Unsupported Type for PTOR Conversion'
       end
     end
-
   end
 end

@@ -105,6 +105,14 @@ class TestRubypyapiPyObject < Test::Unit::TestCase
                  "Failed to correctly unwrap hash.");
   end
 
+  def test_rubify_unsupported
+    urllib2 = RubyPyApi.import 'urllib2'
+    request = urllib2.getAttr('Request')
+    assert_raises RubyPyApi::PTOR::UnsupportedConversion do
+      request.rubify
+    end
+  end
+
   def test_has_attr_affirmative
     pyStringModule = RubyPyApi.import("string");
     assert(pyStringModule.hasAttr("ascii_letters"),

@@ -93,8 +93,10 @@ module RubyPyApi
       if PythonError.error?
         raise PythonError.handle_error
       end
-      _wrap pReturn
+      RubyPyInstance.new pReturn
     end
+  end
 
+  class RubyPyInstance < RubyPyProxy
   end
 end

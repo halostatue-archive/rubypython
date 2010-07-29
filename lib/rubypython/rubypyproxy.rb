@@ -6,6 +6,14 @@ module RubyPyApi
   class NullPObjectError < RuntimeError
   end
 
+  #This is the object that the end user will most often be interacting
+  #with. It holds a reference to an object in the Python VM an delegates
+  #method calls to it, wrapping and returning the results. The user should
+  #not worry about reference counting of this object an instance
+  #will decrement its objects reference count when it is garbage collected.
+  #
+  #Note: All RubyPyProxy objects become invalid when the Python interpreter
+  #is halted.
   class RubyPyProxy 
 
     attr_reader :pObject
@@ -18,11 +26,11 @@ module RubyPyApi
       end
     end
 
-    def _setAttr(name, *args)
+    def _setAttr(name, *args) #:nodoc:
       @pObject.setAttr(name, args[0])
     end
 
-    def _wrap(pyobject)
+    def _wrap(pyobject) #:nodoc:
       if pyobject.class?
         ret = RubyPyApi::RubyPyClass.new(pyobject)
       elsif RubyPyApi.legacy_mode
@@ -31,11 +39,14 @@ module RubyPyApi
       ret or RubyPyApi::RubyPyProxy.new(pyobject)
     end
 
+    #RubyPython checks the attribute dictionary of the wrapped object
+    #to check whether it will respond to a method call. This should not
+    #return false positives but it may return false negatives.
     def respond_to?(mname)
       @pObject.hasAttr(mname.to_s)
     end
 
-    def method_missing(name, *args, &block)
+    def method_missing(name, *args, &block) #:nodoc:
       name = name.to_s
       
       if(name.end_with? "=")
@@ -75,6 +86,8 @@ module RubyPyApi
       return _wrap(pReturn)
     end
 
+    #RubyPython will attempt to translate the wrapped object into a native
+    #Ruby object. This will only succeed for simple builtin type.
     def rubify
       @pObject.rubify
     end

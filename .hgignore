@@ -8,3 +8,4 @@ syntax:glob
 doc/*
 ext/*/Makefile
 *.swp
+.yardoc/*

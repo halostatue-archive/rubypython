@@ -49,6 +49,8 @@ class Hoe
   end
 end
 
+Hoe.plugin :yard
+
 # Generate all the Rake tasks
 # Run 'rake -T' to see list of generated tasks (from gem root directory)
 $hoe = Hoe.spec(GEM_NAME) do
@@ -63,6 +65,8 @@ $hoe = Hoe.spec(GEM_NAME) do
   # == Optional
   self.changes = self.paragraphs_of("History.txt", 0..1).join("\n\n")
   #p.extra_deps = EXTRA_DEPENDENCIES
+  self.yard_files=["lib/**/*.rb"]
+
 
   self.spec_extras = {
     :requirements => ["Python, ~>2.4"]

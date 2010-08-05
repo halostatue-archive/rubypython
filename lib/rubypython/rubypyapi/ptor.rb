@@ -2,7 +2,11 @@ require 'rubypython/rubypyapi/python'
 require 'rubypython/rubypyapi/macros'
 
 module RubyPyApi
+  #Handles conversion of Python types to Ruby natives types if possible. Objects
+  #to be converted should be passed to the {#ptorObject} method.
   module PTOR
+    #Raised when RubyPython does not know how to convert a Python
+    #object.
     class UnsupportedConversion < Exception; end
 
     def self.ptorString(pString)
@@ -63,6 +67,7 @@ module RubyPyApi
     end
 
       
+    #@raise {UnsupportedConversion}
     def self.ptorObject(pObj)
       if Macros.PyObject_TypeCheck(pObj, Python.PyString_Type.to_ptr) != 0
 	ptorString pObj

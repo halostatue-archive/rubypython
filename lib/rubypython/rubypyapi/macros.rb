@@ -2,8 +2,8 @@ require 'ffi'
 require 'rubypython/rubypyapi/python'
 
 module RubyPyApi
+  #Contains Python C API macros reimplmented in Ruby. For internal use only.
   module Macros
-    #Useful Python Macros reimplemented in Ruby
     def self.Py_TYPE(pObjPointer)
       pStruct = Python::PyObjectStruct.new pObjPointer
       pStruct[:ob_type]

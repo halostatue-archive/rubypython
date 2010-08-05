@@ -11,6 +11,9 @@ module RubyPyApi
   #make use of the RubyPyApi::RubyPyProxy class and its subclasses.
   class PyObject
 
+    #This class wraps C PyObject*s so that the their Python reference count is
+    #automatically decreased when the Ruby object referencing them 
+    #goes out of scope.
     class AutoPyPointer < FFI::AutoPointer
       def self.release(pointer)
         Python.Py_DecRef pointer if Python.IsInitialized == 1 
@@ -19,6 +22,9 @@ module RubyPyApi
 
     attr_reader :pointer
 
+    #@param [FFI::Pointer, other] pointer objects passed in to the constructor
+    #   are just assigned to the pointer attribute of the instance. All other
+    #   objects are converted via {RTOP#rtopObject} before being assigned.
     def initialize(rObject)
       if rObject.kind_of? FFI::Pointer 
         @pointer = AutoPyPointer.new rObject
@@ -28,14 +34,23 @@ module RubyPyApi
       end
     end
 
+    #Attempts to convert the wrapped object to a native ruby type.
+    #@return a ruby version of the wrapped object
+    #@raise [{PTOR::UnsupportedConversion}]
     def rubify
       PTOR.ptorObject @pointer
     end
 
+    #Tests whether the wrapped object has a given attribute
+    #@param [String] the name of the attribute to look up
+    #@return [Boolean]
     def hasAttr(attrName)
       Python.PyObject_HasAttrString(@pointer, attrName) == 1
     end
 
+    #Retrieves an object from the wrapped python object
+    #@param [String] the name of attribute to fetch
+    #@return [{PyObject}] a Ruby wrapper around the fetched attribute
     def getAttr(attrName)
       pyAttr = Python.PyObject_GetAttrString @pointer, attrName
       self.class.new pyAttr

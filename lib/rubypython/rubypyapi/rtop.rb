@@ -2,6 +2,9 @@ require 'rubypython/rubypyapi/python'
 require 'rubypython/rubypyapi/macros'
 
 module RubyPyApi
+  #This modules encapsulates the work of converting ruby objects
+  #to native Python types, so that they may be passed to the python
+  #interpreter.
   module RTOP
     def self.rtopString(rString)
       Python.PyString_FromString(rString)
@@ -59,6 +62,12 @@ module RubyPyApi
       Python.PyString_FromString rSymbol.to_s
     end
 
+    #If possible converts a ruby type to an equivalent
+    #python native type.
+    #@param rObj a native ruby type
+    #@param [Boolean] is_key whether this object will be used as a key in a
+    #  python dict.
+    #@return an FFI::Pointer wrapping a C PyObject*
     def self.rtopObject(rObj, is_key=false)
       case rObj
       when String

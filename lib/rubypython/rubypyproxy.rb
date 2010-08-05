@@ -1,6 +1,7 @@
 require 'rubypython/rubypyapi/py_error'
 require 'rubypython/rubypyapi/py_object'
 require 'rubypython/rubypyapi/ptor'
+require 'rubypython/blankobject.rb'
 
 module RubyPyApi
 
@@ -12,7 +13,7 @@ module RubyPyApi
   #
   #Note: All RubyPyProxy objects become invalid when the Python interpreter
   #is halted.
-  class RubyPyProxy 
+  class RubyPyProxy < BlankObject
 
     attr_reader :pObject
 

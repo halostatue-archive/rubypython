@@ -1,8 +1,8 @@
-History.txt
+History.md
 License.txt
 Manifest.txt
 PostInstall.txt
-README.txt
+README.md
 Rakefile
 config/hoe.rb
 config/requirements.rb
@@ -21,7 +21,6 @@ setup.rb
 test/fixture1.pickle
 test/python_helpers
 test/python_helpers/objects.py
-test/python_helpers/objects.pyc
 test/test.wav
 test/test_helper.rb
 test/test_legacy_mode.rb

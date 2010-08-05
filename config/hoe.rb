@@ -1,7 +1,7 @@
 require 'rubypython/version'
 
 AUTHOR = 'Zach Raines'  
-EMAIL = "achatesavc+rubypython@gmail.com"
+EMAIL = "raineszm+rubypython@gmail.com"
 DESCRIPTION = "A bridge between ruby and python"
 GEM_NAME = 'rubypython' 
 RUBYFORGE_PROJECT = 'rubypython' 
@@ -59,8 +59,7 @@ $hoe = Hoe.spec(GEM_NAME) do
   self.version = VERS
   # == Optional
   self.changes = self.paragraphs_of("History.md", 0..1).join("\n\n")
-  #p.extra_deps = EXTRA_DEPENDENCIES
-  self.yard_files=["lib/**/*.rb"]
+  self.extra_deps = EXTRA_DEPENDENCIES
   self.yard_options=['--markup','markdown']
 
 

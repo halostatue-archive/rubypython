@@ -52,7 +52,7 @@ module RubyPyApi
     end
 
     def self.rtopNone
-      Macros.PY_RETURN_NONE
+      Macros.Py_RETURN_NONE
     end
 
     def self.rtopSymbol(rSymbol)

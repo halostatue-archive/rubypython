@@ -30,18 +30,18 @@ module RubyPyApi
     end
 
     def self.Py_RETURN_FALSE
-      Python.Py_IncRef(Py_False)
-      Py_False
+      Python.Py_IncRef(self.Py_False)
+      self.Py_False
     end
 
     def self.Py_RETURN_TRUE
-      Python.Py_IncRef(Py_True)
-      Py_True
+      Python.Py_IncRef(self.Py_True)
+      self.Py_True
     end
 
     def self.Py_RETURN_NONE
-      Python.Py_IncRef(Py_None)
-      Py_None
+      Python.Py_IncRef(self.Py_None)
+      self.Py_None
     end
   end
 end

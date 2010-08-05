@@ -1,23 +1,23 @@
-== 0.2.10 2010-07-08
+## 0.2.10 2010-07-08
 * Bug Fixes
 	* Made some changes to how the native extension is configured and build.
-== 0.2.9 2009-10-19
+## 0.2.9 2009-10-19
 * Minor Enhancements
 	* Updated the C code to make it cleaner, more readable, and more maintainable.
-== 0.2.8 2009-10-05
+## 0.2.8 2009-10-05
 * Bug Fixes
 	* Some test files were improperly formatted (minor bug fix).
-== 0.2.7 2009-3-30
+## 0.2.7 2009-3-30
 * Bug Fixes
 	* Fixed some bugs which caused rubypython to be unable to determine python version correctly.
-== 0.2.6 2009-3-19
+## 0.2.6 2009-3-19
 * Bug Fixes
 	* Further updates to increase compatibility with 1.9.
-== 0.2.5 2009-3-18
+## 0.2.5 2009-3-18
 * Bug Fixes
 	* Updated to build and run under Ruby 1.9.
 
-== 0.2.4 2008-10-24
+## 0.2.4 2008-10-24
 * Major Enhancements
 	* Provided setter methods for object attributes. Python object attributes can now be set 
 		from within ruby.
@@ -25,7 +25,7 @@
 		collisions.
 * Bug Fix
 	* Changed part of extconf.rb file that would not work under windows.
-== 0.2.3 2008-08-29
+## 0.2.3 2008-08-29
 * 2 Major Enhancements
 	* Introduced PyMain object as a singleton wrapper for the Python __main__ and 
 		__builtin__ modules.
@@ -39,7 +39,7 @@
 	* Fixed an error in ptor.c that might have prevented RubyPython from building correctly 	
 		on certain systems.
 		
-== 0.2.2 2008-08-07
+## 0.2.2 2008-08-07
 * Major Enhancements
 	* Wrapped classes and instances should now behave as expected.
 	* Gave RubyPyClasses a "new" method for creating instances.
@@ -51,11 +51,11 @@
 		certain objects
 
 
-== 0.2.1 2008-08-02
+## 0.2.1 2008-08-02
 * 1 Bug Fix
 	* Incorrect require fixed
 
-== 0.2.0 2008-08-02
+## 0.2.0 2008-08-02
 * 3 major enhancements
 	* RubyPython can now effectively convert or wrap most types from Python.
 	* Errors in the Python interpreter are relayed to Ruby errors.
@@ -64,11 +64,11 @@
 	* RubyPython.run did not work correctly. This is fixed now.
 	* Cleanup in RubyPython.stop fixes some issues in RubyPythonBridge.stop
 
-== 0.1.0 2008-08-01
+## 0.1.0 2008-08-01
 * A lot of major enhancements
 	* Too many to name. Hey I'm still developing
 
-== 0.0.1 2008-07-30
+## 0.0.1 2008-07-30
 
 * 1 major enhancement:
   * Initial release

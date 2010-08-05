@@ -36,11 +36,6 @@ REV = nil
 # UNCOMMENT IF REQUIRED:
 # REV = YAML.load(`svn info`)['Revision']
 VERS = RubyPython::VERSION::STRING + (REV ? ".#{REV}" : "")
-RDOC_OPTS = ['--quiet', '--title', 'rubypython documentation',
-    "--opname", "index.html",
-    "--line-numbers",
-    "--main", "README",
-    "--inline-source"]
 
 class Hoe
   def extra_deps
@@ -63,9 +58,10 @@ $hoe = Hoe.spec(GEM_NAME) do
   self.clean_globs |= ['**/.*.sw?', '*.gem', '.config', '**/.DS_Store']  #An array of file patterns to delete on clean.
   self.version = VERS
   # == Optional
-  self.changes = self.paragraphs_of("History.txt", 0..1).join("\n\n")
+  self.changes = self.paragraphs_of("History.md", 0..1).join("\n\n")
   #p.extra_deps = EXTRA_DEPENDENCIES
   self.yard_files=["lib/**/*.rb"]
+  self.yard_options=['--markup','markdown']
 
 
   self.spec_extras = {
@@ -73,7 +69,7 @@ $hoe = Hoe.spec(GEM_NAME) do
   }    # A hash of extra values to set in the gemspec.
   end
 
-CHANGES = $hoe.paragraphs_of('History.txt', 0..1).join("\\n\\n")
+CHANGES = $hoe.paragraphs_of('History.md', 0..1).join("\\n\\n")
 PATH    = (RUBYFORGE_PROJECT == GEM_NAME) ? RUBYFORGE_PROJECT : "#{RUBYFORGE_PROJECT}/#{GEM_NAME}"
 $hoe.remote_rdoc_dir = File.join(PATH.gsub(/^#{RUBYFORGE_PROJECT}\/?/,''), 'rdoc')
 $hoe.rsync_args = '-av --delete --ignore-errors'

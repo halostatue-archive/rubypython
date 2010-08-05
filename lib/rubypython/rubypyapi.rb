@@ -4,13 +4,14 @@ require 'rubypython/rubypyapi/ptor'
 require 'rubypython/rubypyapi/rtop'
 require 'rubypython/rubypyapi/py_object'
 
-#This module is really only for internal use. The RubyPython module
-#exports more user-friendly interfaces to the functionality provided
-#within. In short DO NOT USE THIS MODULE. It's internals are liable to
-#change and odds are if you use this module directly your code will break
-#with new releases.
+#This module is really only for internal use. The RubyPython module exports more
+#user-friendly interfaces to the functionality provided within. It's internals
+#are liable to change and odds are if you use this module directly your code
+#will break with new releases.
 module RubyPyApi
+
   @@legacy_mode = false
+
   def self.legacy_mode=(on_off)
     @@legacy_mode = on_off
   end
@@ -35,7 +36,6 @@ module RubyPyApi
     false
   end
 
-  #py_import
   def self.import(mname)
     pModule = Python.PyImport_ImportModule mname
     PyObject.new pModule

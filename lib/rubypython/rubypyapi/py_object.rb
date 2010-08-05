@@ -111,11 +111,7 @@ module RubyPyApi
         if arg.instance_of? RubyPyApi::PyObject
           arg
         elsif(arg.instance_of? RubyPyApi::RubyPyProxy)
-          if(arg.pObject.null?)
-            raise NullPObjectError.new("Null pointer.")
-          else
-            arg.pObject
-          end
+          arg.pObject
         else
           RubyPyApi::PyObject.new arg
         end

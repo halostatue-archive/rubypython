@@ -4,9 +4,6 @@ require 'rubypython/rubypyapi/ptor'
 
 module RubyPyApi
 
-  class NullPObjectError < RuntimeError
-  end
-
   #This is the object that the end user will most often be interacting
   #with. It holds a reference to an object in the Python VM an delegates
   #method calls to it, wrapping and returning the results. The user should

@@ -2,7 +2,9 @@ require 'ffi'
 require 'open3'
 
 module RubyPyApi
-  module Python #:nodoc:all
+  #This module provides access to the Python C API functions via the Ruby ffi
+  #gem. Documentation for these functions may be found [here](http://docs.python.org/c-api/). Likewise the FFI gem documentation may be found [here](http://rdoc.info/projects/ffi/ffi).
+  module Python
     extend FFI::Library
     PYTHON_VERSION = Open3.popen3("python --version") { |i,o,e| e.read}.chomp.split[1].to_f
     PYTHON_NAME = "python#{PYTHON_VERSION}"
@@ -12,6 +14,8 @@ module RubyPyApi
      "/lib/#{PYTHON_NAME}/config/#{LIB_NAME}.#{LIB_EXT}"
     @ffi_libs = [FFI::DynamicLibrary.open(LIB, FFI::DynamicLibrary::RTLD_LAZY|FFI::DynamicLibrary::RTLD_GLOBAL)]
 
+    #The class is a little bit of a hack to extract the address of global
+    #structs. If someone knows a better way please let me know.
     class DummyStruct < FFI::Struct
       layout :dummy_var, :int
     end
@@ -94,6 +98,10 @@ module RubyPyApi
     attach_variable :Py_ZeroStruct, :_Py_ZeroStruct, DummyStruct.by_value
     attach_variable :Py_NoneStruct, :_Py_NoneStruct, DummyStruct.by_value
 
+    #This is an implementation of the basic structure of a Python PyObject
+    #struct. The C struct is actually much larger, but since we only access
+    #the first two data members via FFI and always deal with struct pointers
+    #there is no need to mess around with the rest of the object.
     class PyObjectStruct < FFI::Struct
       layout :ob_refcnt, :int,
         :ob_type, :pointer

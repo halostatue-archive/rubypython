@@ -12,14 +12,17 @@ module RubyPyApi
 
   @@legacy_mode = false
 
+  #@see RubyPython.legacy_mode=
   def self.legacy_mode=(on_off)
     @@legacy_mode = on_off
   end
 
+  #@see RubyPython.legacy_mode
   def self.legacy_mode
     @@legacy_mode
   end
 
+  #@see RubyPython.start
   def self.start
     if Python.Py_IsInitialized != 0
       return false
@@ -28,6 +31,7 @@ module RubyPyApi
     true
   end
 
+  #@see RubyPython.stop
   def self.stop
     if Python.Py_IsInitialized !=0
       Python.Py_Finalize
@@ -36,6 +40,7 @@ module RubyPyApi
     false
   end
 
+  #@see RubyPython.stop
   def self.import(mname)
     pModule = Python.PyImport_ImportModule mname
     PyObject.new pModule

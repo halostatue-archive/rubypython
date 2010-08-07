@@ -15,7 +15,7 @@ class TestRubySessions < Test::Unit::TestCase
                   depickledObject.rubify,
                   "Failed to correctly depickle an object")
 
-      assert_raise PythonError do 
+      assert_raise RubyPython::PythonError do 
         cPickle.loads "INVALID STRING"
       end
     end

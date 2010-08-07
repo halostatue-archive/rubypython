@@ -19,7 +19,7 @@ class TestRubypython < Test::Unit::TestCase
   end
 
   def test_propogate_python_error
-    assert_raise(PythonError,"rubypython failed to propogate python error.") do
+    assert_raise(RubyPython::PythonError,"rubypython failed to propogate python error.") do
       RubyPython.import "slasdfj"
     end
     

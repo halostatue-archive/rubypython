@@ -1,7 +1,7 @@
-require 'rubypython/rubypyapi/py_error'
+require 'rubypython/py_error'
 require 'rubypython/rubypyapi/py_object'
 require 'rubypython/rubypyapi/ptor'
-require 'rubypython/blankobject.rb'
+require 'rubypython/blankobject'
 
 module RubyPython
   module RubyPyApi

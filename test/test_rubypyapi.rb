@@ -258,32 +258,32 @@ class TestRubyPyApi_PythonError < Test::Unit::TestCase
   end
 
   def test_error_occurred_negative
-    assert(!PythonError.error?,
+    assert(!RubyPython::PythonError.error?,
            "PythonError erroneously detected an error.")
   end
 
   def test_error_occurred_positive
     RubyPython::RubyPyApi.import("wat")
-    assert(PythonError.error?,
+    assert(RubyPython::PythonError.error?,
            "RubyPython failed to detect error on failed import.")
-    PythonError.clear
+    RubyPython::PythonError.clear
   end
 
   def test_error_clear
     RubyPython::RubyPyApi.import("wat")
-    PythonError.clear
-    assert(!PythonError.error?,
+    RubyPython::PythonError.clear
+    assert(!RubyPython::PythonError.error?,
            "PythonError.clear failed to clear error.")
   end
 
   def test_error_clear_no_error
-    PythonError.clear
+    RubyPython::PythonError.clear
   end
 
   def test_error_fetch_type
     RubyPython::RubyPyApi.import("wat")
 
-    rbType, rbValue, rbTraceback = PythonError.fetch()
+    rbType, rbValue, rbTraceback = RubyPython::PythonError.fetch()
     rbValue.xDecref
     rbTraceback.xDecref
     eType = rbType.getAttr("__name__").rubify

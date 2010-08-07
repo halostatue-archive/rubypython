@@ -98,8 +98,27 @@ module RubyPython
         @pObject.rubify
       end
 
+
+
+
       def ==(other)
         self.pObject.pointer == other.pObject.pointer
+      end
+
+      def +(other)
+        self.__add__ other
+      end
+
+      def -(other)
+        self.__sub__ other
+      end
+
+      def *(other)
+        self.__mul__ other
+      end
+
+      def /(other)
+        self.__div__ other
       end
           
     end

@@ -417,6 +417,20 @@ class TestPyAPI_PyProxy < Test::Unit::TestCase
 
   end
 
+end
+
+class TestPyAPI_RubyPyProxy_Operators < Test::Unit::TestCase
+
+  def setup
+    RubyPython.start
+    @two = RubyPython::PyAPI::RubyPyProxy.new 2
+    @six = RubyPython::PyAPI::RubyPyProxy.new 6 
+  end
+
+  def teardown
+    RubyPython.stop
+  end
+
   def test_proxy_eql
     urllib2_a = RubyPython.import('urllib2')
     urllib2_b = RubyPython.import('urllib2')
@@ -427,7 +441,36 @@ class TestPyAPI_PyProxy < Test::Unit::TestCase
 
   end
 
+  def test_delegates_addition_correctly
+    result = @two + @six
+    assert_equal(8,
+                result.rubify,
+                "RubyPyProxy + not setup correctly.")
+
+  end
+
+  def test_delegates_subtraction_correctly
+    result = @six - @two
+    assert_equal(4,
+                result.rubify,
+                "RubyPyProxy - not setup correctly.")
+  end
+
+  def test_delegates_multiplication_correctly
+    result = @two * @six
+    assert_equal(12,
+                result.rubify,
+                "RubyPyProxy * not setup correctly.")
+  end
+
+  def test_delegates_division_correctly
+    result = @six / @two
+    assert_equal(3,
+                result.rubify,
+                "RubyPyProxy / not setup correctly.")
+  end
 end
+
 
 
 class TestPyAPI_CustomTestObject < Test::Unit::TestCase

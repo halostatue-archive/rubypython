@@ -1,3 +1,4 @@
+A number of things have changed with version 0.3.0. If you are upgrading from a previous version of RubyPython, you should check the docs for instructions on how to get your code working with the new version of RubyPython.
 
 For more information on RubyPython, see http://rubypython.rubyforge.org
 

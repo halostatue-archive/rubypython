@@ -3,6 +3,7 @@ require 'rubypython/rubypyapi/macros'
 
 
 module RubyPython
+  
   #Raised when an error occurs in the Python interpreter.
   class PythonError < Exception
     

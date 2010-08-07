@@ -2,10 +2,14 @@ require 'rubypython/rubypyapi/python'
 require 'rubypython/rubypyapi/macros'
 module RubyPython
   module RubyPyApi
-    #This modules encapsulates the work of converting ruby objects
-    #to native Python types, so that they may be passed to the python
-    #interpreter.
+    #This modules encapsulates the work of converting between native Ruby and
+    #Python types. Unsupported conversions raise {UnsupportedConversion}. 
     module Conversion
+      
+      #Raised when RubyPython does not know how to convert an object from Python
+      #to Ruby or vice versa
+      class UnsupportedConversion < Exception; end
+
       def self.rtopString(rString)
         Python.PyString_FromString(rString)
       end
@@ -99,10 +103,6 @@ module RubyPython
           rtopNone
         end
       end
-
-      #Raised when RubyPython does not know how to convert a Python
-      #object.
-      class UnsupportedConversion < Exception; end
 
       def self.ptorString(pString)
         Python.PyString_AsString(pString)

@@ -157,9 +157,9 @@ module RubyPython
       #@return [Array<PyObject>]
       def self.convert(*args)
         args.map! do |arg|
-          if arg.instance_of? PyAPI::PyObject
+          if arg.kind_of? PyAPI::PyObject
             arg
-          elsif(arg.instance_of? PyAPI::RubyPyProxy)
+          elsif arg.kind_of? PyAPI::RubyPyProxy
             arg.pObject
           else
             PyAPI::PyObject.new arg

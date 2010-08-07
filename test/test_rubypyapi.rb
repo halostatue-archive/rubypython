@@ -108,7 +108,7 @@ class TestRubypyapiPyObject < Test::Unit::TestCase
   def test_rubify_unsupported
     urllib2 = RubyPython::RubyPyApi.import 'urllib2'
     request = urllib2.getAttr('Request')
-    assert_raises RubyPython::RubyPyApi::PTOR::UnsupportedConversion do
+    assert_raises RubyPython::RubyPyApi::Conversion::UnsupportedConversion do
       request.rubify
     end
   end

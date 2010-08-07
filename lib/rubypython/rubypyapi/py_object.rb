@@ -1,7 +1,6 @@
 require 'rubypython/rubypyapi/python'
 require 'rubypython/rubypyapi/macros'
-require 'rubypython/rubypyapi/ptor'
-require 'rubypython/rubypyapi/rtop'
+require 'rubypython/rubypyapi/conversion'
 require 'ffi'
 
 module RubyPython
@@ -28,21 +27,21 @@ module RubyPython
 
       #@param [FFI::Pointer, other] pointer objects passed in to the constructor
       #   are just assigned to the pointer attribute of the instance. All other
-      #   objects are converted via {RTOP.rtopObject} before being assigned.
+      #   objects are converted via {Conversion.rtopObject} before being assigned.
       def initialize(rObject)
         if rObject.kind_of? FFI::Pointer 
           @pointer = AutoPyPointer.new rObject
           xIncref if rObject.is_a? AutoPyPointer
         else
-          @pointer = AutoPyPointer.new RTOP.rtopObject(rObject)
+          @pointer = AutoPyPointer.new Conversion.rtopObject(rObject)
         end
       end
 
       #Attempts to convert the wrapped object to a native ruby type.
       #@return a ruby version of the wrapped object
-      #@raise [{PTOR::UnsupportedConversion}]
+      #@raise [{Conversion::UnsupportedConversion}]
       def rubify
-        PTOR.ptorObject @pointer
+        Conversion.ptorObject @pointer
       end
 
       #Tests whether the wrapped object has a given attribute

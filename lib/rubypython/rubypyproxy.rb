@@ -1,6 +1,6 @@
 require 'rubypython/py_error'
 require 'rubypython/rubypyapi/py_object'
-require 'rubypython/rubypyapi/ptor'
+require 'rubypython/rubypyapi/conversion'
 require 'rubypython/blankobject'
 
 module RubyPython
@@ -38,7 +38,7 @@ module RubyPython
         else
           RubyPyApi::RubyPyProxy.new(pyobject)
         end
-      rescue PTOR::UnsupportedConversion => exc
+      rescue Conversion::UnsupportedConversion => exc
         RubyPyApi::RubyPyProxy.new pyobject
       end
 

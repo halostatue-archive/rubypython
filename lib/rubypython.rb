@@ -13,8 +13,6 @@ if RUBY_VERSION == "1.8.6"
   end
 end
 
-RubyPythonBridge = RubyPyApi
-
 
 #This module provides the direct user interface for the RubyPython extension.
 #
@@ -124,7 +122,7 @@ end
 # The PyMainClass object provides somewhat experimental block support.
 # A block may be passed to a method call and the object returned by the function call
 # will be passed as an argument to the block.
-class PyMainClass < RubyPyApi::BlankObject
+class PyMainClass < RubyPython::RubyPyApi::BlankObject
   include Singleton
   attr_writer :main, :builtin
   def main #:nodoc:

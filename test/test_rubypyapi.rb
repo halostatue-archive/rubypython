@@ -2,13 +2,13 @@ require File.dirname(__FILE__) + '/test_helper.rb'
 
 class TestRubypyapiBasic < Test::Unit::TestCase
   def test_start_stop
-    assert(RubyPyApi.start, "Embedded python interpreter failed to start correctly.")
+    assert(RubyPython::RubyPyApi.start, "Embedded python interpreter failed to start correctly.")
     
-    assert(!RubyPyApi.start, "Interpreter attempted to start while running.")
+    assert(!RubyPython::RubyPyApi.start, "Interpreter attempted to start while running.")
     
-    assert(RubyPyApi.stop, "Interpreter failed to halt.")
+    assert(RubyPython::RubyPyApi.stop, "Interpreter failed to halt.")
     
-    assert(!RubyPyApi.stop, "Interpreter ran into trouble while halting.")
+    assert(!RubyPython::RubyPyApi.stop, "Interpreter ran into trouble while halting.")
   end
   
 end
@@ -16,29 +16,29 @@ end
 class TestRubypyapiPyObject < Test::Unit::TestCase
 
   def setup
-    RubyPyApi.start
+    RubyPython::RubyPyApi.start
   end
   
   def teardown
-    RubyPyApi.stop
+    RubyPython::RubyPyApi.stop
   end
   
   def test_imports
-    urllib2 = RubyPyApi.import("urllib2")
-    assert_instance_of(RubyPyApi::PyObject,
+    urllib2 = RubyPython::RubyPyApi.import("urllib2")
+    assert_instance_of(RubyPython::RubyPyApi::PyObject,
                        urllib2,
                        "Failed to import object.")
   end
   
   def test_wrap_string
-    pyString = RubyPyApi::PyObject.new("STRING");
-    assert_instance_of(RubyPyApi::PyObject,
+    pyString = RubyPython::RubyPyApi::PyObject.new("STRING");
+    assert_instance_of(RubyPython::RubyPyApi::PyObject,
                        pyString,
                        "Failed to create PyObject wrapper from ruby string.");
   end
   
   def test_rubify_string
-    pyString = RubyPyApi::PyObject.new("STRING");
+    pyString = RubyPython::RubyPyApi::PyObject.new("STRING");
     unwrapped = pyString.rubify();
     assert_equal("STRING",
                  unwrapped,
@@ -46,14 +46,14 @@ class TestRubypyapiPyObject < Test::Unit::TestCase
   end
   
   def test_wrap_int
-    pyInt = RubyPyApi::PyObject.new(1);
-    assert_instance_of(RubyPyApi::PyObject,
+    pyInt = RubyPython::RubyPyApi::PyObject.new(1);
+    assert_instance_of(RubyPython::RubyPyApi::PyObject,
                        pyInt,
                        "Failed to create PyObject wrapper from ruby int.");
   end
   
   def test_rubify_int
-    pyInt = RubyPyApi::PyObject.new(1);
+    pyInt = RubyPython::RubyPyApi::PyObject.new(1);
     unwrapped = pyInt.rubify();
     assert_equal(1,
                  unwrapped,
@@ -61,14 +61,14 @@ class TestRubypyapiPyObject < Test::Unit::TestCase
   end
   
   def test_wrap_float
-    pyFloat = RubyPyApi::PyObject.new(1.0);
-    assert_instance_of(RubyPyApi::PyObject,
+    pyFloat = RubyPython::RubyPyApi::PyObject.new(1.0);
+    assert_instance_of(RubyPython::RubyPyApi::PyObject,
                        pyFloat,
                        "Failed to create PyObject wrapper from ruby float.");
   end
   
   def test_rubify_float
-    pyFloat = RubyPyApi::PyObject.new(1.0);
+    pyFloat = RubyPython::RubyPyApi::PyObject.new(1.0);
     unwrapped = pyFloat.rubify();
     assert_equal(1.0,
                  unwrapped,
@@ -76,14 +76,14 @@ class TestRubypyapiPyObject < Test::Unit::TestCase
   end
   
   def test_wrap_array
-    pyArray = RubyPyApi::PyObject.new([1,'a',1.0,"STRING"]);
-    assert_instance_of(RubyPyApi::PyObject,
+    pyArray = RubyPython::RubyPyApi::PyObject.new([1,'a',1.0,"STRING"]);
+    assert_instance_of(RubyPython::RubyPyApi::PyObject,
                        pyArray,
                        "Failed to create PyObject wrapper from ruby array.");
   end
   
   def test_rubify_array
-    pyArray = RubyPyApi::PyObject.new([1,'a',1.0,"STRING"]);
+    pyArray = RubyPython::RubyPyApi::PyObject.new([1,'a',1.0,"STRING"]);
     unwrapped = pyArray.rubify();
     assert_equal([1,'a',1.0,"STRING"],
                  unwrapped,
@@ -91,14 +91,14 @@ class TestRubypyapiPyObject < Test::Unit::TestCase
   end
   
   def test_wrap_hash
-    pyHash = RubyPyApi::PyObject.new({1 => 1,:a => 'a', :sym => 1.0,"STRING" => "STRING"});
-    assert_instance_of(RubyPyApi::PyObject,
+    pyHash = RubyPython::RubyPyApi::PyObject.new({1 => 1,:a => 'a', :sym => 1.0,"STRING" => "STRING"});
+    assert_instance_of(RubyPython::RubyPyApi::PyObject,
                        pyHash,
                        "Failed to create PyObject wrapper from ruby hash.");
   end
   
   def test_rubify_hash
-    pyHash = RubyPyApi::PyObject.new({1 => 1,:a => 'a', :sym => 1.0,"STRING" => "STRING"})
+    pyHash = RubyPython::RubyPyApi::PyObject.new({1 => 1,:a => 'a', :sym => 1.0,"STRING" => "STRING"})
     unwrapped = pyHash.rubify();
     assert_equal({1 => 1,"a" => 'a', "sym" => 1.0,"STRING" => "STRING"},
                  unwrapped,
@@ -106,30 +106,30 @@ class TestRubypyapiPyObject < Test::Unit::TestCase
   end
 
   def test_rubify_unsupported
-    urllib2 = RubyPyApi.import 'urllib2'
+    urllib2 = RubyPython::RubyPyApi.import 'urllib2'
     request = urllib2.getAttr('Request')
-    assert_raises RubyPyApi::PTOR::UnsupportedConversion do
+    assert_raises RubyPython::RubyPyApi::PTOR::UnsupportedConversion do
       request.rubify
     end
   end
 
   def test_has_attr_affirmative
-    pyStringModule = RubyPyApi.import("string");
+    pyStringModule = RubyPython::RubyPyApi.import("string");
     assert(pyStringModule.hasAttr("ascii_letters"),
            "Hasattr failed to detect ascii_letters in string module.")
   end
 
   def test_has_attr_negative
-    pyStringModule = RubyPyApi.import("string")
+    pyStringModule = RubyPython::RubyPyApi.import("string")
     assert(!pyStringModule.hasAttr("nonExistentThing"),
                  "Hasattr erroneously claimed existence of a non existent thing.")
   end
 
   def test_get_attr
-    pyStringModule = RubyPyApi.import("string")
+    pyStringModule = RubyPython::RubyPyApi.import("string")
 
     pyAsciiLetters = pyStringModule.getAttr("ascii_letters")
-    assert_instance_of(RubyPyApi::PyObject,
+    assert_instance_of(RubyPython::RubyPyApi::PyObject,
                        pyAsciiLetters,
                        "Failed to fetch RubyPyObject with getAttr")
     
@@ -139,9 +139,9 @@ class TestRubypyapiPyObject < Test::Unit::TestCase
   end
 
   def test_set_attr
-    pyStringModule = RubyPyApi.import("string")
+    pyStringModule = RubyPython::RubyPyApi.import("string")
 
-    pyNewLetters = RubyPyApi::PyObject.new("RbPy")
+    pyNewLetters = RubyPython::RubyPyApi::PyObject.new("RbPy")
 
     assert_nothing_raised "Exception raised when trying to setAttr" do
       pyStringModule.setAttr("ascii_letters", pyNewLetters)
@@ -153,9 +153,9 @@ class TestRubypyapiPyObject < Test::Unit::TestCase
   end
 
   def test_set_attr_new
-    pyStringModule = RubyPyApi.import("string")
+    pyStringModule = RubyPython::RubyPyApi.import("string")
 
-    pyNewString = RubyPyApi::PyObject.new("Python")
+    pyNewString = RubyPython::RubyPyApi::PyObject.new("Python")
 
     assert_nothing_raised "Exception raised when trying to setAttr new attribute" do
     pyStringModule.setAttr("ruby", pyNewString)
@@ -167,8 +167,8 @@ class TestRubypyapiPyObject < Test::Unit::TestCase
   end
 
   def test_compare_equal
-    a = RubyPyApi::PyObject.new(10)
-    b = RubyPyApi::PyObject.new(10)
+    a = RubyPython::RubyPyApi::PyObject.new(10)
+    b = RubyPython::RubyPyApi::PyObject.new(10)
 
     assert_equal(0,
                  a.cmp(b),
@@ -176,9 +176,9 @@ class TestRubypyapiPyObject < Test::Unit::TestCase
   end
 
   def test_compare_bidirectional
-    less = RubyPyApi::PyObject.new(5)
-    lessb = RubyPyApi::PyObject.new(5)
-    greater = RubyPyApi::PyObject.new(10)
+    less = RubyPython::RubyPyApi::PyObject.new(5)
+    lessb = RubyPython::RubyPyApi::PyObject.new(5)
+    greater = RubyPython::RubyPyApi::PyObject.new(10)
     
 
     assert_equal(less.cmp(greater),
@@ -192,8 +192,8 @@ class TestRubypyapiPyObject < Test::Unit::TestCase
   end
 
   def test_compare_less_than
-    less = RubyPyApi::PyObject.new(5)
-    greater = RubyPyApi::PyObject.new(10)
+    less = RubyPython::RubyPyApi::PyObject.new(5)
+    greater = RubyPython::RubyPyApi::PyObject.new(10)
 
     assert_equal(-1,
                  less.cmp(greater),
@@ -201,8 +201,8 @@ class TestRubypyapiPyObject < Test::Unit::TestCase
   end
 
   def test_compare_greater_than
-    less = RubyPyApi::PyObject.new(5)
-    greater = RubyPyApi::PyObject.new(10)
+    less = RubyPython::RubyPyApi::PyObject.new(5)
+    greater = RubyPython::RubyPyApi::PyObject.new(10)
 
     assert_equal(1,
                  greater.cmp(less),
@@ -211,18 +211,18 @@ class TestRubypyapiPyObject < Test::Unit::TestCase
   end
 
   def test_make_tuple
-    arg = RubyPyApi::PyObject.new("arg")
-    argt = RubyPyApi::PyObject.makeTuple(arg)
+    arg = RubyPython::RubyPyApi::PyObject.new("arg")
+    argt = RubyPython::RubyPyApi::PyObject.makeTuple(arg)
     assert_equal(["arg"],
                  argt.rubify,
                  "Failed to correctly wrap with a tuple.")
   end
 
   def test_call_object
-    arg = RubyPyApi::PyObject.new(6)
-    argt = RubyPyApi::PyObject.makeTuple(arg)
+    arg = RubyPython::RubyPyApi::PyObject.new(6)
+    argt = RubyPython::RubyPyApi::PyObject.makeTuple(arg)
 
-    builtin = RubyPyApi.import("__builtin__")
+    builtin = RubyPython::RubyPyApi.import("__builtin__")
     string = builtin.getAttr("str")
     rbString = string.callObject(argt)
     
@@ -234,10 +234,10 @@ class TestRubypyapiPyObject < Test::Unit::TestCase
   end
 
   def test_new_list
-    a = RubyPyApi::PyObject.new("a")
-    b = RubyPyApi::PyObject.new("b")
+    a = RubyPython::RubyPyApi::PyObject.new("a")
+    b = RubyPython::RubyPyApi::PyObject.new("b")
 
-    pList = RubyPyApi::PyObject.newList(a,b)
+    pList = RubyPython::RubyPyApi::PyObject.newList(a,b)
 
     assert_equal(["a","b"],
                  pList.rubify,
@@ -250,11 +250,11 @@ end
 
 class TestRubyPyApi_PythonError < Test::Unit::TestCase
   def setup
-    RubyPyApi.start
+    RubyPython::RubyPyApi.start
   end
 
   def teardown
-    RubyPyApi.stop
+    RubyPython::RubyPyApi.stop
   end
 
   def test_error_occurred_negative
@@ -263,14 +263,14 @@ class TestRubyPyApi_PythonError < Test::Unit::TestCase
   end
 
   def test_error_occurred_positive
-    RubyPyApi.import("wat")
+    RubyPython::RubyPyApi.import("wat")
     assert(PythonError.error?,
            "RubyPython failed to detect error on failed import.")
     PythonError.clear
   end
 
   def test_error_clear
-    RubyPyApi.import("wat")
+    RubyPython::RubyPyApi.import("wat")
     PythonError.clear
     assert(!PythonError.error?,
            "PythonError.clear failed to clear error.")
@@ -281,7 +281,7 @@ class TestRubyPyApi_PythonError < Test::Unit::TestCase
   end
 
   def test_error_fetch_type
-    RubyPyApi.import("wat")
+    RubyPython::RubyPyApi.import("wat")
 
     rbType, rbValue, rbTraceback = PythonError.fetch()
     rbValue.xDecref
@@ -306,25 +306,25 @@ class TestRubyPyApi_PyProxy < Test::Unit::TestCase
 
 
   def setup
-    RubyPyApi.start
+    RubyPython::RubyPyApi.start
   end
 
 
   def teardown
-    RubyPyApi.stop
+    RubyPython::RubyPyApi.stop
   end
 
 
   def test_initialize_pyproxy
-    rbString = RubyPyApi::PyObject.new("string")
-    rbProxy = RubyPyApi::RubyPyProxy.new(rbString)
+    rbString = RubyPython::RubyPyApi::PyObject.new("string")
+    rbProxy = RubyPython::RubyPyApi::RubyPyProxy.new(rbString)
   end
 
   def test_call_method
-    a = RubyPyApi::PyObject.new("a")
-    b = RubyPyApi::PyObject.new("b")
-    aProxy = RubyPyApi::RubyPyProxy.new(a)
-    bProxy = RubyPyApi::RubyPyProxy.new(b)
+    a = RubyPython::RubyPyApi::PyObject.new("a")
+    b = RubyPython::RubyPyApi::PyObject.new("b")
+    aProxy = RubyPython::RubyPyApi::RubyPyProxy.new(a)
+    bProxy = RubyPython::RubyPyApi::RubyPyProxy.new(b)
     abProxy = aProxy.__add__(bProxy)
 
     assert_equal("ab",
@@ -334,8 +334,8 @@ class TestRubyPyApi_PyProxy < Test::Unit::TestCase
   end
 
   def test_call_nomethod
-    rbString = RubyPyApi::PyObject.new("string")
-    rbStringProxy = RubyPyApi::RubyPyProxy.new(rbString)
+    rbString = RubyPython::RubyPyApi::PyObject.new("string")
+    rbStringProxy = RubyPython::RubyPyApi::RubyPyProxy.new(rbString)
 
     assert_raise NoMethodError do
       rbStringProxy.wat []
@@ -343,8 +343,8 @@ class TestRubyPyApi_PyProxy < Test::Unit::TestCase
   end
 
   def test_call_noargs
-    builtin = RubyPyApi.import("__builtin__")
-    builtinProxy = RubyPyApi::RubyPyProxy.new(builtin)
+    builtin = RubyPython::RubyPyApi.import("__builtin__")
+    builtinProxy = RubyPython::RubyPyApi::RubyPyProxy.new(builtin)
 
     rbStrClass = builtinProxy.str
     rbStr = rbStrClass.new
@@ -355,10 +355,10 @@ class TestRubyPyApi_PyProxy < Test::Unit::TestCase
   end
 
   def test_get_object
-    pyStringModule = RubyPyApi.import("string")
+    pyStringModule = RubyPython::RubyPyApi.import("string")
     pyAsciiLetters = pyStringModule.getAttr("ascii_letters")    
     
-    pyStringProxy = RubyPyApi::RubyPyProxy.new(pyStringModule)
+    pyStringProxy = RubyPython::RubyPyApi::RubyPyProxy.new(pyStringModule)
 
     assert_equal(pyAsciiLetters.rubify,
                  pyStringProxy.ascii_letters.pObject.rubify,
@@ -367,8 +367,8 @@ class TestRubyPyApi_PyProxy < Test::Unit::TestCase
   end
 
   def test_set_object
-    stringMod=RubyPyApi.import("string")
-    stringModProxy=RubyPyApi::RubyPyProxy.new(stringMod)
+    stringMod=RubyPython::RubyPyApi.import("string")
+    stringModProxy=RubyPython::RubyPyApi::RubyPyProxy.new(stringMod)
     
     stringModProxy.letters="a"
     
@@ -379,8 +379,8 @@ class TestRubyPyApi_PyProxy < Test::Unit::TestCase
   end
 
   def test_rubify
-    pyStringModule = RubyPyApi.import("string")
-    pyStringProxy = RubyPyApi::RubyPyProxy.new(pyStringModule)
+    pyStringModule = RubyPython::RubyPyApi.import("string")
+    pyStringProxy = RubyPython::RubyPyApi::RubyPyProxy.new(pyStringModule)
     lettersProxy = pyStringProxy.ascii_letters
 
     assert_equal(lettersProxy.pObject.rubify,
@@ -392,7 +392,7 @@ class TestRubyPyApi_PyProxy < Test::Unit::TestCase
 
   def test_from_ruby_type
     expected = "STRING"
-    proxy = RubyPyApi::RubyPyProxy.new expected
+    proxy = RubyPython::RubyPyApi::RubyPyProxy.new expected
 
     assert_equal(expected,
                 proxy.rubify,
@@ -405,19 +405,19 @@ end
 
 class TestRubyPyApi_CustomTestObject < Test::Unit::TestCase
   def setup
-    RubyPyApi.start
+    RubyPython::RubyPyApi.start
   end
 
 
   def teardown
-    RubyPyApi.stop
+    RubyPython::RubyPyApi.stop
   end
 
   def test_load_custom_file
-    rbSys=RubyPyApi::RubyPyProxy.new(RubyPyApi.import("sys"))
+    rbSys=RubyPython::RubyPyApi::RubyPyProxy.new(RubyPython::RubyPyApi.import("sys"))
     rbPath=rbSys.path
     rbPath.append("./test/python_helpers/")
-    RubyPyApi.import "objects"
+    RubyPython::RubyPyApi.import "objects"
   end
 
 end

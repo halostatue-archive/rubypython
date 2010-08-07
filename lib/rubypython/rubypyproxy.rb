@@ -1,10 +1,10 @@
 require 'rubypython/py_error'
-require 'rubypython/rubypyapi/py_object'
-require 'rubypython/rubypyapi/conversion'
+require 'rubypython/pyapi/py_object'
+require 'rubypython/pyapi/conversion'
 require 'rubypython/blankobject'
 
 module RubyPython
-  module RubyPyApi
+  module PyAPI
 
     #This is the object that the end user will most often be interacting
     #with. It holds a reference to an object in the Python VM an delegates
@@ -19,10 +19,10 @@ module RubyPython
       attr_reader :pObject
 
       def initialize(pObject)
-        if pObject.kind_of? RubyPyApi::PyObject
+        if pObject.kind_of? PyAPI::PyObject
           @pObject = pObject
         else
-          @pObject = RubyPyApi::PyObject.new pObject
+          @pObject = PyAPI::PyObject.new pObject
         end
       end
 
@@ -32,14 +32,14 @@ module RubyPython
 
       def _wrap(pyobject) #:nodoc:
         if pyobject.class?
-          RubyPyApi::RubyPyClass.new(pyobject)
-        elsif RubyPyApi.legacy_mode
+          PyAPI::RubyPyClass.new(pyobject)
+        elsif PyAPI.legacy_mode
           pyobject.rubify
         else
-          RubyPyApi::RubyPyProxy.new(pyobject)
+          PyAPI::RubyPyProxy.new(pyobject)
         end
       rescue Conversion::UnsupportedConversion => exc
-        RubyPyApi::RubyPyProxy.new pyobject
+        PyAPI::RubyPyProxy.new pyobject
       end
 
       #RubyPython checks the attribute dictionary of the wrapped object
@@ -64,7 +64,7 @@ module RubyPython
         end
 
         
-        args = RubyPyApi::PyObject.convert(*args)
+        args = PyAPI::PyObject.convert(*args)
 
         if setter
           return _setAttr(name,*args)
@@ -76,7 +76,7 @@ module RubyPython
           if args.empty? and pFunc.class?
             pReturn = pFunc
           else
-            pTuple = RubyPyApi::PyObject.buildArgTuple(*args)
+            pTuple = PyAPI::PyObject.buildArgTuple(*args)
             pReturn = pFunc.callObject(pTuple)
             if(PythonError.error?)
               raise PythonError.handle_error
@@ -103,8 +103,8 @@ module RubyPython
     class RubyPyClass < RubyPyProxy
 
       def new(*args)
-        args = RubyPyApi::PyObject.convert(*args)
-        pTuple = RubyPyApi::PyObject.buildArgTuple(*args)
+        args = PyAPI::PyObject.convert(*args)
+        pTuple = PyAPI::PyObject.buildArgTuple(*args)
         pReturn = @pObject.callObject(pTuple)
         if PythonError.error?
           raise PythonError.handle_error

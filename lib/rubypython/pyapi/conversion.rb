@@ -1,7 +1,7 @@
-require 'rubypython/rubypyapi/python'
-require 'rubypython/rubypyapi/macros'
+require 'rubypython/pyapi/python'
+require 'rubypython/pyapi/macros'
 module RubyPython
-  module RubyPyApi
+  module PyAPI
     #This modules encapsulates the work of converting between native Ruby and
     #Python types. Unsupported conversions raise {UnsupportedConversion}. 
     module Conversion

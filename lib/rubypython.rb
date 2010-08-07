@@ -1,4 +1,4 @@
-require 'rubypython/rubypyapi'
+require 'rubypython/pyapi'
 require 'rubypython/rubypyproxy'
 require 'rubypython/blankobject'
 require 'singleton'
@@ -16,7 +16,7 @@ end
 
 #This module provides the direct user interface for the RubyPython extension.
 #
-#The majority of the functionality lies in the RubyPyApi module, which intefaces
+#The majority of the functionality lies in the PyAPI module, which intefaces
 #to the Python C API using the Ruby FFI module. However, the end user should
 #only worry about dealing with the RubyPython module as that is designed for
 #user interaction.
@@ -40,7 +40,7 @@ module RubyPython
   #@return [Boolean] returns true if the interpreter was started here
   #    and false otherwise
   def self.start
-    RubyPyApi.start
+    PyAPI.start
   end
 
   #Stops the Python interpreter if it is running. Returns true if the
@@ -51,20 +51,20 @@ module RubyPython
   def self.stop
     PyMain.main = nil
     PyMain.builtin = nil
-    RubyPyApi.stop
+    PyAPI.stop
   end
 
   #Import a Python module into the interpreter and return a proxy object
   #for it. This is the preferred way to gain access to Python object.
   #@param [String] mod the name of the module to import
-  #@return [RubyPyApi::RubyPyModule] pymod a proxy object wrapping the requested
+  #@return [PyAPI::RubyPyModule] pymod a proxy object wrapping the requested
   #module
   def self.import(mod)
-    pymod = RubyPyApi.import(mod)
+    pymod = PyAPI.import(mod)
     if(PythonError.error?)
       raise PythonError.handle_error
     end
-    RubyPyApi::RubyPyModule.new(pymod)
+    PyAPI::RubyPyModule.new(pymod)
   end
 
   #Switch RubyPython into a mode compatible with versions < 0.3.0. All
@@ -73,14 +73,14 @@ module RubyPython
   #conversion is known are the objects wrapped in proxy objects.
   #@return [void]
   def self.legacy_mode=(on_off)
-    RubyPyApi.legacy_mode = on_off
+    PyAPI.legacy_mode = on_off
   end
 
   #Set RubyPython to automatically wrap all returned objects as an instance
-  #of {RubyPyApi::RubyPyProxy} or one of its subclasses.
+  #of {PyAPI::RubyPyProxy} or one of its subclasses.
   #@return [Boolean]
   def self.legacy_mode
-    RubyPyApi.legacy_mode
+    PyAPI.legacy_mode
   end
 
   #Execute the given block, starting the Python interperter before its execution
@@ -122,7 +122,7 @@ end
 # The PyMainClass object provides somewhat experimental block support.
 # A block may be passed to a method call and the object returned by the function call
 # will be passed as an argument to the block.
-class PyMainClass < RubyPython::RubyPyApi::BlankObject
+class PyMainClass < RubyPython::PyAPI::BlankObject
   include Singleton
   attr_writer :main, :builtin
   def main #:nodoc:

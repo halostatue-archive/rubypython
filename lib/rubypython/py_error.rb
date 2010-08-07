@@ -1,5 +1,5 @@
-require 'rubypython/rubypyapi/python'
-require 'rubypython/rubypyapi/macros'
+require 'rubypython/pyapi/python'
+require 'rubypython/pyapi/macros'
 
 
 module RubyPython
@@ -25,7 +25,7 @@ module RubyPython
       rbType, rbValue, rbTraceback = fetch()
 
       if not rbValue.null?
-        msg = rbValue.getAttr("__str__").callObject RubyPyApi::PyObject.buildArgTuple
+        msg = rbValue.getAttr("__str__").callObject PyAPI::PyObject.buildArgTuple
         msg = msg.rubify
       else
         msg = nil
@@ -47,7 +47,7 @@ module RubyPython
     end
 
     #A wrapper to the Python C API PyErr_Fetch function.
-    #@return [Array] an array containing three {RubyPyApi::PyObject}s
+    #@return [Array] an array containing three {PyAPI::PyObject}s
     #   representing the Type, Value, and stacktrace of the python
     #   error respectively.
     def self.fetch
@@ -55,23 +55,23 @@ module RubyPython
       valuePointer = FFI::MemoryPointer.new :pointer
       tracebackPointer = FFI::MemoryPointer.new :pointer
 
-      RubyPyApi::Python.PyErr_Fetch typePointer, valuePointer, tracebackPointer
+      PyAPI::Python.PyErr_Fetch typePointer, valuePointer, tracebackPointer
 
-      rbType = RubyPyApi::PyObject.new typePointer.read_pointer
-      rbValue = RubyPyApi::PyObject.new valuePointer.read_pointer
-      rbTraceback = RubyPyApi::PyObject.new tracebackPointer.read_pointer
+      rbType = PyAPI::PyObject.new typePointer.read_pointer
+      rbValue = PyAPI::PyObject.new valuePointer.read_pointer
+      rbTraceback = PyAPI::PyObject.new tracebackPointer.read_pointer
       [rbType, rbValue, rbTraceback]
     end
 
     #Determines whether an error has occured in the python interpreter
     def self.error?
-      !RubyPyApi::Python.PyErr_Occurred.null?
+      !PyAPI::Python.PyErr_Occurred.null?
     end
 
     #Resets the Python interpreter error flag
     #@return [nil]
     def self.clear
-      RubyPyApi::Python.PyErr_Clear
+      PyAPI::Python.PyErr_Clear
     end
 
   end

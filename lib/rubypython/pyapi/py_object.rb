@@ -1,14 +1,14 @@
-require 'rubypython/rubypyapi/python'
-require 'rubypython/rubypyapi/macros'
-require 'rubypython/rubypyapi/conversion'
+require 'rubypython/pyapi/python'
+require 'rubypython/pyapi/macros'
+require 'rubypython/pyapi/conversion'
 require 'ffi'
 
 module RubyPython
-  module RubyPyApi
+  module PyAPI
 
     #This object is an opaque wrapper around the C PyObject\* type used by the
     #python C API. This class **should not** be used by the end user. They
-    #should instead make use of the {RubyPyApi::RubyPyProxy} class and its
+    #should instead make use of the {PyAPI::RubyPyProxy} class and its
     #subclasses.
     class PyObject
 
@@ -157,12 +157,12 @@ module RubyPython
       #@return [Array<PyObject>]
       def self.convert(*args)
         args.map! do |arg|
-          if arg.instance_of? RubyPyApi::PyObject
+          if arg.instance_of? PyAPI::PyObject
             arg
-          elsif(arg.instance_of? RubyPyApi::RubyPyProxy)
+          elsif(arg.instance_of? PyAPI::RubyPyProxy)
             arg.pObject
           else
-            RubyPyApi::PyObject.new arg
+            PyAPI::PyObject.new arg
           end
         end
       end
@@ -172,8 +172,8 @@ module RubyPython
       #@param [Array<PyObject>] args the arguments to be inserted into the tuple.
       #@return [PyObject<tuple>]
       def self.buildArgTuple(*args)
-        pList = RubyPyApi::PyObject.newList(*args)
-        pTuple = RubyPyApi::PyObject.makeTuple(pList)
+        pList = PyAPI::PyObject.newList(*args)
+        pTuple = PyAPI::PyObject.makeTuple(pList)
         pList.xDecref
         pTuple
       end

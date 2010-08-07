@@ -131,7 +131,7 @@ class TestWithCustomObject < Test::Unit::TestCase
 
   def test_create_new_class_object
     mockObject = @objects.RubyPythonMockObject.new
-    assert_kind_of(RubyPython::RubyPyApi::RubyPyProxy,
+    assert_kind_of(RubyPython::PyAPI::RubyPyProxy,
                        mockObject,
                        "Could not get new class instance from python.")
   end
@@ -188,7 +188,7 @@ class TestRubyPython_DynamicTypes < Test::Unit::TestCase
 
   def test_module_wraps_as_module
     urllib2 = RubyPython.import('urllib2')
-    assert_kind_of(RubyPython::RubyPyApi::RubyPyModule,
+    assert_kind_of(RubyPython::PyAPI::RubyPyModule,
                        urllib2,
                        "Wrapped Python class not of correct type.")
 
@@ -196,7 +196,7 @@ class TestRubyPython_DynamicTypes < Test::Unit::TestCase
 
   def test_class_wraps_as_class
     urllib2 = RubyPython.import('urllib2')
-    assert_kind_of(RubyPython::RubyPyApi::RubyPyClass,
+    assert_kind_of(RubyPython::PyAPI::RubyPyClass,
                        urllib2.Request,
                        "Wrapped Python class not of correct type.")
 
@@ -206,7 +206,7 @@ class TestRubyPython_DynamicTypes < Test::Unit::TestCase
     urllib2 = RubyPython.import 'urllib2'
     request = urllib2.Request
     req = request.new 'google.com'
-    assert_kind_of(RubyPython::RubyPyApi::RubyPyInstance,
+    assert_kind_of(RubyPython::PyAPI::RubyPyInstance,
                       req,
                       "Wrapped Python Instance not of correct type.")
   end

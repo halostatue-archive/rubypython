@@ -3,7 +3,7 @@ require 'open3'
 require 'rbconfig'
 
 module RubyPython
-  module RubyPyApi
+  module PyAPI
     #This module provides access to the Python C API functions via the Ruby ffi
     #gem. Documentation for these functions may be found [here](http://docs.python.org/c-api/). Likewise the FFI gem documentation may be found [here](http://rdoc.info/projects/ffi/ffi).
     module Python

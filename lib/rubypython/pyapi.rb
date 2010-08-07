@@ -1,13 +1,13 @@
-require 'rubypython/rubypyapi/python'
-require 'rubypython/rubypyapi/macros'
-require 'rubypython/rubypyapi/py_object'
+require 'rubypython/pyapi/python'
+require 'rubypython/pyapi/macros'
+require 'rubypython/pyapi/py_object'
 
 module RubyPython
   #This module is really only for internal use. The RubyPython module exports more
   #user-friendly interfaces to the functionality provided within. It's internals
   #are liable to change and odds are if you use this module directly your code
   #will break with new releases.
-  module RubyPyApi
+  module PyAPI
 
     @@legacy_mode = false
 

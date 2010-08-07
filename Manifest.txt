@@ -9,11 +9,11 @@ config/requirements.rb
 lib/rubypython.rb
 lib/rubypython/blankobject.rb
 lib/rubypython/py_error.rb
-lib/rubypython/rubypyapi.rb
-lib/rubypython/rubypyapi/macros.rb
-lib/rubypython/rubypyapi/conversion.rb
-lib/rubypython/rubypyapi/py_object.rb
-lib/rubypython/rubypyapi/python.rb
+lib/rubypython/pyapi.rb
+lib/rubypython/pyapi/macros.rb
+lib/rubypython/pyapi/conversion.rb
+lib/rubypython/pyapi/py_object.rb
+lib/rubypython/pyapi/python.rb
 lib/rubypython/rubypyproxy.rb
 lib/rubypython/version.rb
 setup.rb
@@ -23,6 +23,6 @@ test/python_helpers/objects.py
 test/test.wav
 test/test_helper.rb
 test/test_legacy_mode.rb
-test/test_rubypyapi.rb
+test/test_pyapi.rb
 test/test_rubypython.rb
 test/test_rubypython_sessions.rb

@@ -15,7 +15,7 @@ class TestRubypythonLegacy < Test::Unit::TestCase
     RubyPython.start
     cPickle = RubyPython.import("cPickle")
     
-    assert_instance_of(RubyPythonBridge::RubyPyModule,
+    assert_instance_of(RubyPython::RubyPyApi::RubyPyModule,
                        cPickle,
                        "Module object not returned by import.")
     
@@ -33,7 +33,7 @@ class TestRubypythonLegacy < Test::Unit::TestCase
       cPickle.splack
     end
     
-    assert_instance_of(RubyPythonBridge::RubyPyClass,
+    assert_instance_of(RubyPython::RubyPyApi::RubyPyClass,
                        cPickle.PicklingError,
                        "Wrapped Python class was not of type RubyPyClass.")
     
@@ -243,13 +243,13 @@ class TestLegacyWithCPickle < Test::Unit::TestCase
   end
   
   def test_class_wrapping
-    assert_instance_of(RubyPythonBridge::RubyPyClass,
+    assert_instance_of(RubyPython::RubyPyApi::RubyPyClass,
                        @cPickle.PicklingError,
                        "Wrapped class is not an instance of RubyPyClass.")
   end
   
   def test_module_wrapping
-    assert_instance_of(RubyPythonBridge::RubyPyModule,
+    assert_instance_of(RubyPython::RubyPyApi::RubyPyModule,
                        @cPickle,
                        "Wrapped module is not of class RubyPyModule.")
   end

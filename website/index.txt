@@ -14,8 +14,8 @@ h2. Is it in active development?
        have trouble.
 
 h2. What
-
-	RubyPython is a C bridge between Ruby and Python with a Ruby interface. It's aim is to make the power of the Python's great standard library available to Ruby programmers from within Ruby.
+he 
+	RubyPython is a bridge between Ruby and Python with a Ruby interface. It's aim is to make the power of the Python's great standard library available to Ruby programmers from within Ruby. As of version 0.3.x the Python interpreter is accessed via the Ruby 'ffi' gem.
 	
 	
 

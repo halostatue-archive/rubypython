@@ -417,6 +417,16 @@ class TestPyAPI_PyProxy < Test::Unit::TestCase
 
   end
 
+  def test_proxy_eql
+    urllib2_a = RubyPython.import('urllib2')
+    urllib2_b = RubyPython.import('urllib2')
+
+    assert_equal(urllib2_a,
+                urllib2_b,
+                "RubyPyProxy == not set up correctly.")
+
+  end
+
 end
 
 

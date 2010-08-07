@@ -97,6 +97,10 @@ module RubyPython
       def rubify
         @pObject.rubify
       end
+
+      def ==(other)
+        self.pObject.pointer == other.pObject.pointer
+      end
           
     end
 

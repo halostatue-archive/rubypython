@@ -71,7 +71,7 @@ module RubyPython
       #@param rObj a native ruby type
       #@param [Boolean] is_key whether this object will be used as a key in a
       #  python dict.
-      #@return an FFI::Pointer wrapping a C PyObject*
+      #@return [FFI::Pointer] a to a C PyObject\*
       #@raise [UnsupportedConversion]
       def self.rtopObject(rObj, is_key=false)
         case rObj
@@ -165,6 +165,10 @@ module RubyPython
       end
 
         
+      #Converts a pointer to a Python object into a native ruby type, if
+      #possible. Otherwise raises an error.
+      #@param [FFI::Pointer] pObj a pointer to a Python object
+      #@return a native ruby object.
       #@raise {UnsupportedConversion}
       def self.ptorObject(pObj)
         if Macros.PyObject_TypeCheck(pObj, Python.PyString_Type.to_ptr) != 0

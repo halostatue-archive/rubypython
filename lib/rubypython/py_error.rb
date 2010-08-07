@@ -16,9 +16,9 @@ module RubyPython
 
     #This method should be called when an error has occured in the
     #Python interpreter. This acts as factory function for PythonError
-    #objects. The function fetchs calls {#fetch} to get the error
+    #objects. The function fetchs calls {fetch} to get the error
     #information from the Python interpreter and uses this to build
-    #a PythonError object. It then calls {#clear} to clear the error
+    #a PythonError object. It then calls {clear} to clear the error
     #flag of the python interpreter
     #@return [PythonError] an error enscapsulating the Python error
     def self.handle_error
@@ -47,7 +47,7 @@ module RubyPython
     end
 
     #A wrapper to the Python C API PyErr_Fetch function.
-    #@return [Array] an array containing three {PyAPI::PyObject}s
+    #@return [Array<PyAPI::PyObject>] an array containing three {PyAPI::PyObject} instances.
     #   representing the Type, Value, and stacktrace of the python
     #   error respectively.
     def self.fetch
@@ -63,13 +63,13 @@ module RubyPython
       [rbType, rbValue, rbTraceback]
     end
 
-    #Determines whether an error has occured in the python interpreter
+    #Determines whether an error has occured in the python interpreter.
     def self.error?
       !PyAPI::Python.PyErr_Occurred.null?
     end
 
     #Resets the Python interpreter error flag
-    #@return [nil]
+    #@return [void]
     def self.clear
       PyAPI::Python.PyErr_Clear
     end

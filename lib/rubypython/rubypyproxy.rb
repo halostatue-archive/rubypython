@@ -26,11 +26,13 @@ module RubyPython
         end
       end
 
-      def _setAttr(name, *args) #:nodoc:
-        @pObject.setAttr(name, args[0])
-      end
-
-      def _wrap(pyobject) #:nodoc:
+      #Handles the job of wrapping up anything returned by a {RubyPyProxy}
+      #instance. The behavior differs depending on the value of
+      #{RubyPython.legacy_mode}. If legacy mode is inactive, every returned
+      #object is wrapped by an instance of {RubyPyProxy}. If legacy mode is
+      #active, RubyPython first attempts to convert the returned object to a
+      #native Ruby type, and then only wraps the object if this fails.
+      def _wrap(pyobject)
         if pyobject.class?
           PyAPI::RubyPyClass.new(pyobject)
         elsif PyAPI.legacy_mode
@@ -49,7 +51,8 @@ module RubyPython
         @pObject.hasAttr(mname.to_s)
       end
 
-      def method_missing(name, *args, &block) #:nodoc:
+      #Implements the method call delegation.
+      def method_missing(name, *args, &block)
         name = name.to_s
         
         if(name.end_with? "=")
@@ -67,7 +70,7 @@ module RubyPython
         args = PyAPI::PyObject.convert(*args)
 
         if setter
-          return _setAttr(name,*args)
+          return @pObject.setAttr(name, args[0]) 
         end
 
         pFunc = @pObject.getAttr(name)

@@ -16,7 +16,7 @@ end
 
 #This module provides the direct user interface for the RubyPython extension.
 #
-#The majority of the functionality lies in the PyAPI module, which intefaces
+#The majority of the functionality lies in the {PyAPI} module, which intefaces
 #to the Python C API using the Ruby FFI module. However, the end user should
 #only worry about dealing with the RubyPython module as that is designed for
 #user interaction.
@@ -29,7 +29,7 @@ end
 #RubyPython.stop when they are finished with Python.
 #@example
 #  RubyPython.start
-#  cPickle=RubyPython.import "cPickle"
+#  cPickle = RubyPython.import "cPickle"
 #  puts cPickle.dumps "RubyPython is awesome!"
 #  RubyPython.stop
 module RubyPython

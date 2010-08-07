@@ -13,6 +13,23 @@ class TestRubypyapiBasic < Test::Unit::TestCase
   
 end
 
+class TestRubypyapiConversion < Test::Unit::TestCase
+
+  def setup
+    RubyPython::RubyPyApi.start
+  end
+
+  def teardown
+    RubyPython::RubyPyApi.stop
+  end
+
+  def test_rtop_unsupported_conversion
+    assert_raise(RubyPython::RubyPyApi::Conversion::UnsupportedConversion) do
+      RubyPython::RubyPyApi::Conversion.rtopObject Class
+    end
+  end
+end
+
 class TestRubypyapiPyObject < Test::Unit::TestCase
 
   def setup

@@ -72,6 +72,7 @@ module RubyPython
       #@param [Boolean] is_key whether this object will be used as a key in a
       #  python dict.
       #@return an FFI::Pointer wrapping a C PyObject*
+      #@raise [UnsupportedConversion]
       def self.rtopObject(rObj, is_key=false)
         case rObj
         when String
@@ -99,8 +100,10 @@ module RubyPython
           rtopFalse
         when Symbol
           rtopSymbol rObj
-        else
+        when nil
           rtopNone
+        else
+          raise UnsupportedConversion.new "Unsupported type for RTOP conversion." 
         end
       end
 

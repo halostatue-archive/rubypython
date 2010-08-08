@@ -102,7 +102,7 @@ module RubyPython
 
 
       def ==(other)
-        self.pObject.pointer == other.pObject.pointer
+        @pObject.cmp(other.pObject) == 0
       end
 
       def +(other)

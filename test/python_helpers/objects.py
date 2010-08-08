@@ -16,3 +16,9 @@ class RubyPythonMockObject:
 
     def sum_elements(self, aList):
         return sum(aList)
+
+    def __eq__(self, other):
+        if type(self) == type(other):
+            return True
+        else:
+            return False

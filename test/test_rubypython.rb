@@ -174,6 +174,14 @@ class TestWithCustomObject < Test::Unit::TestCase
                 mockObjectInstance.sum_elements(rbList).rubify,
                 "List operations not equivalent between ruby and python")
   end
+
+  def test_object_equality
+    obj_a = @objects.RubyPythonMockObject.new
+    obj_b = @objects.RubyPythonMockObject.new
+    assert_equal(obj_a,
+                obj_b,
+                "RubyPython failed to respect Python __eq__.")
+  end
 end
 
 class TestRubyPython_DynamicTypes < Test::Unit::TestCase

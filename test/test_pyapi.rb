@@ -469,6 +469,19 @@ class TestPyAPI_RubyPyProxy_Operators < Test::Unit::TestCase
                 result.rubify,
                 "RubyPyProxy / not setup correctly.")
   end
+
+  def test_delgates_less_than
+    assert(@two < @six,
+          "RubyPyProxy < not set up correctly.")
+
+  end
+
+  def test_delegates_greater_than
+    assert(@six > @two,
+          "RubyPyProxy > not set up correctly.")
+
+  end
+
 end
 
 

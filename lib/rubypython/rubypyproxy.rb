@@ -1,6 +1,7 @@
 require 'rubypython/py_error'
 require 'rubypython/pyapi/py_object'
 require 'rubypython/pyapi/conversion'
+require 'rubypython/pyapi/operators'
 require 'rubypython/blankobject'
 
 module RubyPython
@@ -15,6 +16,7 @@ module RubyPython
     #Note: All RubyPyProxy objects become invalid when the Python interpreter
     #is halted.
     class RubyPyProxy < BlankObject
+      include PyAPI::Operators
 
       attr_reader :pObject
 
@@ -98,29 +100,6 @@ module RubyPython
         @pObject.rubify
       end
 
-
-
-
-      def ==(other)
-        @pObject.cmp(other.pObject) == 0
-      end
-
-      def +(other)
-        self.__add__ other
-      end
-
-      def -(other)
-        self.__sub__ other
-      end
-
-      def *(other)
-        self.__mul__ other
-      end
-
-      def /(other)
-        self.__div__ other
-      end
-          
     end
 
     class RubyPyModule < RubyPyProxy

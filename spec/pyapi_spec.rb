@@ -234,6 +234,9 @@ describe RubyPython::PyAPI::RubyPyProxy do
     @b = RubyPython::PyAPI::PyObject.new "b"
     @builtin = RubyPython::PyAPI.import "__builtin__"
     @string = RubyPython::PyAPI.import "string"
+
+    @two = 2
+    @six = 6
   end
 
   after do
@@ -312,6 +315,22 @@ describe RubyPython::PyAPI::RubyPyProxy do
       stringProxy.letters = AString
       stringProxy.letters.rubify.should == AString
     end
+  end
+
+  describe "when used with an operator" do
+
+    ['+', '-', '/', '*', '==', '<', '>', '<=', '>='].each do |op|
+      it "should delegate #{op}" do
+        @six.__send__(op, @two).should be_equal(6.__send__ op, 2)
+      end
+    end
+
+  end
+
+  it "should delegate object equality" do
+    urllib_a = described_class.new RubyPython::PyAPI.import('urllib')
+    urllib_b = described_class.new RubyPython::PyAPI.import('urllib')
+    urllib_a.should == urllib_b
   end
 
 end

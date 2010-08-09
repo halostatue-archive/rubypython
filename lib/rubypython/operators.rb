@@ -37,5 +37,9 @@ module RubyPython
       (self < other) or (self == other)
     end
 
+    def [](index)
+      self.__getitem__ index
+    end
+
   end
 end

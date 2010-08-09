@@ -101,7 +101,18 @@ describe RubyPython::RubyPyProxy do
       end
     end
 
+    it "should allow list indexing" do
+      array = described_class.new(AnArray)
+      array[1].rubify.should == AnArray[1]
+    end
+
+    it "should allow dict access" do
+      dict = described_class.new(AHash)
+      key = AConvertedHash.keys[0]
+      dict[key].rubify.should == AConvertedHash[key]
+    end
   end
+
 
   it "should delegate object equality" do
     urllib_a = RubyPython.import('urllib')

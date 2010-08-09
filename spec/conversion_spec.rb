@@ -25,7 +25,25 @@ describe RubyPython::Conversion do
         subject.ptorObject(py_object_ptr).should == output
       end
     end
+  end
 
+
+  context "when converting Ruby to Python" do
+    [
+      ["an int", "an int", AnInt],
+      ["a float", "a float", AFloat],
+      ["a string", "a string", AString],
+      ["a string", "a symbol", ASym],
+      ["a list", "an array", AnArray],
+      ["a dict", "a hash", AConvertedHash]
+    ].each do |py_type, rb_type, input|
+
+      it "should convert #{rb_type} to #{py_type}" do
+        py_object_ptr = subject.rtopObject(input)
+        output = @objects.__send__(rb_type.sub(' ', '_')).pObject.pointer
+        RubyPython::Python.PyObject_Compare(py_object_ptr, output).should == 0
+      end
+    end
   end
 
 end

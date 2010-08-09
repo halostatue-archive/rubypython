@@ -10,7 +10,6 @@ describe RubyPython::PyObject do
   end
 
   describe ".new" do
-
     [
       ["a string", AString],
       ["an int", AnInt],
@@ -19,8 +18,9 @@ describe RubyPython::PyObject do
       ["a symbol", ASym],
       ["a hash", AHash]
     ].each do |title, obj|
+
       it "should wrap #{title}" do
-        described_class.new(obj).should be_instance_of(described_class)
+        lambda { described_class.new(obj) }.should_not raise_exception
       end
     end
 

@@ -28,6 +28,11 @@ describe RubyPython::Conversion do
         subject.ptorObject(py_object_ptr).should == output
       end
     end
+
+    it "should return an FFI::Pointer when it cannot convert" do
+      unconvertable = @objects.RubyPythonMockObject.pObject.pointer
+      subject.ptorObject(unconvertable).should be_a_kind_of FFI::Pointer
+    end
   end
 
 

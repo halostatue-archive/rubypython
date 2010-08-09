@@ -191,7 +191,7 @@ module RubyPython
       elsif pObj == Macros.Py_None
         nil
       else
-        raise UnsupportedConversion.new 'Unsupported Type for PTOR Conversion'
+        pObj
       end
     end
   end

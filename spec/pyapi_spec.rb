@@ -1,25 +1,15 @@
 require File.dirname(__FILE__) + '/spec_helper.rb'
 
-describe RubyPython::PyAPI,  "when starting/stopping interpreter" do
-  it "should start and stop only once" do
-    RubyPython::PyAPI.start.should be_true
-    RubyPython::PyAPI.start.should be_false
-    RubyPython::PyAPI.stop.should be_true
-    RubyPython::PyAPI.stop.should be_false
-  end
-end
-
-
-describe RubyPython::PyAPI::PyObject do
+describe RubyPython::PyObject do
   include TestConstants
   before do
-    RubyPython::PyAPI.start
-    @string = RubyPython::PyAPI.import 'string'
-    @urllib2 = RubyPython::PyAPI.import 'urllib2'
+    RubyPython.start
+    @string = RubyPython.import('string').pObject
+    @urllib2 = RubyPython.import('urllib2').pObject
   end
 
   after do
-    RubyPython::PyAPI.stop
+    RubyPython.stop
   end
 
   describe "#new" do
@@ -64,7 +54,7 @@ describe RubyPython::PyAPI::PyObject do
       lambda do
         request = @urllib2.getAttr('Request')
         request.rubify
-      end.should raise_exception(RubyPython::PyAPI::Conversion::UnsupportedConversion)
+      end.should raise_exception(RubyPython::Conversion::UnsupportedConversion)
     end
 
   end #rubify
@@ -144,7 +134,7 @@ describe RubyPython::PyAPI::PyObject do
       arg = described_class.new AnInt
       argt = described_class.makeTuple arg
 
-      builtin = RubyPython::PyAPI.import "__builtin__"
+      builtin = RubyPython.import("__builtin__").pObject
       stringClass = builtin.getAttr "str"
       stringClass.callObject(argt).rubify.should == AnInt.to_s
     end
@@ -163,11 +153,11 @@ end
 
 describe RubyPython::PythonError do
   before do
-    RubyPython::PyAPI.start
+    RubyPython.start
   end
 
   after do
-    RubyPython::PyAPI.stop
+    RubyPython.stop
   end
 
   describe "#error?" do
@@ -176,14 +166,14 @@ describe RubyPython::PythonError do
     end
 
     it "should return true when an error has occured" do
-      RubyPython::PyAPI.import("wat")
+      RubyPython::Python.PyImport_ImportModule("wat")
       described_class.error?.should be_true
     end
   end
 
   describe "#clear" do
     it "should reset the Python error flag" do
-      RubyPython::PyAPI.import("wat")
+      RubyPython::Python.PyImport_ImportModule("wat")
       described_class.clear
       described_class.error?.should be_false
     end
@@ -196,7 +186,7 @@ describe RubyPython::PythonError do
 
   describe "#fetch" do
     it "should make availible Python error type" do
-      RubyPython::PyAPI.import("wat")
+      RubyPython::Python.PyImport_ImportModule("wat")
       rbType, rbValue, rbTraceback = described_class.fetch
       rbType.getAttr("__name__").rubify.should == "ImportError"
     end
@@ -204,27 +194,27 @@ describe RubyPython::PythonError do
 
 end
 
-describe RubyPython::PyAPI::RubyPyProxy do
+describe RubyPython::RubyPyProxy do
   include TestConstants
 
   before do
-    RubyPython::PyAPI.start
-    @a = RubyPython::PyAPI::PyObject.new "a"
-    @b = RubyPython::PyAPI::PyObject.new "b"
-    @builtin = RubyPython::PyAPI.import "__builtin__"
-    @string = RubyPython::PyAPI.import "string"
+    RubyPython.start
+    @a = RubyPython::PyObject.new "a"
+    @b = RubyPython::PyObject.new "b"
+    @builtin = RubyPython.import("__builtin__").pObject
+    @string = RubyPython.import("string").pObject
 
     @two = 2
     @six = 6
   end
 
   after do
-    RubyPython::PyAPI.stop
+    RubyPython.stop
   end
 
   describe "#new" do
     it "should accept a PyObject instance" do
-      rbPyObject = RubyPython::PyAPI::PyObject.new AString
+      rbPyObject = RubyPython::PyObject.new AString
       lambda {described_class.new rbPyObject}.should_not raise_exception
     end
 
@@ -257,7 +247,7 @@ describe RubyPython::PyAPI::RubyPyProxy do
       ["a hash", AHash]
     ].each do |title, obj|
       it "should faithfully unwrap #{title}" do
-        pyObject = RubyPython::PyAPI::PyObject.new obj
+        pyObject = RubyPython::PyObject.new obj
         proxy = described_class.new pyObject
         proxy.rubify.should == pyObject.rubify
       end
@@ -297,7 +287,7 @@ describe RubyPython::PyAPI::RubyPyProxy do
 
     it "should return a class as a RubyPyClass" do
       urllib2 = RubyPython.import('urllib2')
-      urllib2.Request.should be_a(RubyPython::PyAPI::RubyPyClass)
+      urllib2.Request.should be_a(RubyPython::RubyPyClass)
     end
   end
 
@@ -312,14 +302,14 @@ describe RubyPython::PyAPI::RubyPyProxy do
   end
 
   it "should delegate object equality" do
-    urllib_a = described_class.new RubyPython::PyAPI.import('urllib')
-    urllib_b = described_class.new RubyPython::PyAPI.import('urllib')
+    urllib_a = RubyPython.import('urllib')
+    urllib_b = RubyPython.import('urllib')
     urllib_a.should == urllib_b
   end
 
 end
 
-describe RubyPython::PyAPI::RubyPyClass do
+describe RubyPython::RubyPyClass do
   before do
     RubyPython.start
   end
@@ -331,7 +321,7 @@ describe RubyPython::PyAPI::RubyPyClass do
   describe "#new" do
     it "should return a RubyPyInstance" do
       urllib2 = RubyPython.import 'urllib2'
-      urllib2.Request.new('google.com').should be_a(RubyPython::PyAPI::RubyPyInstance)
+      urllib2.Request.new('google.com').should be_a(RubyPython::RubyPyInstance)
     end
   end
 

@@ -24,7 +24,7 @@ describe RubyPython do
     end
 
     it "should return a RubyPyModule" do
-      RubyPython.import('urllib2').should be_a(RubyPython::PyAPI::RubyPyModule)
+      RubyPython.import('urllib2').should be_a(RubyPython::RubyPyModule)
     end
   end
 

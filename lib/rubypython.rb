@@ -68,10 +68,10 @@ module RubyPython
   #Import a Python module into the interpreter and return a proxy object
   #for it. This is the preferred way to gain access to Python object.
   #@param [String] mod the name of the module to import
-  #@return [PyAPI::RubyPyModule] pymod a proxy object wrapping the requested
+  #@return [RubyPyModule] pymod a proxy object wrapping the requested
   #module
   def self.import(mod)
-    pModule = Python.PyImport_ImportModule mname
+    pModule = Python.PyImport_ImportModule mod
     pymod = PyObject.new pModule
     if(PythonError.error?)
       raise PythonError.handle_error
@@ -89,7 +89,7 @@ module RubyPython
   end
 
   #Set RubyPython to automatically wrap all returned objects as an instance
-  #of {PyAPI::RubyPyProxy} or one of its subclasses.
+  #of {RubyPyProxy} or one of its subclasses.
   #@return [Boolean]
   def self.legacy_mode
     @@legacy_mode
@@ -134,7 +134,7 @@ end
 # The PyMainClass object provides somewhat experimental block support.
 # A block may be passed to a method call and the object returned by the function call
 # will be passed as an argument to the block.
-class PyMainClass < RubyPython::PyAPI::BlankObject
+class PyMainClass < RubyPython::BlankObject
   include Singleton
   attr_writer :main, :builtin
   def main #:nodoc:

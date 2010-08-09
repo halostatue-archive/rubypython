@@ -47,7 +47,7 @@ module RubyPython
     end
 
     #A wrapper to the Python C API PyErr_Fetch function.
-    #@return [Array<PyObject>] an array containing three {PyAPI::PyObject} instances.
+    #@return [Array<PyObject>] an array containing three {PyObject} instances.
     #   representing the Type, Value, and stacktrace of the python
     #   error respectively.
     def self.fetch

@@ -225,3 +225,94 @@ describe RubyPython::PythonError do
   end
 
 end
+
+describe RubyPython::PyAPI::RubyPyProxy do
+  include TestConstants
+
+  before do
+    RubyPython::PyAPI.start
+    @a = RubyPython::PyAPI::PyObject.new "a"
+    @b = RubyPython::PyAPI::PyObject.new "b"
+    @builtin = RubyPython::PyAPI.import "__builtin__"
+    @string = RubyPython::PyAPI.import "string"
+  end
+
+  after do
+    RubyPython::PyAPI.stop
+  end
+
+  describe "#new" do
+    it "should accept a PyObject instance" do
+      rbPyObject = RubyPython::PyAPI::PyObject.new AString
+      lambda {described_class.new rbPyObject}.should_not raise_exception
+    end
+
+
+    [
+      ["a string", AString],
+      ["an int", AnInt],
+      ["a float", AFloat],
+      ["an array", AnArray],
+      ["a symbol", ASym, ASym.to_s],
+      ["a hash", AHash, AConvertedHash]
+    ].each do |arr|
+      type, input, output = arr
+      output ||= input
+
+      it "should convert #{type} to wrapped pObject" do
+        described_class.new(input).pObject.rubify.should == output
+      end
+
+    end
+  end
+
+  describe "#rubify" do
+    [
+      ["a string", AString],
+      ["an int", AnInt],
+      ["a float", AFloat],
+      ["an array", AnArray],
+      ["a symbol", ASym],
+      ["a hash", AHash]
+    ].each do |title, obj|
+      it "should faithfully unwrap #{title}" do
+        pyObject = RubyPython::PyAPI::PyObject.new obj
+        proxy = described_class.new pyObject
+        proxy.rubify.should == pyObject.rubify
+      end
+    end
+  end
+
+  describe "method delegation" do
+
+    it "should refer method calls to wrapped object" do
+      aProxy = described_class.new(@a)
+      bProxy = described_class.new(@b)
+      aProxy.__add__(bProxy).rubify.should == (@a.rubify + @b.rubify)
+    end
+
+    it "should raise NoMethodError when method is undefined" do
+      aProxy = described_class.new @a
+      lambda {aProxy.wat []}.should raise_exception(NoMethodError)
+    end
+
+    it "should allow methods to be called with no arguments" do
+      builtinProxy = described_class.new @builtin
+      rbStrClass = builtinProxy.str
+      rbStrClass.new.rubify.should == String.new
+    end
+
+    it "should fetch attributes when method name is an attribute" do
+      pyLetters = @string.getAttr "ascii_letters"
+      stringProxy = described_class.new @string
+      stringProxy.ascii_letters.rubify.should == pyLetters.rubify
+    end
+
+    it "should set attribute if method call is a setter" do
+      stringProxy = described_class.new @string
+      stringProxy.letters = AString
+      stringProxy.letters.rubify.should == AString
+    end
+  end
+
+end

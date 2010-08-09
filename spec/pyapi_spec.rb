@@ -21,16 +21,15 @@ module TestConstants
 
 end
 
-describe RubyPython::PyAPI, "when starting/stopping interpreter" do
-  
-  it "start and stop only once" do
+describe RubyPython::PyAPI,  "when starting/stopping interpreter" do
+  it "should start and stop only once" do
     RubyPython::PyAPI.start.should be_true
     RubyPython::PyAPI.start.should be_false
     RubyPython::PyAPI.stop.should be_true
     RubyPython::PyAPI.stop.should be_false
   end
-  
 end
+
 
 describe RubyPython::PyAPI::PyObject do
   include TestConstants

@@ -1,4 +1,5 @@
-require 'rubypython/pyapi'
+require 'rubypython/python'
+require 'rubypython/py_object'
 require 'rubypython/rubypyproxy'
 require 'rubypython/blankobject'
 require 'singleton'
@@ -34,13 +35,19 @@ end
 #  RubyPython.stop
 module RubyPython
 
+  @@legacy_mode = false
+
   #Starts ups the Python interpreter. This method **must** be run
   #before using any Python code. The only alternatives are use of the
   #{session} and {run} methods.
   #@return [Boolean] returns true if the interpreter was started here
   #    and false otherwise
   def self.start
-    PyAPI.start
+    if Python.Py_IsInitialized != 0
+      return false
+    end
+    Python.Py_Initialize
+    true
   end
 
   #Stops the Python interpreter if it is running. Returns true if the
@@ -51,7 +58,11 @@ module RubyPython
   def self.stop
     PyMain.main = nil
     PyMain.builtin = nil
-    PyAPI.stop
+    if Python.Py_IsInitialized !=0
+      Python.Py_Finalize
+      return true
+    end
+    false
   end
 
   #Import a Python module into the interpreter and return a proxy object
@@ -60,11 +71,12 @@ module RubyPython
   #@return [PyAPI::RubyPyModule] pymod a proxy object wrapping the requested
   #module
   def self.import(mod)
-    pymod = PyAPI.import(mod)
+    pModule = Python.PyImport_ImportModule mname
+    pymod = PyObject.new pModule
     if(PythonError.error?)
       raise PythonError.handle_error
     end
-    PyAPI::RubyPyModule.new(pymod)
+    RubyPyModule.new(pymod)
   end
 
   #Switch RubyPython into a mode compatible with versions < 0.3.0. All
@@ -73,14 +85,14 @@ module RubyPython
   #conversion is known are the objects wrapped in proxy objects.
   #@return [void]
   def self.legacy_mode=(on_off)
-    PyAPI.legacy_mode = on_off
+    @@legacy_mode = on_off
   end
 
   #Set RubyPython to automatically wrap all returned objects as an instance
   #of {PyAPI::RubyPyProxy} or one of its subclasses.
   #@return [Boolean]
   def self.legacy_mode
-    PyAPI.legacy_mode
+    @@legacy_mode
   end
 
   #Execute the given block, starting the Python interperter before its execution

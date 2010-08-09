@@ -182,3 +182,46 @@ describe RubyPython::PyAPI::PyObject do
   end
 
 end
+
+describe RubyPython::PythonError do
+  before do
+    RubyPython::PyAPI.start
+  end
+
+  after do
+    RubyPython::PyAPI.stop
+  end
+
+  describe "#error?" do
+    it "should return false when no error has occured" do
+      described_class.error?.should be_false
+    end
+
+    it "should return true when an error has occured" do
+      RubyPython::PyAPI.import("wat")
+      described_class.error?.should be_true
+    end
+  end
+
+  describe "#clear" do
+    it "should reset the Python error flag" do
+      RubyPython::PyAPI.import("wat")
+      described_class.clear
+      described_class.error?.should be_false
+    end
+
+    it "should not barf when there is no error" do
+      lambda {described_class.clear}.should_not raise_exception
+    end
+  end
+
+
+  describe "#fetch" do
+    it "should make availible Python error type" do
+      RubyPython::PyAPI.import("wat")
+      rbType, rbValue, rbTraceback = described_class.fetch
+      rbType.getAttr("__name__").rubify.should == "ImportError"
+    end
+  end
+
+end

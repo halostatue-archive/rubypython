@@ -17,10 +17,9 @@ end
 
 #This module provides the direct user interface for the RubyPython extension.
 #
-#The majority of the functionality lies in the {PyAPI} module, which intefaces
-#to the Python C API using the Ruby FFI module. However, the end user should
-#only worry about dealing with the RubyPython module as that is designed for
-#user interaction.
+#RubyPython interfaces to the Python C API via the {Python} module using the
+#Ruby FFI gem. However, the end user should only worry about dealing with the
+#methods made avaiable via the RubyPython module.
 #
 #Usage
 #-----
@@ -67,11 +66,11 @@ module RubyPython
 
   #Import a Python module into the interpreter and return a proxy object
   #for it. This is the preferred way to gain access to Python object.
-  #@param [String] mod the name of the module to import
-  #@return [RubyPyModule] pymod a proxy object wrapping the requested
+  #@param [String] mod_name the name of the module to import
+  #@return [RubyPyModule] a proxy object wrapping the requested
   #module
-  def self.import(mod)
-    pModule = Python.PyImport_ImportModule mod
+  def self.import(mod_name)
+    pModule = Python.PyImport_ImportModule mod_name
     pymod = PyObject.new pModule
     if(PythonError.error?)
       raise PythonError.handle_error
@@ -130,22 +129,29 @@ end
 # The \_\_main\_\_ namespace is searched before the \_\_builtin\_\_ namespace. As such,
 # naming clashes will be resolved in that order.
 #
-# == Block Syntax
-# The PyMainClass object provides somewhat experimental block support.
-# A block may be passed to a method call and the object returned by the function call
+# ## Block Syntax
+# The PyMainClass object provides somewhat experimental block support.  A block
+# may be passed to a method call and the object returned by the function call
 # will be passed as an argument to the block.
 class PyMainClass < RubyPython::BlankObject
   include Singleton
   attr_writer :main, :builtin
-  def main #:nodoc:
+  
+  #@return [RubyPyModule] a proxy object wrapping the Python \__main\__
+  #namespace.
+  def main 
     @main||=RubyPython.import "__main__"
   end
   
-  def builtin #:nodoc:
+  #@return [RubyPyModule] a proxy object wrapping the Python \__builtin\__
+  #namespace.
+  def builtin
     @builtin||=RubyPython.import "__builtin__"
   end
   
-  def method_missing(name,*args,&block) #:nodoc:
+  #Delegates any method calls on this object to the Python \__main\__ or
+  #\__builtin\__ namespaces. Method call resolution occurs in that order.
+  def method_missing(name,*args,&block)
     begin
       result=main.__send__(name,*args)
     rescue NoMethodError
@@ -162,5 +168,4 @@ class PyMainClass < RubyPython::BlankObject
   end
 end
 
-# See _PyMainClass_
-PyMain=PyMainClass.instance
+PyMain = PyMainClass.instance

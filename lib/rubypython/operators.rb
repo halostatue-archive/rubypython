@@ -41,5 +41,9 @@ module RubyPython
       self.__getitem__ index
     end
 
+    def []=(index, value)
+      self.__setitem__ index, value
+    end
+
   end
 end

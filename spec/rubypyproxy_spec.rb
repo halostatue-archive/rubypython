@@ -111,6 +111,21 @@ describe RubyPython::RubyPyProxy do
       key = AConvertedHash.keys[0]
       dict[key].rubify.should == AConvertedHash[key]
     end
+
+    it "should allow list index assignment" do
+      array = described_class.new(AnArray)
+      val = AString*2
+      array[1] = val
+      array[1].rubify.should == val
+    end
+
+    it "should allow dict value modification" do
+      dict = described_class.new(AHash)
+      key = AConvertedHash.keys[0]
+      val = AString*2
+      dict[key] = val
+      dict[key].rubify.should == val
+    end
   end
 
 

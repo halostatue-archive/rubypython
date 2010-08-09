@@ -37,7 +37,6 @@ module RubyPython
 
     #Attempts to convert the wrapped object to a native ruby type.
     #@return a ruby version of the wrapped object
-    #@raise [{Conversion::UnsupportedConversion}]
     def rubify
       Conversion.ptorObject @pointer
     end

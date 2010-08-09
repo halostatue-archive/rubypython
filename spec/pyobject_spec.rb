@@ -46,14 +46,6 @@ describe RubyPython::PyObject do
 
     end
 
-    #perhaps move this
-    it "should raise 'Unsupported' error when unable to convert object" do
-      lambda do
-        request = @urllib2.getAttr('Request')
-        request.rubify
-      end.should raise_exception(RubyPython::Conversion::UnsupportedConversion)
-    end
-
   end #rubify
 
   describe "#hasAttr" do

@@ -10,8 +10,8 @@ describe RubyPython::RubyPyProxy do
     @builtin = RubyPython.import("__builtin__").pObject
     @string = RubyPython.import("string").pObject
 
-    @two = 2
-    @six = 6
+    @two = described_class.new 2
+    @six = described_class.new 6
   end
 
   describe "#new" do
@@ -95,9 +95,15 @@ describe RubyPython::RubyPyProxy do
 
   describe "when used with an operator" do
 
-    ['+', '-', '/', '*', '==', '<', '>', '<=', '>='].each do |op|
+    ['+', '-', '/', '*'].each do |op|
       it "should delegate #{op}" do
-        @six.__send__(op, @two).should be_equal(6.__send__ op, 2)
+        @six.__send__(op, @two).rubify.should == 6.__send__(op, 2)
+      end
+    end
+
+    ['==', '<', '>', '<=', '>='].each do |op|
+      it "should delegate #{op}" do
+        @six.__send__(op, @two).should == 6.__send__(op, 2)
       end
     end
 
@@ -125,6 +131,13 @@ describe RubyPython::RubyPyProxy do
       val = AString*2
       dict[key] = val
       dict[key].rubify.should == val
+    end
+
+    it "should allow creation of new dict key-val pair" do
+      dict = described_class.new(AHash)
+      key = AString*2
+      dict[key] = AString
+      dict[key].rubify.should == AString
     end
   end
 

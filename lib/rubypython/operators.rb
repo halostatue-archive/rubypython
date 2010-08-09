@@ -1,24 +1,23 @@
 module RubyPython
   module Operators
 
+    def self.bin_op rname, pname
+      define_method rname.to_sym do |other|
+        self.__send__ pname, other
+      end
+    end
+
     def ==(other)
       @pObject.cmp(other.pObject) == 0
     end
 
-    def +(other)
-      self.__add__ other
-    end
-
-    def -(other)
-      self.__sub__ other
-    end
-
-    def *(other)
-      self.__mul__ other
-    end
-
-    def /(other)
-      self.__div__ other
+    [
+      [:+, '__add__'],
+      [:-, '__sub__'],
+      [:*, '__mul__'],
+      [:/, '__div__']
+    ].each do |args|
+      bin_op *args
     end
 
     def <(other)

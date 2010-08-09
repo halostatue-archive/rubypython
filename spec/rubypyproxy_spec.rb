@@ -2,9 +2,9 @@ require File.dirname(__FILE__) + '/spec_helper.rb'
 
 describe RubyPython::RubyPyProxy do
   include TestConstants
+  include RubyPythonStartStop
 
   before do
-    RubyPython.start
     @a = RubyPython::PyObject.new "a"
     @b = RubyPython::PyObject.new "b"
     @builtin = RubyPython.import("__builtin__").pObject
@@ -12,10 +12,6 @@ describe RubyPython::RubyPyProxy do
 
     @two = 2
     @six = 6
-  end
-
-  after do
-    RubyPython.stop
   end
 
   describe "#new" do

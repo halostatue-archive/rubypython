@@ -1,13 +1,7 @@
 require File.dirname(__FILE__) + '/spec_helper.rb'
 
 describe RubyPython do
-  before do
-    RubyPython.start
-  end
-
-  after do
-    RubyPython.stop
-  end
+  include RubyPythonStartStop
 
   describe "#import" do
     it "should handle multiple imports" do
@@ -49,5 +43,4 @@ describe RubyPython, "#session" do
     end
 
   end
-
 end

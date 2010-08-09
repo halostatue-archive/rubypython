@@ -27,6 +27,15 @@ module TestConstants
       key = k.is_a?(Symbol)? k.to_s : k
       [key,v]
     end.flatten]
+end
 
+share_as :RubyPythonStartStop do
+  before do
+    RubyPython.start
+  end
+
+  after do
+    RubyPython.stop
+  end
 end
 

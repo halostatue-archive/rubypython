@@ -2,14 +2,7 @@ require File.dirname(__FILE__) + '/spec_helper.rb'
 
 describe PyMainClass do
   include TestConstants
-
-  before do
-    RubyPython.start
-  end
-
-  after do
-    RubyPython.stop
-  end
+  include RubyPythonStartStop
 
   it "should delegate to builtins" do
     PyMain.float(AnInt).rubify.should == AnInt.to_f

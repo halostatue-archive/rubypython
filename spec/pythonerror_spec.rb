@@ -1,12 +1,10 @@
 require File.dirname(__FILE__) + '/spec_helper.rb'
 
 describe RubyPython::PythonError do
-  before do
-    RubyPython.start
-  end
+  include RubyPythonStartStop
 
-  after do
-    RubyPython.stop
+  def cause_error
+    RubyPython::Python.PyImport_ImportModule("wat")
   end
 
   describe "#error?" do
@@ -15,14 +13,14 @@ describe RubyPython::PythonError do
     end
 
     it "should return true when an error has occured" do
-      RubyPython::Python.PyImport_ImportModule("wat")
+      cause_error
       described_class.error?.should be_true
     end
   end
 
   describe "#clear" do
     it "should reset the Python error flag" do
-      RubyPython::Python.PyImport_ImportModule("wat")
+      cause_error
       described_class.clear
       described_class.error?.should be_false
     end
@@ -35,7 +33,7 @@ describe RubyPython::PythonError do
 
   describe "#fetch" do
     it "should make availible Python error type" do
-      RubyPython::Python.PyImport_ImportModule("wat")
+      cause_error
       rbType, rbValue, rbTraceback = described_class.fetch
       rbType.getAttr("__name__").rubify.should == "ImportError"
     end

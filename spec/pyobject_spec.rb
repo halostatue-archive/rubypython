@@ -1,15 +1,12 @@
 require File.dirname(__FILE__) + '/spec_helper.rb'
 
 describe RubyPython::PyObject do
+  include RubyPythonStartStop
   include TestConstants
+
   before do
-    RubyPython.start
     @string = RubyPython.import('string').pObject
     @urllib2 = RubyPython.import('urllib2').pObject
-  end
-
-  after do
-    RubyPython.stop
   end
 
   describe "#new" do

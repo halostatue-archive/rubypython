@@ -22,3 +22,12 @@ class RubyPythonMockObject:
             return True
         else:
             return False
+
+an_int = 1
+a_char = 'a'
+a_float = 1.0
+a_symbol = 'sym'
+a_string = "STRING"
+a_list = [an_int, a_char, a_float, a_string]
+a_dict = { an_int: an_int, a_char: a_char, a_symbol: a_float, a_string:
+        a_string}

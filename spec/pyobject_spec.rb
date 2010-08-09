@@ -9,7 +9,7 @@ describe RubyPython::PyObject do
     @urllib2 = RubyPython.import('urllib2').pObject
   end
 
-  describe "#new" do
+  describe ".new" do
 
     [
       ["a string", AString],

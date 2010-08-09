@@ -294,6 +294,11 @@ describe RubyPython::PyAPI::RubyPyProxy do
       stringProxy.letters = AString
       stringProxy.letters.rubify.should == AString
     end
+
+    it "should return a class as a RubyPyClass" do
+      urllib2 = RubyPython.import('urllib2')
+      urllib2.Request.should be_a(RubyPython::PyAPI::RubyPyClass)
+    end
   end
 
   describe "when used with an operator" do
@@ -310,6 +315,24 @@ describe RubyPython::PyAPI::RubyPyProxy do
     urllib_a = described_class.new RubyPython::PyAPI.import('urllib')
     urllib_b = described_class.new RubyPython::PyAPI.import('urllib')
     urllib_a.should == urllib_b
+  end
+
+end
+
+describe RubyPython::PyAPI::RubyPyClass do
+  before do
+    RubyPython.start
+  end
+
+  after do
+    RubyPython.stop
+  end
+
+  describe "#new" do
+    it "should return a RubyPyInstance" do
+      urllib2 = RubyPython.import 'urllib2'
+      urllib2.Request.new('google.com').should be_a(RubyPython::PyAPI::RubyPyInstance)
+    end
   end
 
 end

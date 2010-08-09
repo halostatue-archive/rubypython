@@ -22,10 +22,37 @@ describe RubyPython do
         RubyPython.import 'nonExistentModule'
       end.should raise_exception(RubyPython::PythonError)
     end
+
+    it "should return a RubyPyModule" do
+      RubyPython.import('urllib2').should be_a(RubyPython::PyAPI::RubyPyModule)
+    end
   end
+
 end
 
-describe PyMain do
+describe RubyPython, "#session" do
+
+  it "should stop the interpreter when an error occurs" do
+    begin
+      RubyPython.session do
+        raise "ERROR"
+      end
+    rescue
+      RubyPython.stop.should be_false
+    end
+  end
+
+  it "should start interpreter" do
+    RubyPython.session do
+      cPickle = RubyPython.import "cPickle"
+      cPickle.loads("(dp1\nS'a'\nS'n'\ns(I1\nS'2'\ntp2\nI4\ns.").rubify.should == {"a"=>"n", [1, "2"]=>4}
+    end
+
+  end
+
+end
+
+describe PyMainClass do
   include TestConstants
 
   before do
@@ -46,3 +73,4 @@ describe PyMain do
 
 
 end
+

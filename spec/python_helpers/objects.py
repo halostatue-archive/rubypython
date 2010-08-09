@@ -31,3 +31,6 @@ a_string = "STRING"
 an_array = a_list = [an_int, a_char, a_float, a_string]
 a_hash = a_dict = { an_int: an_int, a_char: a_char, a_symbol: a_float, a_string:
         a_string}
+true = python_True = True
+false = python_False = False
+nil = python_None = None

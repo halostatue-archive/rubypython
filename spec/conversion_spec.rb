@@ -18,7 +18,10 @@ describe RubyPython::Conversion do
       ["a float", "a float", AFloat],
       ["a string", "a string", AString],
       ["a list", "an array", AnArray],
-      ["a dict", "a hash", AConvertedHash]
+      ["a dict", "a hash", AConvertedHash],
+      ["python True", "true", true],
+      ["python False", "false", false],
+      ["python None", "nil", nil]
     ].each do |py_type, rb_type, output|
       it "should convert #{py_type} to #{rb_type}" do
         py_object_ptr = @objects.__send__(py_type.sub(' ', '_')).pObject.pointer
@@ -35,7 +38,10 @@ describe RubyPython::Conversion do
       ["a string", "a string", AString],
       ["a string", "a symbol", ASym],
       ["a list", "an array", AnArray],
-      ["a dict", "a hash", AConvertedHash]
+      ["a dict", "a hash", AConvertedHash],
+      ["python True", "true", true],
+      ["python False", "false", false],
+      ["python None", "nil", nil]
     ].each do |py_type, rb_type, input|
 
       it "should convert #{rb_type} to #{py_type}" do

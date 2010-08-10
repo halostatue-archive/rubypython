@@ -98,6 +98,14 @@ module RubyPython
       @pObject.rubify
     end
 
+    def inspect
+      self.__repr__.rubify
+    end
+
+    def to_s
+      self.__str__.rubify
+    end
+
   end
 
   class RubyPyModule < RubyPyProxy

@@ -56,6 +56,18 @@ describe RubyPython::RubyPyProxy do
     end
   end
 
+  describe "#inspect" do
+    it "should return 'repr' of wrapped object" do
+      @six.inspect.should == '6'
+    end
+  end
+
+  describe "#to_s" do
+    it "should return 'str' of wrapped object" do
+      @six.to_s.should == '6'
+    end
+  end
+
   describe "method delegation" do
 
     it "should refer method calls to wrapped object" do
@@ -66,7 +78,7 @@ describe RubyPython::RubyPyProxy do
 
     it "should raise NoMethodError when method is undefined" do
       aProxy = described_class.new @a
-      lambda {aProxy.wat []}.should raise_exception(NoMethodError)
+      lambda {aProxy.wat}.should raise_exception(NoMethodError)
     end
 
     it "should allow methods to be called with no arguments" do

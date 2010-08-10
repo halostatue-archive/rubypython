@@ -55,9 +55,9 @@ module RubyPython
   #@return [Boolean] returns true if the interpreter was stopped here
   #    and false otherwise
   def self.stop
-    PyMain.main = nil
-    PyMain.builtin = nil
     if Python.Py_IsInitialized !=0
+      PyMain.main = nil
+      PyMain.builtin = nil
       Python.Py_Finalize
       return true
     end

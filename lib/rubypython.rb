@@ -58,6 +58,7 @@ module RubyPython
     if Python.Py_IsInitialized !=0
       PyMain.main = nil
       PyMain.builtin = nil
+      RubyPython::Operators.class_variable_set('@@operator', nil)
       Python.Py_Finalize
       return true
     end

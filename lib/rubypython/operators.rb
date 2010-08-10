@@ -1,5 +1,8 @@
 module RubyPython
   module Operators
+    def self.operator_
+      @@operator ||= RubyPython.import('operator')
+    end
 
     def self.bin_op rname, pname
       define_method rname.to_sym do |other|
@@ -7,9 +10,12 @@ module RubyPython
       end
     end
 
-    def ==(other)
-      @pObject.cmp(other.pObject) == 0
+    def self.rel_op rname, pname
+      define_method rname.to_sym do |other|
+        Operators.operator_.__send__(pname, self, other).rubify
+      end
     end
+
 
     [
       [:+, '__add__'],
@@ -20,20 +26,14 @@ module RubyPython
       bin_op *args
     end
 
-    def <(other)
-      @pObject.cmp(other.pObject) < 0
-    end
-
-    def >(other)
-      @pObject.cmp(other.pObject) > 0
-    end
-
-    def >=(other)
-      (self > other) or (self == other)
-    end
-
-    def <=(other)
-      (self < other) or (self == other)
+    [
+      [:==, 'eq'],
+      [:<, 'lt'],
+      [:<=, 'le'],
+      [:>, 'gt'],
+      [:>=, 'ge']
+    ].each do |args|
+      rel_op *args
     end
 
     def [](index)

@@ -21,7 +21,11 @@ module RubyPython
       [:+, '__add__'],
       [:-, '__sub__'],
       [:*, '__mul__'],
-      [:/, '__div__']
+      [:/, '__div__'],
+      [:&, '__and__'],
+      [:^, '__xor__'],
+      [:%, '__mod__'],
+      [:**, '__pow__']
     ].each do |args|
       bin_op *args
     end

@@ -11,7 +11,7 @@ module RubyPython
     #@param [String] msg the message attached to the Python error
     def initialize(typeName, msg)
       @type = typeName
-      super([typeName, msg].join ': ')
+      super([typeName, msg].join(': '))
     end
 
     #This method should be called when an error has occured in the

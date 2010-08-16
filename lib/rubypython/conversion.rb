@@ -102,7 +102,7 @@ module RubyPython
       when nil
         rtopNone
       else
-        raise UnsupportedConversion.new "Unsupported type for RTOP conversion." 
+        raise UnsupportedConversion.new("Unsupported type for RTOP conversion." )
       end
     end
 

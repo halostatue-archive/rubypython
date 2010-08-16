@@ -4,15 +4,13 @@ require 'rubypython/rubypyproxy'
 require 'rubypython/blankobject'
 require 'singleton'
 
-if RUBY_VERSION == "1.8.6"
-  class String
-    #This is necessary for Ruby versions 1.8.6 and below as 
-    #String#end_with? is not defined in this case.
-    def end_with?(c)
-      self[-1].chr == c
-    end
+class String
+  #This is necessary for Ruby versions 1.8.6 and below as 
+  #String#end_with? is not defined in this case.
+  def end_with?(c)
+    self[-1].chr == c
   end
-end
+end unless String.respond_to? :end_with?
 
 
 #This module provides the direct user interface for the RubyPython extension.

@@ -26,16 +26,6 @@ end
 
 describe RubyPython, "#session" do
 
-  it "should stop the interpreter when an error occurs" do
-    begin
-      RubyPython.session do
-        raise "ERROR"
-      end
-    rescue
-      RubyPython.stop.should be_false
-    end
-  end
-
   it "should start interpreter" do
     RubyPython.session do
       cPickle = RubyPython.import "cPickle"

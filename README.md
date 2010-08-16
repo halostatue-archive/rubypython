@@ -37,9 +37,9 @@ Note: RubyPython has been tested on Mac OS 10.5.x
 
 ## DOCUMENTATION:
 
-The RDoc should provide a reasonable description of how to use RubyPython.
+The documentation should provide a reasonable description of how to use RubyPython.
 Starting with version 0.3.x there are two modes of operation: default and
-legacy. These are described in the RDoc.
+legacy. These are described in the docs.
 	
 ## LICENSE:
 

@@ -1,9 +1,11 @@
 begin
   require 'spec'
+  require 'ffi'
 rescue LoadError
   require 'rubygems' unless ENV['NO_RUBYGEMS']
   gem 'rspec'
   require 'spec'
+  require 'ffi'
 end
 
 $:.unshift(File.dirname(__FILE__) + '/../lib')

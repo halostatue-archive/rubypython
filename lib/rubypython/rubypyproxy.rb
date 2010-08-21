@@ -99,11 +99,11 @@ module RubyPython
     end
 
     def inspect
-      self.__repr__.rubify
+      self.__repr__.rubify rescue super
     end
 
     def to_s
-      self.__str__.rubify
+      self.__str__.rubify rescue super
     end
 
   end

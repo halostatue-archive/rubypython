@@ -1,6 +1,5 @@
 require 'ffi'
 require 'open3'
-require 'rbconfig'
 
 module RubyPython
   #This module provides access to the Python C API functions via the Ruby ffi

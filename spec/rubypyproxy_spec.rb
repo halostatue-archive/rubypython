@@ -12,6 +12,10 @@ describe RubyPython::RubyPyProxy do
 
     @two = described_class.new 2
     @six = described_class.new 6
+
+    sys = RubyPython.import 'sys'
+    sys.path.append './spec/python_helpers'
+    @objects = RubyPython.import 'objects'
   end
 
   describe "#new" do
@@ -57,14 +61,24 @@ describe RubyPython::RubyPyProxy do
   end
 
   describe "#inspect" do
+
     it "should return 'repr' of wrapped object" do
       @six.inspect.should == '6'
     end
+
+    it "should gracefully handle lack of defined __repr__" do
+      lambda { @objects.RubyPythonMockObject.inspect }.should_not raise_exception
+    end
+
   end
 
   describe "#to_s" do
     it "should return 'str' of wrapped object" do
       @six.to_s.should == '6'
+    end
+
+    it "should gracefully handle lack of defined __str__" do
+      lambda { @objects.RubyPythonMockObject.to_s }.should_not raise_exception
     end
   end
 

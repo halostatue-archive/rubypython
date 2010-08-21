@@ -10,9 +10,9 @@ module RubyPython
     PYTHON_VERSION = Open3.popen3("python --version") { |i,o,e| e.read}.chomp.split[1].to_f
     PYTHON_NAME = "python#{PYTHON_VERSION}"
     LIB_NAME = "lib#{PYTHON_NAME}"
-    LIB_EXT = File.extname RbConfig::CONFIG['LIBRUBY_SO']
+    LIB_EXT = FFI::Platform::LIBSUFFIX
     LIB = `python-config --prefix`.chomp +
-      "/lib/#{PYTHON_NAME}/config/#{LIB_NAME}#{LIB_EXT}"
+      "/lib/#{PYTHON_NAME}/config/#{LIB_NAME}.#{LIB_EXT}"
     @ffi_libs = [FFI::DynamicLibrary.open(LIB, FFI::DynamicLibrary::RTLD_LAZY|FFI::DynamicLibrary::RTLD_GLOBAL)]
 
     #The class is a little bit of a hack to extract the address of global

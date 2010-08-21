@@ -17,7 +17,6 @@ lib/rubypython/python.rb
 lib/rubypython/rubypyproxy.rb
 lib/rubypython/version.rb
 setup.rb
-spec/fixture1.pickle
 spec/pymainclass_spec.rb
 spec/pyobject_spec.rb
 spec/python_helpers

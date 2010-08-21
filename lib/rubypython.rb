@@ -26,10 +26,36 @@ end unless String.respond_to? :end_with?
 #interpreter. If this approach is used, the user should remember to call
 #RubyPython.stop when they are finished with Python.
 #@example
-#  RubyPython.start
-#  cPickle = RubyPython.import "cPickle"
-#  puts cPickle.dumps "RubyPython is awesome!"
-#  RubyPython.stop
+#    RubyPython.start
+#    cPickle = RubyPython.import "cPickle"
+#    puts cPickle.dumps("RubyPython is awesome!").rubify
+#    RubyPython.stop
+#
+#Legacy Mode vs Normal Mode
+#---------------------------
+#By default RubyPython always returns a proxy class which refers method calls to
+#the wrapped Python object. If you instead would like RubyPython to aggressively
+#attempt conversion of return values, as it did in RubyPython 0.2.x, then you
+#should set {RubyPython.legacy_mode} to true. In this case RubyPython will
+#attempt to convert any return value from Python to a native Ruby type, and only
+#return a proxy if conversion is not possible. For example consider the
+#following equivalent code samples.
+#
+#@example Normal Mode
+#    RubyPython.start
+#    string = RubyPython.import 'string'
+#    ascii_letters = string.ascii_letters # Here ascii_letters is a proxy object
+#    puts ascii_letters.rubify # we use the rubify method to convert it to a
+#                              # native type
+#    RubyPython.stop
+#
+#@example Legacy Mode
+#    RubyPython.legacy_mode = true
+#    RubyPython.start
+#    string = RubyPython.import 'string'
+#    ascii_letters = string.ascii_letters # Here ascii_letters is a native ruby string
+#    puts ascii_letters # No explicit conversion is neccessary
+#    RubyPython.stop
 module RubyPython
 
   @@legacy_mode = false

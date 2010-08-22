@@ -35,6 +35,10 @@ def run_python_command(cmd)
   IO.popen("python -c '#{cmd}'") { |f| f.gets.chomp}
 end
 
+class RubyPython::RubyPyProxy
+  [:should, :should_not, :class].each { |m| reveal(m) }
+end
+
 share_as :RubyPythonStartStop do
   before do
     RubyPython.start

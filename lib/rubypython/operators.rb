@@ -50,5 +50,9 @@ module RubyPython
       self.__setitem__ index, value
     end
 
+    def include?(item)
+      self.__contains__(item).rubify
+    end
+
   end
 end

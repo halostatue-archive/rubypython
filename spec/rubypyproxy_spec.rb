@@ -168,6 +168,11 @@ describe RubyPython::RubyPyProxy do
       dict[key] = AString
       dict[key].rubify.should == AString
     end
+
+    it "should allow membership tests with include?" do
+      list = described_class.new(AnArray)
+      list.include?(AnArray[0]).should be_true
+    end
   end
 
 

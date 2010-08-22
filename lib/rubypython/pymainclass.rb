@@ -32,10 +32,10 @@ module RubyPython
     #\__builtin\__ namespaces. Method call resolution occurs in that order.
     def method_missing(name,*args,&block)
       begin
-        result=main.__send__(name,*args)
+        result=main.__send__(:method_missing, name,*args)
       rescue NoMethodError
         begin
-          result=builtin.__send__(name,*args)
+          result=builtin.__send__(:method_missing, name,*args)
         rescue NoMethodError
           super(name,*args)
         end

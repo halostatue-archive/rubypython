@@ -1,15 +1,17 @@
 require File.dirname(__FILE__) + '/spec_helper.rb'
 
-describe PyMainClass do
+describe RubyPython::PyMainClass do
   include TestConstants
   include RubyPythonStartStop
 
+  subject { RubyPython::PyMain }
+
   it "should delegate to builtins" do
-    PyMain.float(AnInt).rubify.should == AnInt.to_f
+    subject.float(AnInt).rubify.should == AnInt.to_f
   end
 
   it "should handle block syntax" do
-    PyMain.float(AnInt) {|f| f.rubify*2}.should == (AnInt.to_f * 2)
+    subject.float(AnInt) {|f| f.rubify*2}.should == (AnInt.to_f * 2)
   end
 
 end

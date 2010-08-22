@@ -13,6 +13,7 @@ lib/rubypython/macros.rb
 lib/rubypython/conversion.rb
 lib/rubypython/operators.rb
 lib/rubypython/py_object.rb
+lib/rubypython/pymainclass.rb
 lib/rubypython/python.rb
 lib/rubypython/rubypyproxy.rb
 lib/rubypython/version.rb

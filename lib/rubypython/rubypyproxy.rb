@@ -55,6 +55,17 @@ module RubyPython
     def method_missing(name, *args, &block)
       name = name.to_s
 
+      if(name.end_with? "?")
+        begin
+          RubyPyProxy.reveal(name.to_sym)
+          return self.__send__ name.to_sym, *args, &block
+        rescue RuntimeError => exc
+          raise NoMethodError.new(name) if exc.message =~ /Don't know how to reveal/
+          raise
+        end
+      end
+
+
       if(name.end_with? "=")
         setter = true
         name.chomp! "="
@@ -99,11 +110,17 @@ module RubyPython
     end
 
     def inspect
-      self.__repr__.rubify rescue super
+      self.__repr__.rubify rescue _inspect
+    rescue
+      class << self; define_method :_inspect, RubyPyProxy.find_hidden_method(:inspect); end
+      _inspect
     end
 
     def to_s
-      self.__str__.rubify rescue super
+      self.__str__.rubify rescue _to_s
+    rescue
+      class << self; define_method :_to_s, RubyPyProxy.find_hidden_method(:to_s); end
+      _to_s
     end
 
   end

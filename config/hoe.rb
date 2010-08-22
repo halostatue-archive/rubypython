@@ -8,7 +8,8 @@ RUBYFORGE_PROJECT = 'rubypython'
 HOMEPATH = "http://#{RUBYFORGE_PROJECT}.rubyforge.org"
 DOWNLOAD_PATH = "http://rubyforge.org/projects/#{RUBYFORGE_PROJECT}"
 EXTRA_DEPENDENCIES = [
-  ['ffi', '>=0.6.3']
+  ['ffi', '>=0.6.3'],
+  ['blankslate', '>=2.1.2.3']
 ]    # An array of rubygem dependencies [name, version]
 
 

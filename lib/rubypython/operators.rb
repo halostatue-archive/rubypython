@@ -25,7 +25,9 @@ module RubyPython
       [:&, '__and__'],
       [:^, '__xor__'],
       [:%, '__mod__'],
-      [:**, '__pow__']
+      [:**, '__pow__'],
+      [:>>, '__rshift__'],
+      [:<<, '__lshift__']
     ].each do |args|
       bin_op *args
     end

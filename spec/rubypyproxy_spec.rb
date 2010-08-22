@@ -121,7 +121,10 @@ describe RubyPython::RubyPyProxy do
 
   describe "when used with an operator" do
 
-    ['+', '-', '/', '*', '&', '^', '%', '**'].each do |op|
+    [
+      '+', '-', '/', '*', '&', '^', '%', '**',
+      '>>', '<<'
+    ].each do |op|
       it "should delegate #{op}" do
         @six.__send__(op, @two).rubify.should == 6.__send__(op, 2)
       end

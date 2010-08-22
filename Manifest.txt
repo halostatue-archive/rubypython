@@ -8,6 +8,7 @@ config/hoe.rb
 config/requirements.rb
 lib/rubypython.rb
 lib/rubypython/blankobject.rb
+lib/rubypython/core_ext/string.rb
 lib/rubypython/py_error.rb
 lib/rubypython/macros.rb
 lib/rubypython/conversion.rb

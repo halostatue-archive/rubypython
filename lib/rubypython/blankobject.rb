@@ -4,7 +4,7 @@ module RubyPython
   #1.8.x
   class BlankObject
     instance_methods.each do |m|
-      undef_method m unless m =~/(^__)||object_id/
+      undef_method m unless m =~ /^(__)|(object_id)|(.*?$)/
     end
   end
 end

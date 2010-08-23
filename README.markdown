@@ -21,6 +21,7 @@ Features:
 Known Problems:
 
 * Builtin Python methods which require a top level frame object (eval, dir, ...) do not work properly at present.
+* There is no support for passing more complicated Ruby types to Python.
 
 ## SYNOPSIS:
 RubyPython lets you leverage the power of the Python standard library while
@@ -31,6 +32,29 @@ as:
     cPickle = RubyPython.import("cPickle")
     p cPickle.dumps("RubyPython is awesome!").rubify
     RubyPython.stop
+
+The main point of the gem is to allow access to tools that are not readily availible in Python. However, it is clear that many people may wish to use Ruby tools with Python code bases using this library. The largest problem in this case is the there is no support for passing Ruby classes, procs, or methods to Python. That being said, with some creative coding it is still possible to do a lot in the manner.
+
+One caveat is that it may be tempting to attempt to translate Python code to Ruby code directly using RubyPython. However, it often makes much more sense to use idiomatic Ruby code where possible. For example if we have the following Python code:
+
+    import library
+    for i in library.a_list:
+      result = library.function_call(i)
+      print result
+
+If we wanted for some reason to migrate this to RubyPython, we could do it as follows:
+
+    RubyPython.start
+    library = RubyPython.import 'library'
+    library.a_list.to_a.each { |i| puts library.function_call(i).rubify }
+    RubyPython.stop
+
+There are several things to note about the code above:
+
+1. We made sure to call RubyPython.start before doing anything with the Python interpreter.
+1. We manually bound our imported library to a local variable. RubyPython will not do that for us.
+1. We used called rubify before we printed the objects so that they would be displayed as native Ruby objects.
+1. We stopped the interpreter after we were done with RubyPython.stop.
 	
 ## REQUIREMENTS:
 	

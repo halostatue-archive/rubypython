@@ -82,6 +82,21 @@ describe RubyPython::RubyPyProxy do
     end
   end
 
+  describe "#respond_to?" do
+    it "should return true for getters" do
+      @objects.should respond_to(:RubyPythonMockObject)
+    end
+
+    it "should return false for undefined methods" do
+      @objects.should_not respond_to(:undefined_attr)
+    end
+
+    it "should return true for any setter" do
+      @objects.should respond_to(:any_variable=)
+    end
+
+  end
+
   describe "method delegation" do
 
     it "should refer method calls to wrapped object" do

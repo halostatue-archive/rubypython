@@ -31,19 +31,15 @@ module RubyPython
     #Delegates any method calls on this object to the Python \__main\__ or
     #\__builtin\__ namespaces. Method call resolution occurs in that order.
     def method_missing(name,*args,&block)
-      begin
-        result=main.__send__(:method_missing, name,*args)
-      rescue NoMethodError
-        begin
-          result=builtin.__send__(:method_missing, name,*args)
-        rescue NoMethodError
-          super(name,*args)
-        end
-      end
-      if(block)
-        return block.call(result)
-      end
-      return result
+      proxy = if main.respond_to?(name)
+                main
+              elsif builtin.respond_to?(name)
+                builtin
+              else
+                super(name, *args)
+              end
+      result = proxy.__send__(:method_missing, name,*args)
+      block ? block.call(result) : result
     end
   end
 

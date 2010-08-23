@@ -14,4 +14,8 @@ describe RubyPython::PyMainClass do
     subject.float(AnInt) {|f| f.rubify*2}.should == (AnInt.to_f * 2)
   end
 
+  describe "#eval" do
+    specify { subject.eval('1+1').rubify.should == 2 }
+  end
+
 end

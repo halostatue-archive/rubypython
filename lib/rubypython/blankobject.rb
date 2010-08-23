@@ -8,7 +8,7 @@ module RubyPython
     class << self
       def hide(name)
         if instance_methods.include?(name) and
-          name.to_s !~ /^(__|instance_eval|object_id)/
+          name.to_s !~ /^(__|instance_eval|object_id|respond_to\?)/
           @hidden_methods ||= {}
           @hidden_methods[name.to_sym] = instance_method(name)
           undef_method name

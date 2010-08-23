@@ -48,6 +48,7 @@ module RubyPython
     #to check whether it will respond to a method call. This should not
     #return false positives but it may return false negatives.
     def respond_to?(mname)
+      return true if super(mname)
       mname = mname.to_s
       return true if mname.end_with? '='
       @pObject.hasAttr(mname)

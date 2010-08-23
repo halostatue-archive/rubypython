@@ -95,6 +95,10 @@ describe RubyPython::RubyPyProxy do
       @objects.should respond_to(:any_variable=)
     end
 
+    it "should return true for methods on RubyPyProxy instance" do
+      @objects.should respond_to(:inspect)
+    end
+
   end
 
   describe "method delegation" do

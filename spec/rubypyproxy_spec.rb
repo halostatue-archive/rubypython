@@ -132,6 +132,12 @@ describe RubyPython::RubyPyProxy do
       stringProxy.letters.rubify.should == AString
     end
 
+    it "should create nonexistent attirubte if method call is a setter" do
+      stringProxy = described_class.new @string
+      stringProxy.nonExistent = 1
+      stringProxy.nonExistent.rubify.should == 1
+    end
+
     it "should return a class as a RubyPyClass" do
       urllib2 = RubyPython.import('urllib2')
       urllib2.Request.should be_a(RubyPython::RubyPyClass)

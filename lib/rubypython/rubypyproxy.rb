@@ -79,7 +79,7 @@ module RubyPython
         setter=false
       end
 
-      if(!@pObject.hasAttr(name))
+      if(!@pObject.hasAttr(name) and !setter)
         raise NoMethodError.new(name)
       end
 

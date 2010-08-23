@@ -31,7 +31,7 @@ h2. The Basics
 
 Check out the RDOC pages at "http://rubypython.rubyforge.org/rdoc":http://rubypython.rubyforge.org/rdoc
 
-I have test the system on Mac OS 10.5 and Ubuntu Jaunty 9.04. If anyone has issues with another setup let me know and I'll do what I can.
+I have tested the system on Mac OS 10.5 and Ubuntu Jaunty 9.04. If anyone has issues with another setup let me know and I'll do what I can.
 
 
 h2. Forum

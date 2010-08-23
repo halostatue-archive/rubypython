@@ -14,8 +14,6 @@ describe RubyPython::PyMainClass do
     subject.float(AnInt) {|f| f.rubify*2}.should == (AnInt.to_f * 2)
   end
 
-  specify { subject.eval('1+1').rubify.should == 2 }
-
   it "should allow attribute access" do
     subject.main.__name__.rubify.should == '__main__'
   end

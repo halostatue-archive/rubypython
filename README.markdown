@@ -18,10 +18,18 @@ Features:
 * Python objects can be treated as Ruby objects!
 * Python's standard library available to you from within Ruby.
 
+Known Problems:
+
+* Builtin Python methods which require a top level frame object (eval, dir, ...) do not work properly at present.
+
 ## SYNOPSIS:
+RubyPython lets you leverage the power of the Python standard library while
+using the syntactical power of ruby. Using RubyPython you can write code such
+as:
+
     RubyPython.start
     cPickle = RubyPython.import("cPickle")
-    p cPickle.dumps("RubyPython is awesome!")
+    p cPickle.dumps("RubyPython is awesome!").rubify
     RubyPython.stop
 	
 ## REQUIREMENTS:
@@ -39,7 +47,7 @@ Note: RubyPython has been tested on Mac OS 10.5.x
 ## DOCUMENTATION:
 
 The documentation should provide a reasonable description of how to use RubyPython.
-Starting with version 0.3.x there are two modes of operation: default and
+Starting with version 0.3.x there are two modes of operation: normal and
 legacy. These are described in the docs.
 	
 ## LICENSE:

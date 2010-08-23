@@ -44,11 +44,14 @@ module RubyPython
       RubyPyProxy.new pyobject
     end
 
+    reveal(:respond_to?)
+    alias :is_real_method? :respond_to?
+
     #RubyPython checks the attribute dictionary of the wrapped object
     #to check whether it will respond to a method call. This should not
     #return false positives but it may return false negatives.
     def respond_to?(mname)
-      return true if super(mname)
+      return true if is_real_method?(mname)
       mname = mname.to_s
       return true if mname.end_with? '='
       @pObject.hasAttr(mname)
@@ -61,7 +64,7 @@ module RubyPython
       if(name.end_with? "?")
         begin
           RubyPyProxy.reveal(name.to_sym)
-          return self.__send__ name.to_sym, *args, &block
+          return self.__send__(name.to_sym, *args, &block)
         rescue RuntimeError => exc
           raise NoMethodError.new(name) if exc.message =~ /Don't know how to reveal/
           raise

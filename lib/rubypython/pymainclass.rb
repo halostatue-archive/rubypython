@@ -27,7 +27,7 @@ module RubyPython
     def builtin
       @builtin||=RubyPython.import "__builtin__"
     end
-    
+
     #Delegates any method calls on this object to the Python \__main\__ or
     #\__builtin\__ namespaces. Method call resolution occurs in that order.
     def method_missing(name,*args,&block)

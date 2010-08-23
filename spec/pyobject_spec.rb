@@ -140,13 +140,7 @@ describe RubyPython::PyObject do
 
   describe "#functionOrMethod?" do
 
-    xit "should be true for a function" do
-      builtin = RubyPython.import('__builtin__').pObject
-      print = builtin.getAttr('print')
-      print.should be_a_functionOrMethod
-    end
-
-    xit "should be true for a method" do
+    it "should be true for a method" do
       req = RubyPython.import("urllib2").Request.new("google.com").pObject
       req.getAttr('add_header').should be_a_functionOrMethod
     end

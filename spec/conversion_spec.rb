@@ -57,7 +57,7 @@ describe RubyPython::Conversion do
       end
     end
 
-    xit "should raise an exception when it cannot convert" do
+    it "should raise an exception when it cannot convert" do
       lambda { subject.rtopObject(Class) }.should raise_exception(subject::UnsupportedConversion)
     end
 

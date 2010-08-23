@@ -82,6 +82,23 @@ describe RubyPython::RubyPyProxy do
     end
   end
 
+  describe "#to_a" do
+    it "should convert a list to an array of its entries" do
+      list = @objects.a_list
+      list.to_a.should == AnArray.map { |x| described_class.new(x) }
+    end
+
+    it "should convert a tuple to an array of its entries" do
+      tuple = @objects.a_tuple
+      tuple.to_a.should == AnArray.map { |x| described_class.new(x) }
+    end
+
+    it "should convert a dict to an array of keys" do
+      dict = @objects.a_dict
+      dict.to_a.sort.should == AConvertedHash.keys.map {|x| described_class.new(x)}.sort
+    end
+  end
+
   describe "#respond_to?" do
     it "should return true for getters" do
       @objects.should respond_to(:RubyPythonMockObject)
@@ -148,7 +165,7 @@ describe RubyPython::RubyPyProxy do
 
     [
       '+', '-', '/', '*', '&', '^', '%', '**',
-      '>>', '<<'
+      '>>', '<<', '<=>'
     ].each do |op|
       it "should delegate #{op}" do
         @six.__send__(op, @two).rubify.should == 6.__send__(op, 2)

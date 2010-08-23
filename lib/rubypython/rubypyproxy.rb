@@ -129,6 +129,17 @@ module RubyPython
       _to_s
     end
 
+    def to_a
+      iter = self.__iter__
+      ary = []
+      loop do
+        ary << iter.next()
+      end
+    rescue PythonError => exc
+      raise if exc.message !~ /StopIteration/
+      ary
+    end
+
   end
 
   class RubyPyModule < RubyPyProxy

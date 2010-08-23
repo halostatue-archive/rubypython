@@ -37,7 +37,7 @@ module RubyPython
       [:<, 'lt'],
       [:<=, 'le'],
       [:>, 'gt'],
-      [:>=, 'ge']
+      [:>=, 'ge'],
     ].each do |args|
       rel_op *args
     end
@@ -52,6 +52,10 @@ module RubyPython
 
     def include?(item)
       self.__contains__(item).rubify
+    end
+
+    def <=>(other)
+      PyMain.cmp(self, other)
     end
 
   end

@@ -18,6 +18,7 @@ describe RubyPython::Conversion do
       ["a float", "a float", AFloat],
       ["a string", "a string", AString],
       ["a list", "an array", AnArray],
+      ["a tuple", "an array", AnArray],
       ["a dict", "a hash", AConvertedHash],
       ["python True", "true", true],
       ["python False", "false", false],
@@ -55,6 +56,11 @@ describe RubyPython::Conversion do
         RubyPython::Python.PyObject_Compare(py_object_ptr, output).should == 0
       end
     end
+
+    it "should raise an exception when it cannot convert" do
+      lambda { subject.rtopObject(Class) }.should raise_exception(subject::UnsupportedConversion)
+    end
+
   end
 
 end

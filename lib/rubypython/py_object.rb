@@ -17,7 +17,7 @@ module RubyPython
     #goes out of scope.
     class AutoPyPointer < FFI::AutoPointer
       def self.release(pointer)
-        Python.Py_DecRef pointer if Python.IsInitialized == 1 
+        #Python.Py_DecRef pointer if Python.Py_IsInitialized != 0 
       end
     end
 

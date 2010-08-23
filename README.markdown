@@ -39,8 +39,7 @@ One caveat is that it may be tempting to attempt to translate Python code to Rub
 
     import library
     for i in library.a_list:
-      result = library.function_call(i)
-      print result
+      print(library.function_call(i))
 
 If we wanted for some reason to migrate this to RubyPython, we could do it as follows:
 
@@ -53,6 +52,7 @@ There are several things to note about the code above:
 
 1. We made sure to call RubyPython.start before doing anything with the Python interpreter.
 1. We manually bound our imported library to a local variable. RubyPython will not do that for us.
+1. We used to\_a to convert a python iterable type to a Ruby array.
 1. We used called rubify before we printed the objects so that they would be displayed as native Ruby objects.
 1. We stopped the interpreter after we were done with RubyPython.stop.
 	

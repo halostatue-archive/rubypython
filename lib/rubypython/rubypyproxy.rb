@@ -45,11 +45,14 @@ module RubyPython
     end
 
     reveal(:respond_to?)
+
+    #Moves the old respond_to? method to is_real_method?
     alias :is_real_method? :respond_to?
 
     #RubyPython checks the attribute dictionary of the wrapped object
     #to check whether it will respond to a method call. This should not
-    #return false positives but it may return false negatives.
+    #return false positives but it may return false negatives. The builitin Ruby
+    #respond_to? method has been aliased to is_real_method?. 
     def respond_to?(mname)
       return true if is_real_method?(mname)
       mname = mname.to_s
@@ -115,6 +118,11 @@ module RubyPython
       @pObject.rubify
     end
 
+    #Returns the string representation of the wrapped object via a call to the
+    #object's \_\_repr\_\_ method. Falls back on the default Ruby behavior when
+    #this method cannot be found.
+    #
+    #@return [String]
     def inspect
       self.__repr__.rubify rescue _inspect
     rescue
@@ -122,6 +130,11 @@ module RubyPython
       _inspect
     end
 
+    #Returns the string representation of the wrapped object via a call to the
+    #object's \_\_str\_\_ method. Falls back on the default Ruby behavior when
+    #this method cannot be found.
+    #
+    #@return [String]
     def to_s
       self.__str__.rubify rescue _to_s
     rescue
@@ -129,6 +142,38 @@ module RubyPython
       _to_s
     end
 
+    #Converts the wrapped Python object to a Ruby Array. Note that this only converts
+    #one level, so a nested array will remain a proxy object. Only wrapped
+    #objects which have an \_\_iter\_\_ method may be converted using to_a.
+    #
+    #Note that for Dict objects, this method returns what you would get in
+    #Python, not in Ruby. That is a_dict.to_a returns an array of the
+    #dictionary's keys.
+    #@return [Array<RubyPyProxy>]
+    #@example List
+    #    irb(main):001:0> RubyPython.start
+    #    => true
+    #    irb(main):002:0> a_list = RubyPython::RubyPyProxy.new [1, 'a', 2, 'b']
+    #    => [1, 'a', 2, 'b']
+    #    irb(main):003:0> a_list.kind_of? RubyPython::RubyPyProxy
+    #    => true
+    #    irb(main):004:0> a_list.to_a
+    #    => [1, 'a', 2, 'b']
+    #    irb(main):005:0> RubyPython.stop
+    #    => true
+    #    
+    #@example Dict
+    #    irb(main):001:0> RubyPython.start
+    #    => true
+    #    irb(main):002:0> a_dict = RubyPython::RubyPyProxy.new({1 => '2', :three => [4,5]})
+    #    => {1: '2', 'three': [4, 5]}
+    #    irb(main):003:0> a_dict.kind_of? RubyPython::RubyPyProxy
+    #    => true
+    #    irb(main):004:0> a_dict.to_a
+    #    => [1, 'three']
+    #    irb(main):005:0> RubyPython.stop
+    #    => true
+    
     def to_a
       iter = self.__iter__
       ary = []

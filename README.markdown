@@ -73,6 +73,8 @@ Note: RubyPython has been tested on Mac OS 10.5.x
 The documentation should provide a reasonable description of how to use RubyPython.
 Starting with version 0.3.x there are two modes of operation: normal and
 legacy. These are described in the docs.
+
+The most useful to check out docs will be those for RubyPython and RubyPython::RubyPyProxy.
 	
 ## LICENSE:
 

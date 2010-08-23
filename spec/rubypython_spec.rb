@@ -31,6 +31,32 @@ describe RubyPython, "#session" do
       cPickle = RubyPython.import "cPickle"
       cPickle.loads("(dp1\nS'a'\nS'n'\ns(I1\nS'2'\ntp2\nI4\ns.").rubify.should == {"a"=>"n", [1, "2"]=>4}
     end
-
   end
+
+  it "should stop the interpreter" do
+    RubyPython.session do
+      cPickle = RubyPython.import "cPickle"
+    end
+
+    RubyPython.stop.should be_false
+  end
+end
+
+describe RubyPython, "#run" do
+
+  it "should start interpreter" do
+    RubyPython.run do
+      cPickle = import "cPickle"
+      cPickle.loads("(dp1\nS'a'\nS'n'\ns(I1\nS'2'\ntp2\nI4\ns.").rubify.should == {"a"=>"n", [1, "2"]=>4}
+    end
+  end
+
+  it "should stop the interpreter" do
+    RubyPython.run do
+      cPickle = import "cPickle"
+    end
+
+    RubyPython.stop.should be_false
+  end
+
 end

@@ -113,14 +113,17 @@ module RubyPython
     #@return the result of evaluating the given block
     def session
       start
-      yield
+      result = yield
+      stop
+      result
     end
 
     #The same as {session} except that the block is executed within the scope 
     #of the RubyPython module.
     def run(&block)
       start
-      module_eval(&block)
+      result = module_eval(&block)
+      stop
     end
   end
 end

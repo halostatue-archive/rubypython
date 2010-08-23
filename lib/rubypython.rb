@@ -98,10 +98,10 @@ module RubyPython
     #module
     def import(mod_name)
       pModule = Python.PyImport_ImportModule mod_name
-      pymod = PyObject.new pModule
       if(PythonError.error?)
         raise PythonError.handle_error
       end
+      pymod = PyObject.new pModule
       RubyPyModule.new(pymod)
     end
 

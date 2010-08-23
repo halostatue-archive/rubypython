@@ -38,7 +38,11 @@ module RubyPython
               else
                 super(name, *args)
               end
-      result = proxy.__send__(:method_missing, name,*args)
+      result = if proxy.is_real_method?(name)
+                 proxy.__send__(name, *args)
+               else
+                 proxy.__send__(:method_missing, name,*args)
+               end
       block ? block.call(result) : result
     end
   end

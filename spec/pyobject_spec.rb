@@ -143,7 +143,7 @@ describe RubyPython::PyObject do
     it "should return the given argument if it is a tuple" do
       arg = @objects.a_tuple.pObject
       converted = described_class.makeTuple(arg)
-      #converted.pointer.address.should == arg.pointer.address
+      converted.pointer.address.should == arg.pointer.address
     end
 
   end
@@ -237,6 +237,26 @@ describe RubyPython::PyObject do
     end
 
     specify { described_class.new(6).should_not be_callable }
+
+  end
+
+  describe ".convert" do
+
+    it "should not modify PyObjects passed to it" do
+      args = AnArray.map { |x| described_class.new(x) }
+      described_class.convert(*args).should == args
+    end
+
+    it "should pull PyObjects out of RubyPyProxy instances" do
+      args = @objects.an_array.to_a
+      described_class.convert(*args).should == args.map {|x| x.pObject}
+    end
+
+    it "should create new PyObject instances of simple Ruby types" do
+      described_class.convert(*AnArray).each do |x|
+        x.should be_a_kind_of described_class
+      end
+    end
 
   end
 

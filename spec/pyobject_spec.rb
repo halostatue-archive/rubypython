@@ -7,6 +7,10 @@ describe RubyPython::PyObject do
   before do
     @string = RubyPython.import('string').pObject
     @urllib2 = RubyPython.import('urllib2').pObject
+    @builtin = RubyPython.import("__builtin__")
+    sys = RubyPython.import 'sys'
+    sys.path.append './spec/python_helpers/'
+    @objects = RubyPython.import('objects')
   end
 
   describe ".new" do
@@ -123,7 +127,7 @@ describe RubyPython::PyObject do
       arg = described_class.new AnInt
       argt = described_class.makeTuple arg
 
-      builtin = RubyPython.import("__builtin__").pObject
+      builtin = @builtin.pObject
       stringClass = builtin.getAttr "str"
       stringClass.callObject(argt).rubify.should == AnInt.to_s
     end
@@ -141,10 +145,43 @@ describe RubyPython::PyObject do
   describe "#functionOrMethod?" do
 
     it "should be true for a method" do
-      req = RubyPython.import("urllib2").Request.new("google.com").pObject
-      req.getAttr('add_header').should be_a_functionOrMethod
+      mockObjClass = @objects.RubyPythonMockObject.pObject
+      mockObjClass.getAttr('square_elements').should be_a_functionOrMethod
     end
 
+    it "should be true for a function" do
+      @objects.pObject.getAttr('identity').should be_a_functionOrMethod
+    end
+
+    xit "should return true for a builtin function" do
+      any = @builtin.pObject.getAttr('any')
+      any.should be_a_functionOrMethod
+    end
+
+    it "should return false for a class" do
+      @objects.RubyPythonMockObject.pObject.should_not be_a_functionOrMethod
+    end
+
+  end
+
+  describe "#class?" do
+
+    it "should return true if wrapped object is an old style class" do
+      @objects.RubyPythonMockObject.pObject.should be_a_class
+    end
+
+    it "should return true if wrapped object is an new style class" do
+      @objects.NewStyleClass.pObject.should be_a_class
+    end
+
+    it "should return true if wrapped object is a builtin class" do
+      strClass = @builtin.pObject.getAttr('str')
+      strClass.should be_a_class
+    end
+
+    it "should return false for an object instance" do
+      @objects.RubyPythonMockObject.new.pObject.should_not be_a_class
+    end
 
   end
 

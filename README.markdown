@@ -22,6 +22,7 @@ Known Problems:
 
 * Builtin Python methods which require a top level frame object (eval, dir, ...) do not work properly at present.
 * There is no support for passing more complicated Ruby types to Python.
+* RubyPython does not currently decrease the reference counts of objects while a session is running. This means memory used by Python objects will not be freed until the interpreter is halted.
 
 ## SYNOPSIS:
 RubyPython lets you leverage the power of the Python standard library while

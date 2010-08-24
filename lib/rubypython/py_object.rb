@@ -12,7 +12,7 @@ module RubyPython
 
     #@private
     #
-    #This class wraps C PyObject\*s so that the their Python reference count is
+    #This class wraps C PyObject\*s so that the Python reference count is
     #automatically decreased when the Ruby object referencing them 
     #goes out of scope.
     class AutoPyPointer < FFI::AutoPointer

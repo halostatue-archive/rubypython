@@ -23,6 +23,10 @@ class RubyPythonMockObject:
         else:
             return False
 
+class NewStyleClass(object):
+    def a_method(self):
+        pass
+
 an_int = 1
 a_char = 'a'
 a_float = 1.0

@@ -142,24 +142,24 @@ describe RubyPython::PyObject do
     end
   end
 
-  describe "#functionOrMethod?" do
+  describe "#function_or_method?" do
 
     it "should be true for a method" do
       mockObjClass = @objects.RubyPythonMockObject.pObject
-      mockObjClass.getAttr('square_elements').should be_a_functionOrMethod
+      mockObjClass.getAttr('square_elements').should be_a_function_or_method
     end
 
     it "should be true for a function" do
-      @objects.pObject.getAttr('identity').should be_a_functionOrMethod
+      @objects.pObject.getAttr('identity').should be_a_function_or_method
     end
 
     xit "should return true for a builtin function" do
       any = @builtin.pObject.getAttr('any')
-      any.should be_a_functionOrMethod
+      any.should be_a_function_or_method
     end
 
     it "should return false for a class" do
-      @objects.RubyPythonMockObject.pObject.should_not be_a_functionOrMethod
+      @objects.RubyPythonMockObject.pObject.should_not be_a_function_or_method
     end
 
   end
@@ -182,6 +182,34 @@ describe RubyPython::PyObject do
     it "should return false for an object instance" do
       @objects.RubyPythonMockObject.new.pObject.should_not be_a_class
     end
+
+  end
+
+  describe "#callable?" do
+
+    it "should be true for a method" do
+      mockObjClass = @objects.RubyPythonMockObject.pObject
+      mockObjClass.getAttr('square_elements').should be_callable
+    end
+
+    it "should be true for a function" do
+      @objects.pObject.getAttr('identity').should be_callable
+    end
+
+    it "should return true for a builtin function" do
+      any = @builtin.pObject.getAttr('any')
+      any.should be_callable
+    end
+
+    it "should return true for a class" do
+      @objects.RubyPythonMockObject.pObject.should be_callable
+    end
+
+    it "should return false for a non-callable instance" do
+      @objects.RubyPythonMockObject.new.pObject.should_not be_callable
+    end
+
+    specify { described_class.new(6).should_not be_callable }
 
   end
 

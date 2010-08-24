@@ -152,7 +152,7 @@ describe RubyPython::PyObject do
     #Expand coverage types
     it "should execute wrapped object with supplied arguments" do
       arg = described_class.new AnInt
-      argt = described_class.makeTuple arg
+      argt = described_class.buildArgTuple arg
 
       builtin = @builtin.pObject
       stringClass = builtin.getAttr "str"

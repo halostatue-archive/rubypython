@@ -28,6 +28,21 @@ describe RubyPython::PyObject do
       end
     end
 
+    [
+      "a string",
+      "an int",
+      "a list",
+      "a dict",
+      "a tuple"
+    ].each do |title|
+      it "should take #{title} from a Python pointer" do
+        lambda do
+          py_obj = @objects.__send__(title.gsub(' ','_')).pObject.pointer
+          described_class.new(py_obj)
+        end.should_not raise_exception
+      end
+    end
+
 
   end #new
 
@@ -114,11 +129,23 @@ describe RubyPython::PyObject do
   end
 
   describe "#makeTuple" do
-    #Try to expand coverage here
     it "should wrap single arguments in a tuple" do
       arg = described_class.new AString
       described_class.makeTuple(arg).rubify.should == [AString]
     end
+
+    it "should turn a Python list into a tuple" do
+      arg = @objects.a_list.pObject
+      converted = described_class.makeTuple(arg)
+      converted.rubify.should == AnArray
+    end
+
+    it "should return the given argument if it is a tuple" do
+      arg = @objects.a_tuple.pObject
+      converted = described_class.makeTuple(arg)
+      #converted.pointer.address.should == arg.pointer.address
+    end
+
   end
 
   describe "#callObject" do

@@ -27,9 +27,12 @@ module RubyPython
     #   are just assigned to the pointer attribute of the instance. All other
     #   objects are converted via {Conversion.rtopObject} before being assigned.
     def initialize(rObject)
-      if rObject.kind_of? FFI::Pointer 
+      if rObject.kind_of? FFI::AutoPointer 
+        new_pointer = FFI::Pointer.new rObject
+        @pointer = AutoPyPointer.new new_pointer
+        xIncref
+      elsif rObject.kind_of? FFI::Pointer
         @pointer = AutoPyPointer.new rObject
-        xIncref if rObject.is_a? AutoPyPointer
       else
         @pointer = AutoPyPointer.new Conversion.rtopObject(rObject)
       end

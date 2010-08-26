@@ -10,7 +10,7 @@ module RubyPython
     PYTHON_NAME = "python#{PYTHON_VERSION}"
     LIB_NAME = "lib#{PYTHON_NAME}"
     LIB_EXT = FFI::Platform::LIBSUFFIX
-    LIB = `python-config --prefix`.chomp +
+    LIB = `python -c 'import sys; print(sys.prefix)'`.chomp +
       "/lib/#{PYTHON_NAME}/config/#{LIB_NAME}.#{LIB_EXT}"
     @ffi_libs = [FFI::DynamicLibrary.open(LIB, FFI::DynamicLibrary::RTLD_LAZY|FFI::DynamicLibrary::RTLD_GLOBAL)]
 

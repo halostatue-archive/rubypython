@@ -1,8 +1,8 @@
-History.md
+History.markdown
 License.txt
 Manifest.txt
 PostInstall.txt
-README.md
+README.markdown
 Rakefile
 config/hoe.rb
 config/requirements.rb
@@ -18,6 +18,7 @@ lib/rubypython/pymainclass.rb
 lib/rubypython/python.rb
 lib/rubypython/rubypyproxy.rb
 lib/rubypython/version.rb
+lib/rubypython/legacy.rb
 setup.rb
 spec/pymainclass_spec.rb
 spec/pyobject_spec.rb
@@ -27,5 +28,7 @@ spec/pythonerror_spec.rb
 spec/rubypyclass_spec.rb
 spec/rubypyproxy_spec.rb
 spec/rubypython_spec.rb
+spec/conversion_spec.rb
+spec/legacy_spec.rb
 spec/spec.opts
 spec/spec_helper.rb

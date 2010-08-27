@@ -10,8 +10,8 @@ module RubyPython
     PYTHON_NAME = "python#{PYTHON_VERSION}"
     LIB_NAME = "lib#{PYTHON_NAME}"
     LIB_EXT = FFI::Platform::LIBSUFFIX
-    LIB = `python -c 'import sys; print(sys.prefix)'`.chomp +
-      "/lib/#{PYTHON_NAME}/config/#{LIB_NAME}.#{LIB_EXT}"
+    LIB = File.join(`python -c "import sys; print(sys.prefix)"`.chomp,
+      "lib", "#{PYTHON_NAME}", "config", "#{LIB_NAME}.#{LIB_EXT}")
     @ffi_libs = [FFI::DynamicLibrary.open(LIB, FFI::DynamicLibrary::RTLD_LAZY|FFI::DynamicLibrary::RTLD_GLOBAL)]
 
     #The class is a little bit of a hack to extract the address of global

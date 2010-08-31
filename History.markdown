@@ -1,3 +1,10 @@
+## 0.3.0 2010-09-xx
+* Major Enhancements
+        * Version 0.3.0 represents an almost complete rewrite of the RubyPython codebase.
+        * A native C extension is no longer required. RubyPython uses the 'ffi' gem.
+* Compatibility Updates
+        * Version 0.3.0 was created with the goal of being compatible with as many Ruby versions as possible. It should at the very least run on MRI 1.8.6 - 1.9.1.
+
 ## 0.2.10 2010-07-08
 * Bug Fixes
 	* Made some changes to how the native extension is configured and build.

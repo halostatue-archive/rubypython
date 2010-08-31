@@ -17,7 +17,7 @@ module RubyPython
     #goes out of scope.
     class AutoPyPointer < FFI::AutoPointer
       def self.release(pointer)
-        #Python.Py_DecRef pointer if Python.Py_IsInitialized != 0 
+        Python.Py_DecRef pointer if Python.Py_IsInitialized != 0 
       end
     end
 
@@ -81,7 +81,8 @@ module RubyPython
     #Decrease the reference count of the wrapped object
     #@return [void]
     def xDecref
-      @pointer = FFI::Pointer::NULL
+      AutoPyPointer.release(@pointer)
+      @pointer.free
     end
 
     #Increase the reference count of the wrapped object

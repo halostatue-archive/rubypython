@@ -28,6 +28,7 @@ spec/pythonerror_spec.rb
 spec/rubypyclass_spec.rb
 spec/rubypyproxy_spec.rb
 spec/rubypython_spec.rb
+spec/refcnt_spec.rb
 spec/conversion_spec.rb
 spec/legacy_spec.rb
 spec/spec.opts

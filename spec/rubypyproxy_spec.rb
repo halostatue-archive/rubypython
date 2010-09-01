@@ -1,7 +1,8 @@
 require File.dirname(__FILE__) + '/spec_helper.rb'
 
+
+include TestConstants
 describe RubyPython::RubyPyProxy do
-  include TestConstants
   include RubyPythonStartStop
 
   before do
@@ -13,8 +14,8 @@ describe RubyPython::RubyPyProxy do
     @two = described_class.new 2
     @six = described_class.new 6
 
-    sys = RubyPython.import 'sys'
-    sys.path.append './spec/python_helpers'
+    @sys = RubyPython.import 'sys'
+    @sys.path.append './spec/python_helpers'
     @objects = RubyPython.import 'objects'
   end
 

@@ -1,6 +1,6 @@
 # RubyPython
 
-* htp://raineszm.bitbucket.org/
+* (http://raineszm.bitbucket.org/)
 
 ## DESCRIPTION:
 

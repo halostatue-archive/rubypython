@@ -53,7 +53,7 @@ There are several things to note about the code above:
 1. We made sure to call RubyPython.start before doing anything with the Python interpreter.
 1. We manually bound our imported library to a local variable. RubyPython will not do that for us.
 1. We used to\_a to convert a python iterable type to a Ruby array.
-1. We used called rubify before we printed the objects so that they would be displayed as native Ruby objects.
+1. We called rubify before we printed the objects so that they would be displayed as native Ruby objects.
 1. We stopped the interpreter after we were done with RubyPython.stop.
 	
 ## REQUIREMENTS:

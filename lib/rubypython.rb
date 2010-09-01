@@ -30,24 +30,8 @@ require 'rubypython/pymainclass'
 #attempt conversion of return values, as it did in RubyPython 0.2.x, then you
 #should set {RubyPython.legacy_mode} to true. In this case RubyPython will
 #attempt to convert any return value from Python to a native Ruby type, and only
-#return a proxy if conversion is not possible. For example consider the
-#following equivalent code samples.
-#
-#@example Normal Mode
-#    RubyPython.start
-#    string = RubyPython.import 'string'
-#    ascii_letters = string.ascii_letters # Here ascii_letters is a proxy object
-#    puts ascii_letters.rubify # we use the rubify method to convert it to a
-#                              # native type
-#    RubyPython.stop
-#
-#@example Legacy Mode
-#    RubyPython.legacy_mode = true
-#    RubyPython.start
-#    string = RubyPython.import 'string'
-#    ascii_letters = string.ascii_letters # Here ascii_letters is a native ruby string
-#    puts ascii_letters # No explicit conversion is neccessary
-#    RubyPython.stop
+#return a proxy if conversion is not possible. For further examples see
+#{RubyPython.legacy_mode}.
 module RubyPython
 
   class << self
@@ -57,9 +41,24 @@ module RubyPython
     #versions < 0.3.0. All Python objects returned by method invocations are
     #automatically converted to natve Ruby Types if RubyPython knows how to do
     #this. Only if no such conversion is known are the objects wrapped in proxy
-    #objects.  Other wise RubyPython automatically wraps all returned objects as
+    #objects.  Otherwise RubyPython automatically wraps all returned objects as
     #an instance of {RubyPyProxy} or one of its subclasses.
     #@return [Boolean]
+    #@example Normal Mode
+    #    RubyPython.start
+    #    string = RubyPython.import 'string'
+    #    ascii_letters = string.ascii_letters # Here ascii_letters is a proxy object
+    #    puts ascii_letters.rubify # we use the rubify method to convert it to a
+    #                              # native type
+    #    RubyPython.stop
+    #
+    #@example Legacy Mode
+    #    RubyPython.legacy_mode = true
+    #    RubyPython.start
+    #    string = RubyPython.import 'string'
+    #    ascii_letters = string.ascii_letters # Here ascii_letters is a native ruby string
+    #    puts ascii_letters # No explicit conversion is neccessary
+    #    RubyPython.stop
     attr_accessor :legacy_mode
 
     #Starts ups the Python interpreter. This method **must** be run

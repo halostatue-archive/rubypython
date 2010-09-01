@@ -1,9 +1,11 @@
 ## 0.3.0 2010-09-xx
 * Major Enhancements
-        * Version 0.3.0 represents an almost complete rewrite of the RubyPython codebase.
-        * A native C extension is no longer required. RubyPython uses the 'ffi' gem.
+  * Version 0.3.0 represents an almost complete rewrite of the RubyPython codebase.
+  * A native C extension is no longer required. RubyPython uses the 'ffi' gem.
+  * RubyPython by default now returns proxy instances for all Ruby objects. See the documentation for more information.
 * Compatibility Updates
-        * Version 0.3.0 was created with the goal of being compatible with as many Ruby versions as possible. It should at the very least run on MRI 1.8.6 - 1.9.1.
+  * Version 0.3.0 was created with the goal of being compatible with as many Ruby versions as possible. It should at the very least run on MRI 1.8.6 - 1.9.1.
+  * A legacy mode option has been added to provide partial compatibility with version 0.2.x.
 
 ## 0.2.10 2010-07-08
 * Bug Fixes

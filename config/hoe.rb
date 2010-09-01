@@ -61,6 +61,7 @@ $hoe = Hoe.spec(GEM_NAME) do
   # == Optional
   self.changes = self.paragraphs_of("History.markdown", 0..1).join("\n\n")
   self.extra_deps = EXTRA_DEPENDENCIES
+  self.yard_title = 'RubyPython'
   self.yard_options=['--markup','markdown']
 
 

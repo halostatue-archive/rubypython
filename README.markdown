@@ -1,16 +1,16 @@
-# rubypython
+# RubyPython
 
 * htp://rubypython.rubyforge.org
 
 ## DESCRIPTION:
 
 RubyPython is a bridge between the Ruby and Python interpreters. It embeds a
-running Python interpreter in the applications process using FFI and
+running Python interpreter in the application's process using FFI and
 provides a means for wrapping and converting Python objects.
  
 ## FEATURES/PROBLEMS:
 
-Features:
+### Features
 
 * Can handle simple conversion of Python builtin types to Ruby builtin types and vice versa
 * Can import Python modules
@@ -18,7 +18,7 @@ Features:
 * Python objects can be treated as Ruby objects!
 * Python's standard library available to you from within Ruby.
 
-Known Problems:
+### Known Problems
 
 * Builtin Python methods which require a top level frame object (eval, dir, ...) do not work properly at present.
 * There is no support for passing more complicated Ruby types to Python.
@@ -33,9 +33,9 @@ as:
     p cPickle.dumps("RubyPython is awesome!").rubify
     RubyPython.stop
 
-The main point of the gem is to allow access to tools that are not readily availible in Python. However, it is clear that many people may wish to use Ruby tools with Python code bases using this library. The largest problem in this case is the there is no support for passing Ruby classes, procs, or methods to Python. That being said, with some creative coding it is still possible to do a lot in the manner.
+The main point of the gem is to allow access to tools that are not readily availible in Ruby. However, it is clear that many people may wish to use Ruby tools with Python code bases using this library. The largest problem in this case is that there is no support for passing Ruby classes, procs, or methods to Python. That being said, with some creative coding it is still possible to do a lot.
 
-One caveat is that it may be tempting to attempt to translate Python code to Ruby code directly using RubyPython. However, it often makes much more sense to use idiomatic Ruby code where possible. For example if we have the following Python code:
+One caveat is that it may be tempting to try to translate Python code to Ruby code directly using RubyPython. However, it often makes much more sense to use idiomatic Ruby code where possible. For example if we have the following Python code:
 
     import library
     for i in library.a_list:
@@ -60,6 +60,7 @@ There are several things to note about the code above:
 	
 * Python >= 2.4, < 3.0
 * Ruby >= 1.8.6
+* You must be able to build the ffi gem under your environment.
 
 Note: RubyPython has been tested on Mac OS 10.5.x
 	

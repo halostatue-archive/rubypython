@@ -2,7 +2,7 @@ require 'fileutils'
 include FileUtils
 
 require 'rubygems'
-%w[rake hoe newgem rubigen hoe/yard].each do |req_gem|
+%w[rake hoe hoe/yard].each do |req_gem|
   begin
     require req_gem
   rescue LoadError
@@ -13,4 +13,3 @@ require 'rubygems'
 end
 
 $:.unshift(File.join(File.dirname(__FILE__), %w[.. lib]))
-$:.unshift(File.join(File.dirname(__FILE__), %w[.. ext rubypython_bridge]))

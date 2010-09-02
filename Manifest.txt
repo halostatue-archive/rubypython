@@ -19,7 +19,6 @@ lib/rubypython/python.rb
 lib/rubypython/rubypyproxy.rb
 lib/rubypython/version.rb
 lib/rubypython/legacy.rb
-setup.rb
 spec/pymainclass_spec.rb
 spec/pyobject_spec.rb
 spec/python_helpers

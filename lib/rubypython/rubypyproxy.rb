@@ -147,7 +147,7 @@ module RubyPython
     #objects which have an \_\_iter\_\_ method may be converted using to_a.
     #
     #Note that for Dict objects, this method returns what you would get in
-    #Python, not in Ruby. That is a_dict.to_a returns an array of the
+    #Python, not in Ruby i.e. a_dict.to_a returns an array of the
     #dictionary's keys.
     #@return [Array<RubyPyProxy>]
     #@example List

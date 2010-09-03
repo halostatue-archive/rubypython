@@ -187,6 +187,19 @@ describe RubyPython::RubyPyProxy do
       end
     end
 
+    describe "#equal?" do
+      it "be true for proxies representing the same object" do
+        obj1 = @objects.RubyPythonMockObject
+        obj2 = @objects.RubyPythonMockObject
+        obj1.should equal(obj2)
+      end
+
+      it "should be false for objects which are different" do
+        @two.should_not equal(@six)
+      end
+
+    end
+
     it "should allow list indexing" do
       array = described_class.new(AnArray)
       array[1].rubify.should == AnArray[1]

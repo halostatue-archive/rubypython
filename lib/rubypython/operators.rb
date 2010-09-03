@@ -53,9 +53,12 @@ module RubyPython
       [:<=, 'le'],
       [:>, 'gt'],
       [:>=, 'ge'],
+      [:equal?, 'is_']
     ].each do |args|
       rel_op *args
     end
+
+    alias :eql? :==
 
     def [](index)
       self.__getitem__ index

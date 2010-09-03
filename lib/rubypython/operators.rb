@@ -16,6 +16,12 @@ module RubyPython
       end
     end
 
+    def self.unary_op rname, pname
+      define_method rname.to_sym do 
+        Operators.operator_.__send__(pname, self)
+      end
+    end
+
 
     [
       [:+, '__add__'],
@@ -31,6 +37,14 @@ module RubyPython
       [:|, '__or__']
     ].each do |args|
       bin_op *args
+    end
+
+    [
+      [:~, :__invert__],
+      [:+@, :__pos__],
+      [:-@, :__neg__]
+    ].each do |args|
+      unary_op *args
     end
 
     [

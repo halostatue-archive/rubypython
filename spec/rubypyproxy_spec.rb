@@ -173,6 +173,14 @@ describe RubyPython::RubyPyProxy do
       end
     end
 
+    [
+      '~', '-@', '+@'
+    ].each do |op|
+      it "should delegate #{op}" do
+        @six.__send__(op).rubify.should == 6.__send__(op)
+      end
+    end
+
     ['==', '<', '>', '<=', '>='].each do |op|
       it "should delegate #{op}" do
         @six.__send__(op, @two).should == 6.__send__(op, 2)

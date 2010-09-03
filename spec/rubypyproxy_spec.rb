@@ -166,7 +166,7 @@ describe RubyPython::RubyPyProxy do
 
     [
       '+', '-', '/', '*', '&', '^', '%', '**',
-      '>>', '<<', '<=>'
+      '>>', '<<', '<=>', '|'
     ].each do |op|
       it "should delegate #{op}" do
         @six.__send__(op, @two).rubify.should == 6.__send__(op, 2)

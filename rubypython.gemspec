@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.email = ["raineszm+rubypython@gmail.com"]
   s.extra_rdoc_files = ["License.txt", "Manifest.txt", "PostInstall.txt", "History.markdown"]
   s.files = File.read("Manifest.txt").split(/\r?\n\r?/) 
-  s.homepage = 'http://rubypython.rubyforge.org'
+  s.homepage = 'http://bitbucket.org/raineszm/rubypython/'
   s.has_rdoc = 'yard'
   s.post_install_message = File.read("PostInstall.txt")
   

@@ -187,11 +187,16 @@ module RubyPython
 
   end
 
+  #A class to wrap Python Modules. It behaves exactly the same as {RubyPyProxy}.
+  #It is just here for Bookkeeping and aesthetics.
   class RubyPyModule < RubyPyProxy
   end
 
+  #A class to wrap Python Classes.
   class RubyPyClass < RubyPyProxy
 
+    #Create an instance of the wrapped class. This is a workaround for the fact
+    #that Python classes are meant to be callable.
     def new(*args)
       args = PyObject.convert(*args)
       pTuple = PyObject.buildArgTuple(*args)
@@ -203,6 +208,7 @@ module RubyPython
     end
   end
 
+  #An object representing an instance of a Python Class.
   class RubyPyInstance < RubyPyProxy
   end
 end

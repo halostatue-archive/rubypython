@@ -1,6 +1,7 @@
 require 'rubypython/core_ext/string'
 require 'rubypython/python'
-require 'rubypython/py_object'
+require 'rubypython/pythonerror'
+require 'rubypython/pyobject'
 require 'rubypython/rubypyproxy'
 require 'rubypython/pymainclass'
 

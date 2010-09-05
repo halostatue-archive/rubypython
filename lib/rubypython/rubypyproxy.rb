@@ -1,5 +1,5 @@
-require 'rubypython/py_error'
-require 'rubypython/py_object'
+require 'rubypython/pythonerror'
+require 'rubypython/pyobject'
 require 'rubypython/conversion'
 require 'rubypython/operators'
 require 'rubypython/blankobject'

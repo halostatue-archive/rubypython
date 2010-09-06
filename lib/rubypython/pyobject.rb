@@ -17,8 +17,16 @@ module RubyPython
     #goes out of scope.
     class AutoPyPointer < FFI::AutoPointer
       class << self
+        #Keeps track of which objects are associated with the currently running
+        #Python interpreter, so that RubyPython knows not to try to decrease the
+        #reference counts of the others when garbage collecting.
         attr_accessor :current_pointers
 
+        #When used along with the FFI Library method is executed whenever a
+        #pointer is garbage collected so that cleanup can be done. In our case
+        #we decrease the reference count of the held pointer as long as the
+        #object is still good. There is really no reason the end-user would need
+        #to the use this method directly.
         def release(pointer)
           obj_id = pointer.object_id
           if (Python.Py_IsInitialized != 0) and @current_pointers.delete(obj_id)
@@ -30,6 +38,7 @@ module RubyPython
       self.current_pointers = {}
     end
 
+    #The FFI::Pointer object which represents the Python PyObject\*.
     attr_reader :pointer
 
     #@param [FFI::Pointer, other] pointer objects passed in to the constructor

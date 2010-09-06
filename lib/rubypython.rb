@@ -86,7 +86,7 @@ module RubyPython
         PyMain.builtin = nil
         RubyPython::Operators.send :class_variable_set, '@@operator', nil
         Python.Py_Finalize
-        ObjectSpace.garbage_collect
+        RubyPython::PyObject::AutoPyPointer.current_pointers.clear
         return true
       end
       false

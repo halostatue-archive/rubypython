@@ -16,9 +16,18 @@ module RubyPython
     #automatically decreased when the Ruby object referencing them 
     #goes out of scope.
     class AutoPyPointer < FFI::AutoPointer
-      def self.release(pointer)
-        Python.Py_DecRef pointer if Python.Py_IsInitialized != 0 
+      class << self
+        attr_accessor :current_pointers
+
+        def release(pointer)
+          obj_id = pointer.object_id
+          if (Python.Py_IsInitialized != 0) and @current_pointers.delete(obj_id)
+            Python.Py_DecRef pointer 
+          end
+        end
       end
+
+      self.current_pointers = {}
     end
 
     attr_reader :pointer
@@ -36,6 +45,7 @@ module RubyPython
       else
         @pointer = AutoPyPointer.new Conversion.rtopObject(rObject)
       end
+      AutoPyPointer.current_pointers[@pointer.object_id] = true
     end
 
     #Attempts to convert the wrapped object to a native ruby type.

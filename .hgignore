@@ -1,7 +1,11 @@
 syntax:glob
 *.o
 *.so
+*.bundle
 *.pyc
 *.log
+*~
 doc/*
 ext/*/Makefile
+*.swp
+.yardoc/*

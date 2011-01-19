@@ -6,13 +6,64 @@ module RubyPython
   #gem. Documentation for these functions may be found [here](http://docs.python.org/c-api/). Likewise the FFI gem documentation may be found [here](http://rdoc.info/projects/ffi/ffi).
   module Python
     extend FFI::Library
-    PYTHON_VERSION = Open3.popen3("python --version") { |i,o,e| e.read}.chomp.split[1].to_f
+
+    # This much we can assume works without anything special at all.
+    PYTHON_VERSION = Open3.popen3("python --version") { |i,o,e| e.read }.chomp.split[1].to_f
     PYTHON_NAME = "python#{PYTHON_VERSION}"
-    LIB_NAME = "lib#{PYTHON_NAME}"
+    LIB_NAME = "#{FFI::Platform::LIBPREFIX}#{PYTHON_NAME}"
     LIB_EXT = FFI::Platform::LIBSUFFIX
-    LIB = File.join(`python -c "import sys; print(sys.prefix)"`.chomp,
-      "lib", "#{PYTHON_NAME}", "config", "#{LIB_NAME}.#{LIB_EXT}")
-    @ffi_libs = [FFI::DynamicLibrary.open(LIB, FFI::DynamicLibrary::RTLD_LAZY|FFI::DynamicLibrary::RTLD_GLOBAL)]
+    PYTHON_SYS_PREFIX = %x{#{PYTHON_NAME} -c "import sys; print(sys.prefix)"}.chomp
+
+    # Here's where we run into problems, as not everything works quite the
+    # way we expect it to.
+    #
+    # The default libname will be something like libpython2.6.so (or .dylib)
+    # or maybe even python2.6.dll on Windows.
+    libname = "#{LIB_NAME}.#{LIB_EXT}"
+
+    # We may need to look in multiple locations for Python, so let's build
+    # this as an array.
+    locations = [ File.join(PYTHON_SYS_PREFIX, "lib", libname) ]
+
+    if FFI::Platform.mac?
+      # On the Mac, let's add a special case that has even a different
+      # libname. This may not be fully useful on future versions of OS X,
+      # but it should work on 10.5 and 10.6. Even if it doesn't, the next
+      # step will (/usr/lib/libpython<version>.dylib is a symlink to the
+      # correct location).
+      locations << File.join(PYTHON_SYS_PREFIX, "Python")
+      # Let's also look in the location that was originally set in this
+      # library:
+      File.join(PYTHON_SYS_PREFIX, "lib", "#{PYTHON_NAME}", "config",
+                libname)
+    end
+
+    if FFI::Platform.unix?
+      # On Unixes, let's look in alternative places, too. Just in case.
+      locations << File.join("/opt/local/lib", libname)
+      locations << File.join("/opt/lib", libname)
+      locations << File.join("/usr/local/lib", libname)
+      locations << File.join("/usr/lib", libname)
+    end
+
+    # Get rid of redundant locations.
+    locations.uniq!
+
+    dyld_flags = FFI::DynamicLibrary::RTLD_LAZY | FFI::DynamicLibrary::RTLD_GLOBAL
+    exceptions = []
+
+    locations.each do |location|
+      begin
+        @ffi_libs = [ FFI::DynamicLibrary.open(location, dyld_flags) ]
+        LIB = location
+        break
+      rescue LoadError => ex
+        @ffi_libs = nil
+        exceptions << ex
+      end
+    end
+
+    raise exceptions.first if @ffi_libs.nil?
 
     #The class is a little bit of a hack to extract the address of global
     #structs. If someone knows a better way please let me know.

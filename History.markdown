@@ -1,3 +1,7 @@
+## 0.3.1 2011-01-19
+* Compatability Updates
+  * Cleanup of code which finds Python library thanks to Austin Ziegler.
+
 ## 0.3.0 2010-09-06
 * Major Enhancements
   * Version 0.3.0 represents an almost complete rewrite of the RubyPython codebase.

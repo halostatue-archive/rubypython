@@ -1,6 +1,9 @@
+= RUBYPYTHON HAS MOVE
+        RubyPython is no longer hosted on github. Head on over to http://bitbucket.org/raineszm/rubypython for the lastest version.
+
 = rubypython
 
-* htp://rubypython.rubyforge.org
+* http://rubypython.rubyforge.org
 
 == DESCRIPTION:
 

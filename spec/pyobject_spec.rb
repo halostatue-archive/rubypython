@@ -1,8 +1,15 @@
 require File.dirname(__FILE__) + '/spec_helper.rb'
 
 describe RubyPython::PyObject do
-  include RubyPythonStartStop
   include TestConstants
+
+  before do
+    RubyPython.start
+  end
+  
+  after do
+    RubyPython.start
+  end
 
   before do
     @string = RubyPython.import('string').pObject

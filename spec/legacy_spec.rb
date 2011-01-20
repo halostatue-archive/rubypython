@@ -3,7 +3,14 @@ require File.dirname(__FILE__) + '/spec_helper.rb'
 include TestConstants
 
 describe 'RubyPython Legacy Mode Module' do
-  include RubyPythonStartStop
+
+  before do
+    RubyPython.start
+  end
+
+  after do
+    RubyPython.stop
+  end
 
   before :all do
     require 'rubypython/legacy'

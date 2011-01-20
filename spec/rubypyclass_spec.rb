@@ -1,7 +1,14 @@
 require File.dirname(__FILE__) + '/spec_helper.rb'
 
 describe RubyPython::RubyPyClass do
-  include RubyPythonStartStop
+
+  before do
+    RubyPython.start
+  end
+  
+  after do
+    RubyPython.start
+  end
 
   describe "#new" do
     it "should return a RubyPyInstance" do

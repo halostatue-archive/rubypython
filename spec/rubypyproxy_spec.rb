@@ -3,7 +3,14 @@ require File.dirname(__FILE__) + '/spec_helper.rb'
 
 include TestConstants
 describe RubyPython::RubyPyProxy do
-  include RubyPythonStartStop
+
+  before do
+    RubyPython.start
+  end
+  
+  after do
+    RubyPython.start
+  end
 
   before do
     @a = RubyPython::PyObject.new "a"

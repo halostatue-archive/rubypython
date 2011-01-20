@@ -2,7 +2,14 @@ require File.dirname(__FILE__) + '/spec_helper.rb'
 
 describe RubyPython::PyMainClass do
   include TestConstants
-  include RubyPythonStartStop
+
+  before do
+    RubyPython.start
+  end
+
+  after do
+    RubyPython.stop
+  end
 
   subject { RubyPython::PyMain }
 

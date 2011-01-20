@@ -39,13 +39,3 @@ class RubyPython::RubyPyProxy
   [:should, :should_not, :class].each { |m| reveal(m) }
 end
 
-share_as :RubyPythonStartStop do
-  before do
-    RubyPython.start
-  end
-
-  after do
-    RubyPython.stop
-  end
-end
-

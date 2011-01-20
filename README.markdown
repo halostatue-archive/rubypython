@@ -1,6 +1,6 @@
 # RubyPython
 
-* [RubyPython](http://raineszm.bitbucket.org/rubypython/)
+* [RubyPython](http://bitbucket.org/raineszm/rubypython/)
 
 ## DESCRIPTION:
 

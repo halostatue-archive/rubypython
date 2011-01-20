@@ -167,6 +167,7 @@ describe RubyPython::RubyPyProxy do
       urllib2 = RubyPython.import('urllib2')
       urllib2.Request.should be_a(RubyPython::RubyPyClass)
     end
+
   end
 
   describe "when used with an operator" do

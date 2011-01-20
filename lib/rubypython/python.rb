@@ -123,6 +123,11 @@ module RubyPython
     attach_function :PyDict_Contains, [:pointer, :pointer], :int
     attach_function :PyDict_GetItem, [:pointer, :pointer], :pointer
 
+    #Function Constants
+    METH_VARARGS = 1
+    attach_function :PyCFunction_New, [:pointer, :pointer], :pointer
+    callback :PyCFunction, [:pointer, :pointer], :pointer
+
     #Error Methods
     attach_function :PyErr_Fetch, [:pointer, :pointer, :pointer], :void
     attach_function :PyErr_Occurred, [], :pointer
@@ -156,6 +161,14 @@ module RubyPython
     class PyObjectStruct < FFI::Struct
       layout :ob_refcnt, :int,
         :ob_type, :pointer
+    end
+
+    #This struct is used when defining Python methods. 
+    class PyMethodDef < FFI::Struct
+      layout :ml_name, :pointer,
+        :ml_meth, :PyCFunction,
+        :ml_flags, :int,
+        :ml_doc, :pointer
     end
 
   end

@@ -25,5 +25,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency('ffi', [">= 0.6.3"])
   s.add_dependency('blankslate', [">= 2.1.2.3"])
+
+  s.add_development_dependency('rspec', [">= 2.0"])
 end
 

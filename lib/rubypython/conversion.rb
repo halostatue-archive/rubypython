@@ -83,7 +83,7 @@ module RubyPython
     #@param rObj a native ruby type
     #@param [Boolean] is_key whether this object will be used as a key in a
     #  python dict.
-    #@return [FFI::Pointer] a to a C PyObject\*
+    #@return [FFI::Pointer] a pointer to a C PyObject\*
     #@raise [UnsupportedConversion]
     def self.rtopObject(rObj, is_key=false)
       case rObj

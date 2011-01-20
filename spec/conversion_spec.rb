@@ -51,13 +51,16 @@ describe RubyPython::Conversion do
       ["a dict", "a hash", AConvertedHash],
       ["python True", "true", true],
       ["python False", "false", false],
-      ["python None", "nil", nil]
-    ].each do |py_type, rb_type, input|
+      ["python None", "nil", nil],
+      ["a function", "a proc", AProc, true]
+    ].each do |py_type, rb_type, input, no_compare|
 
       it "should convert #{rb_type} to #{py_type}" do
         py_object_ptr = subject.rtopObject(input)
-        output = @objects.__send__(rb_type.sub(' ', '_')).pObject.pointer
-        RubyPython::Python.PyObject_Compare(py_object_ptr, output).should == 0
+        unless no_compare
+          output = @objects.__send__(rb_type.sub(' ', '_')).pObject.pointer
+          RubyPython::Python.PyObject_Compare(py_object_ptr, output).should == 0
+        end
       end
     end
 
@@ -66,5 +69,6 @@ describe RubyPython::Conversion do
     end
 
   end
+
 
 end

@@ -29,6 +29,9 @@ module TestConstants
       key = k.is_a?(Symbol)? k.to_s : k
       [key,v]
     end.flatten]
+
+    AProc = Proc.new { |a1, a2| a1 + a2 }
+
 end
 
 def run_python_command(cmd)

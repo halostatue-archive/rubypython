@@ -45,6 +45,17 @@ describe 'RubyPython Legacy Mode Module' do
         @objects.__send__(py_type.sub(' ', '_')).should == output
       end
     end
+
+    [
+      ["proc", AProc],
+      ["method", AMethod]
+    ].each do |rb_type, rb_obj| 
+      it "should raise an exception if a #{rb_type} callback is supplied" do
+        lambda do
+          @objects.apply_callback(rb_obj, [1, 1])
+        end.should raise_exception(RubyPython::Conversion::UnsupportedConversion)
+      end
+    end
   end
 
 end

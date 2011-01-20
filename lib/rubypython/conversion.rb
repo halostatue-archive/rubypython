@@ -115,6 +115,7 @@ module RubyPython
       when nil
         rtopNone
       when Proc, Method
+        raise UnsupportedConversion.new("Python to Ruby callbacks not suppported in legacy mode") if RubyPython.legacy_mode
         rtopProc rObj
       else
         raise UnsupportedConversion.new("Unsupported type for RTOP conversion." )

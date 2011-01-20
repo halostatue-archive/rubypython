@@ -32,6 +32,12 @@ module TestConstants
 
     AProc = Proc.new { |a1, a2| a1 + a2 }
 
+    def self.a_method(a1, a2)
+      a1 + a2
+    end
+
+    AMethod = method(:a_method)
+
 end
 
 def run_python_command(cmd)

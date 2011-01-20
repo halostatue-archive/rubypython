@@ -65,6 +65,19 @@ module RubyPython
       Python.PyString_FromString rSymbol.to_s
     end
 
+    def self.rtopProc(rObj)
+      pyMethodDef = Python::PyMethodDef.new
+      callback = Proc.new do |py_self, py_args|
+        rObj.call(*RubyPyProxy.new(py_args).to_a).pObject.pointer
+      end
+      pyMethodDef[:ml_name] = FFI::MemoryPointer.from_string "Proc::#{rObj.object_id}"
+      pyMethodDef[:ml_meth] = callback
+      pyMethodDef[:ml_flags] = Python::METH_VARARGS
+      pyMethodDef[:ml_doc] = nil
+
+      Python::PyCFunction_New pyMethodDef, nil
+    end
+
     #If possible converts a ruby type to an equivalent
     #python native type.
     #@param rObj a native ruby type
@@ -101,7 +114,7 @@ module RubyPython
         rtopSymbol rObj
       when nil
         rtopNone
-      when Proc
+      when Proc, Method
         rtopProc rObj
       else
         raise UnsupportedConversion.new("Unsupported type for RTOP conversion." )
@@ -163,19 +176,6 @@ module RubyPython
       end
 
       rb_hash
-    end
-
-    def self.rtopProc(rObj)
-      pyMethodDef = Python::PyMethodDef.new
-      callback = Proc.new do |py_self, py_args|
-        rObj.call(RubyPyProxy.new(py_args).to_a).pObject.pointer
-      end
-      pyMethodDef[:ml_name] = FFI::MemoryPointer.from_string "Proc::#{rObj.object_id}"
-      pyMethodDef[:ml_meth] = callback
-      pyMethodDef[:ml_flags] = Python::METH_VARARGS
-      pyMethodDef[:ml_doc] = nil
-
-      Python::PyCFunction_New pyMethodDef, nil
     end
 
 

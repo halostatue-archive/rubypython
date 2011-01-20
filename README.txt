@@ -1,4 +1,4 @@
-= RUBYPYTHON HAS MOVE
+= RUBYPYTHON HAS MOVED
         RubyPython is no longer hosted on github. Head on over to http://bitbucket.org/raineszm/rubypython for the lastest version.
 
 = rubypython

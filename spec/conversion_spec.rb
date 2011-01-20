@@ -2,14 +2,18 @@ require File.dirname(__FILE__) + '/spec_helper.rb'
 
 include TestConstants
 describe RubyPython::Conversion do
-  include RubyPythonStartStop
 
   subject { RubyPython::Conversion }
 
   before do
+    RubyPython.start
     sys = RubyPython.import 'sys'
     sys.path.append './spec/python_helpers'
     @objects = RubyPython.import 'objects'
+  end
+
+  after do
+    RubyPython.stop
   end
 
   context "when converting from Python to Ruby" do

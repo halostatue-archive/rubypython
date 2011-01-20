@@ -75,7 +75,7 @@ The documentation should provide a reasonable description of how to use RubyPyth
 Starting with version 0.3.x there are two modes of operation: normal and
 legacy. These are described in the docs.
 
-The most useful to check out [docs](http://raineszm.bitbucket.org/rubypython/) will be those for RubyPython and RubyPython::RubyPyProxy.
+The most useful to check out [docs](http://rubydoc.info/gems/rubypython/) will be those for RubyPython and RubyPython::RubyPyProxy.
 	
 ## LICENSE:
 

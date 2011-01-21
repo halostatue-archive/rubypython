@@ -82,7 +82,7 @@ The most useful to check out [docs](http://rubydoc.info/gems/rubypython/) will b
 
 (The MIT License)
 
-Copyright (c) 2008 Zach Raines
+Copyright (c) 2008-2011 Zach Raines
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the

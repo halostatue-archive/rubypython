@@ -40,13 +40,24 @@ describe 'Callbacks' do
     ["false", false],
     ["nil", nil]
   ].each do |rb_type, rb_value|
-    it "should allow callbacks to return #{rb_type}" do
+    it "should be able to return #{rb_type}" do
       callback = Proc.new do 
         rb_value
       end
 
       @objects.apply_callback(callback, []).should == rb_value
     end
+  end
+
+  it "should be able to be stored by python variables" do
+    mockObject = @objects.RubyPythonMockObject.new
+    mockObject.callback = AProc
+  end
+
+  it "should be callable as a python instance variable" do
+    mockObject = @objects.RubyPythonMockObject.new
+    mockObject.callback = AProc
+    mockObject.callback(2, 2).rubify.should == 4
   end
 
 end

@@ -29,4 +29,13 @@ describe 'Callbacks' do
     end
   end
 
+  it 'should allow callbacks to return a ruby type' do
+    callback = Proc.new do 
+      true
+    end
+
+    @objects.apply_callback(callback, []).should be_true
+    
+  end
+
 end

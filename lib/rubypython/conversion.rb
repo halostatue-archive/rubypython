@@ -68,7 +68,12 @@ module RubyPython
     def self.rtopProc(rObj)
       pyMethodDef = Python::PyMethodDef.new
       callback = Proc.new do |py_self, py_args|
-        rObj.call(*RubyPyProxy.new(py_args).to_a).pObject.pointer
+        ret = rObj.call(*RubyPyProxy.new(py_args).to_a)
+        if ret.kind_of? RubyPyProxy
+          ret
+        else
+          RubyPyProxy.new ret
+        end.pObject.pointer
       end
       pyMethodDef[:ml_name] = FFI::MemoryPointer.from_string "Proc::#{rObj.object_id}"
       pyMethodDef[:ml_meth] = callback

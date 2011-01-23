@@ -33,6 +33,10 @@ module RubyPython
             Python.Py_DecRef pointer 
           end
         end
+
+        def update(status)
+          current_pointers.clear if status.equal? :stop
+        end
       end
 
       self.current_pointers = {}

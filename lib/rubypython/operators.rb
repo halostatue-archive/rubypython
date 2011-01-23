@@ -107,5 +107,9 @@ module RubyPython
       PyMain.cmp(self, other)
     end
 
+    def self.update(status)
+      @@operator = nil if status.equal? :stop
+    end
+
   end
 end

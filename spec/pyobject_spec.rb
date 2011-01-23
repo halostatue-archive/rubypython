@@ -187,7 +187,7 @@ describe RubyPython::PyObject do
       @objects.pObject.getAttr('identity').should be_a_function_or_method
     end
 
-    xit "should return true for a builtin function" do
+    it "should return true for a builtin function" do
       any = @builtin.pObject.getAttr('any')
       any.should be_a_function_or_method
     end

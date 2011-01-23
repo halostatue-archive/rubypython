@@ -146,6 +146,7 @@ module RubyPython
     attach_variable :PyTuple_Type, DummyStruct.by_value
     attach_variable :PyDict_Type, DummyStruct.by_value
     attach_variable :PyFunction_Type, DummyStruct.by_value
+    attach_variable :PyCFunction_Type, DummyStruct.by_value
     attach_variable :PyMethod_Type, DummyStruct.by_value
     attach_variable :PyType_Type, DummyStruct.by_value
     attach_variable :PyClass_Type, DummyStruct.by_value

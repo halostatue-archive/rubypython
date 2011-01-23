@@ -87,4 +87,9 @@ describe RubyPython, '.configure' do
     end
 
   end
+
+  after(:all) do
+    RubyPython.clear_options
+    RubyPython.instance_eval { reload_library }
+  end
 end

@@ -45,6 +45,14 @@ module RubyPython
                end
       block ? block.call(result) : result
     end
+
+    def update(status)
+      if status.equal? :stop
+        @main = nil
+        @builtin = nil
+      end
+    end
+
   end
 
   PyMain = PyMainClass.instance

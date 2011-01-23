@@ -5,6 +5,8 @@ require 'rubypython/pyobject'
 require 'rubypython/rubypyproxy'
 require 'rubypython/pymainclass'
 
+require 'observer'
+
 
 #This module provides the direct user interface for the RubyPython extension.
 #
@@ -72,6 +74,7 @@ module RubyPython
         return false
       end
       Python.Py_Initialize
+      notify :start
       true
     end
 
@@ -82,11 +85,8 @@ module RubyPython
     #    and false otherwise
     def stop
       if Python.Py_IsInitialized !=0
-        PyMain.main = nil
-        PyMain.builtin = nil
-        RubyPython::Operators.send :class_variable_set, '@@operator', nil
         Python.Py_Finalize
-        RubyPython::PyObject::AutoPyPointer.current_pointers.clear
+        notify :stop
         return true
       end
       false
@@ -126,5 +126,31 @@ module RubyPython
       result = module_eval(&block)
       stop
     end
+
+    def add_observer(object)
+      @observers ||= []
+      @observers << object
+      true
+    end
+
+    def notify(status)
+      if not @observers.nil?
+        @observers.each do |o|
+          o.update status
+        end
+      end
+    end
   end
+
+  [
+    PyMain,
+    Operators,
+    PyObject::AutoPyPointer
+  ].each do |observer|
+    add_observer observer
+  end
+
+
 end
+
+  

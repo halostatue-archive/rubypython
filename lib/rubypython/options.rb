@@ -2,6 +2,11 @@ module RubyPython
   #A hash for storing RubyPython execution options.
   @options = {}
 
+  NEED_RELOAD = [
+    :python_exe,
+    :python_lib
+  ]
+
   class << self
     #Allows one to set options for RubyPython's execution. Parameters 
     #may be set either by supplying a hash argument or by supplying 
@@ -9,7 +14,8 @@ module RubyPython
     #@param [Hash] a hash of options to set
     #@return [Hash] a copy of the new options hash
     def configure(hash={})
-      p @options
+      old_values = @options.select { |k,v| NEED_RELOAD.include? k }
+
       if block_given?
         ostruct = OpenStruct.new @options
         yield ostruct
@@ -19,7 +25,10 @@ module RubyPython
           end.flatten
         end]
       end
-      @options.merge!(hash).dup
+      @options.merge!(hash)
+
+      reload if NEED_RELOAD.any? { |k| @options[k] != old_values[k] } 
+      options
     end
 
     #Returns a copy of the hash currently being used to determine run 
@@ -30,5 +39,19 @@ module RubyPython
     def options
       @options.dup
     end
+
+    def clear_options
+      @options.clear
+    end
+
+    def reload(val=true)
+      @reload = val
+    end
+
+    def reload?
+      @reload
+    end
+
+
   end
 end

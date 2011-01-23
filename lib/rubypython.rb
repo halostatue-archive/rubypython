@@ -73,7 +73,10 @@ module RubyPython
       if Python.Py_IsInitialized != 0
         return false
       end
-      reload_library
+      if reload?
+        reload_library
+        reload(false)
+      end
       Python.Py_Initialize
       notify :start
       true

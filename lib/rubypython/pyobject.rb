@@ -123,9 +123,15 @@ module RubyPython
     #Tests whether the wrapped object is a function or a method. This is not the
     #same as {#callable?} as many other Python objects are callable.
     def function_or_method?
-      isFunc = (Macros.PyObject_TypeCheck(@pointer, Python.PyFunction_Type.to_ptr) != 0)
-      isMethod = (Macros.PyObject_TypeCheck(@pointer, Python.PyMethod_Type.to_ptr) != 0)
-      isFunc or isMethod
+      [
+        Python.PyFunction_Type,
+        Python.PyMethod_Type,
+        Python.PyCFunction_Type
+      ].each do |type|
+        return true if Macros.PyObject_TypeCheck(@pointer, type.to_ptr) != 0
+      end
+
+      false
     end
 
     #Is the wrapped object callable?

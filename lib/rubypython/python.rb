@@ -1,5 +1,6 @@
 require 'ffi'
 require 'open3'
+require 'rubypython/options'
 
 module RubyPython
   #This module provides access to the Python C API functions via the Ruby ffi
@@ -7,8 +8,9 @@ module RubyPython
   module Python
     extend FFI::Library
 
+    PYTHON_EXE = RubyPython.options[:python_exe] || 'python'
     # This much we can assume works without anything special at all.
-    PYTHON_VERSION = Open3.popen3("python --version") { |i,o,e| e.read }.chomp.split[1].to_f
+    PYTHON_VERSION = Open3.popen3("#{PYTHON_EXE} --version") { |i,o,e| e.read }.chomp.split[1].to_f
     PYTHON_NAME = "python#{PYTHON_VERSION}"
     LIB_NAME = "#{FFI::Platform::LIBPREFIX}#{PYTHON_NAME}"
     LIB_EXT = FFI::Platform::LIBSUFFIX

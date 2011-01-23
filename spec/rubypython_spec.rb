@@ -67,3 +67,24 @@ describe RubyPython, "#run" do
   end
 
 end
+
+describe RubyPython, '#reload_library' do
+  it 'leaves RubyPython in a stable state' do
+    lambda do 
+      RubyPython.instance_eval { reload_library }
+      RubyPython.run {}
+    end.should_not raise_exception
+  end
+
+end
+
+describe RubyPython, '.configure' do
+  it 'should allow python executable to be specified', :if =>(not `which python2.6`.empty?) do
+    RubyPython.configure :python_exe => 'python2.6'
+    RubyPython.run do
+      sys = RubyPython.import 'sys'
+      sys.version.rubify.to_f.should == 2.6
+    end
+
+  end
+end

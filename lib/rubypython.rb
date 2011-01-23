@@ -37,7 +37,11 @@ require 'observer'
 #{RubyPython.legacy_mode}.
 module RubyPython
 
+  #A hash for storing RubyPython execution options.
+  @options = {}
+
   class << self
+
 
     #Determines whether RubyPython is operating in Normal Mode or Legacy Mode.
     #If legacy_mode is true, RubyPython switches into a mode compatible with
@@ -63,6 +67,35 @@ module RubyPython
     #    puts ascii_letters # No explicit conversion is neccessary
     #    RubyPython.stop
     attr_accessor :legacy_mode
+
+    #Allows one to set options for RubyPython's execution. Parameters 
+    #may be set either by supplying a hash argument or by supplying 
+    #a block and calling setters on the provided OpenStruct.
+    #@param [Hash] a hash of options to set
+    #@return [Hash] a copy of the new options hash
+    def configure(hash={})
+      p @options
+      if block_given?
+        ostruct = OpenStruct.new @options
+        yield ostruct
+        @options = Hash[*ostruct.instance_eval do 
+          @table.map do |k, v|
+            [k.to_sym, v]
+          end.flatten
+        end]
+      end
+      @options.merge!(hash).dup
+    end
+
+    #Returns a copy of the hash currently being used to determine run 
+    #options. This allows the user to determine what options have been 
+    #set. Modification of options should be done via the configure 
+    #method.
+    #@return [Hash] a copy of the current options hash
+    def options
+      @options.dup
+    end
+
 
     #Starts ups the Python interpreter. This method **must** be run
     #before using any Python code. The only alternatives are use of the

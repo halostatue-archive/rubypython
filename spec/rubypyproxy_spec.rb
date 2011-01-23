@@ -139,6 +139,11 @@ describe RubyPython::RubyPyProxy do
       lambda {aProxy.wat}.should raise_exception(NoMethodError)
     end
 
+    it "should raise NoMethodError when boolean method is undefine" do
+      aProxy = described_class.new @a
+      lambda { aProxy.wat? }.should raise_exception(NoMethodError)
+    end
+
     it "should allow methods to be called with no arguments" do
       builtinProxy = described_class.new @builtin
       rbStrClass = builtinProxy.str

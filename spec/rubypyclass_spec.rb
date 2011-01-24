@@ -11,7 +11,7 @@ describe RubyPython::RubyPyClass do
   end
 
   describe "#new" do
-    it "should return a RubyPyInstance" do
+    it "returns a RubyPyInstance" do
       urllib2 = RubyPython.import 'urllib2'
       urllib2.Request.new('google.com').should be_a(RubyPython::RubyPyInstance)
     end

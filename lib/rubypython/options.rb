@@ -27,7 +27,7 @@ module RubyPython
       end
       @options.merge!(hash)
 
-      reload if NEED_RELOAD.any? { |k| @options[k] != old_values[k] } 
+      @reload = true if NEED_RELOAD.any? { |k| @options[k] != old_values[k] } 
       options
     end
 
@@ -43,15 +43,6 @@ module RubyPython
     def clear_options
       @options.clear
     end
-
-    def reload(val=true)
-      @reload = val
-    end
-
-    def reload?
-      @reload
-    end
-
 
   end
 end

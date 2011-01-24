@@ -28,13 +28,13 @@ describe RubyPython::Conversion do
       ["python False", "false", false],
       ["python None", "nil", nil]
     ].each do |py_type, rb_type, output|
-      it "should convert #{py_type} to #{rb_type}" do
+      it "converts #{py_type} to #{rb_type}" do
         py_object_ptr = @objects.__send__(py_type.sub(' ', '_')).pObject.pointer
         subject.ptorObject(py_object_ptr).should == output
       end
     end
 
-    it "should return an FFI::Pointer when it cannot convert" do
+    it "returns an FFI::Pointer when it cannot convert" do
       unconvertable = @objects.RubyPythonMockObject.pObject.pointer
       subject.ptorObject(unconvertable).should be_a_kind_of(FFI::Pointer)
     end
@@ -55,7 +55,7 @@ describe RubyPython::Conversion do
       ["a function", "a proc", AProc, true]
     ].each do |py_type, rb_type, input, no_compare|
 
-      it "should convert #{rb_type} to #{py_type}" do
+      it "converts #{rb_type} to #{py_type}" do
         py_object_ptr = subject.rtopObject(input)
         unless no_compare
           output = @objects.__send__(rb_type.sub(' ', '_')).pObject.pointer
@@ -64,7 +64,7 @@ describe RubyPython::Conversion do
       end
     end
 
-    it "should raise an exception when it cannot convert" do
+    it "raises an exception when it cannot convert" do
       lambda { subject.rtopObject(Class) }.should raise_exception(subject::UnsupportedConversion)
     end
 

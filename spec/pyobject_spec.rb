@@ -30,7 +30,7 @@ describe RubyPython::PyObject do
       ["a hash", AHash]
     ].each do |title, obj|
 
-      it "should wrap #{title}" do
+      it "wraps #{title}" do
         lambda { described_class.new(obj) }.should_not raise_exception
       end
     end
@@ -41,10 +41,10 @@ describe RubyPython::PyObject do
       "a list",
       "a dict",
       "a tuple"
-    ].each do |title|
-      it "should take #{title} from a Python pointer" do
+    ].each do |type|
+      it "accepts a Python pointer to a #{type}" do
         lambda do
-          py_obj = @objects.__send__(title.gsub(' ','_')).pObject.pointer
+          py_obj = @objects.__send__(type.gsub(' ','_')).pObject.pointer
           described_class.new(py_obj)
         end.should_not raise_exception
       end
@@ -66,7 +66,7 @@ describe RubyPython::PyObject do
       type, input, output = arr
       output ||= input
 
-      it "should faithfully unwrap #{type}" do
+      it "faithfully unwraps #{type}" do
         described_class.new(input).rubify.should == output
       end
 
@@ -75,35 +75,35 @@ describe RubyPython::PyObject do
   end #rubify
 
   describe "#hasAttr" do
-    it "should return true when object has the requested attribute" do
+    it "is true when wrapped object has the requested attribute" do
       @string.hasAttr("ascii_letters").should be_true
     end
 
-    it "should return false when object does not have the requested attribute" do
+    it "is false when wrapped object does not have the requested attribute" do
       @string.hasAttr("nonExistentThing").should be_false
     end
   end
 
   describe "#getAttr" do
-    it "should fetch requested object attribute" do 
+    it "fetchs a pointer to the requested object attribute" do 
       ascii_letters = @string.getAttr "ascii_letters"
       ascii_letters.rubify.should == "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
     end
 
-    it "should return a PyObject instance" do
+    it "returns a PyObject instance" do
       ascii_letters = @string.getAttr "ascii_letters"
       ascii_letters.should be_kind_of(described_class)
     end
   end
 
   describe "#setAttr" do 
-    it "should modify the specified attribute of the object" do
+    it "modifies the specified attribute of the object" do
       pyNewLetters = described_class.new "RbPy"
       @string.setAttr "ascii_letters", pyNewLetters
       @string.getAttr("ascii_letters").rubify.should == pyNewLetters.rubify
     end
 
-    it "should create the requested attribute if it doesn't exist" do 
+    it "creates the requested attribute if it doesn't exist" do 
       pyNewString = described_class.new "python"
       @string.setAttr "ruby", pyNewString
       @string.getAttr("ruby").rubify.should == pyNewString.rubify
@@ -118,36 +118,36 @@ describe RubyPython::PyObject do
       @less_dup = described_class.new 5
     end
 
-    it "should return 0 when objects are equal" do
+    it "returns 0 when objects are equal" do
       @less.cmp(@less_dup).should == 0
     end
 
-    it "should change sign under interchange of arguments" do 
+    it "changes sign under interchange of arguments" do 
       @less.cmp(@greater).should == -@greater.cmp(@less)
     end
 
-    it "should return -1 when first object is less than the second" do
+    it "returns -1 when first object is less than the second" do
       @less.cmp(@greater).should == -1
     end
     
-    it "should return 1 when first object is greater than the second" do
+    it "returns 1 when first object is greater than the second" do
       @greater.cmp(@less).should == 1
     end
   end
 
   describe "#makeTuple" do
-    it "should wrap single arguments in a tuple" do
+    it "wraps single arguments in a tuple" do
       arg = described_class.new AString
       described_class.makeTuple(arg).rubify.should == [AString]
     end
 
-    it "should turn a Python list into a tuple" do
+    it "turns a Python list into a tuple" do
       arg = @objects.a_list.pObject
       converted = described_class.makeTuple(arg)
       converted.rubify.should == AnArray
     end
 
-    it "should return the given argument if it is a tuple" do
+    it "returns the given argument if it is a tuple" do
       arg = @objects.a_tuple.pObject
       converted = described_class.makeTuple(arg)
       converted.pointer.address.should == arg.pointer.address
@@ -157,7 +157,7 @@ describe RubyPython::PyObject do
 
   describe "#callObject" do
     #Expand coverage types
-    it "should execute wrapped object with supplied arguments" do
+    it "executes wrapped object with supplied arguments" do
       arg = described_class.new AnInt
       argt = described_class.buildArgTuple arg
 
@@ -168,7 +168,7 @@ describe RubyPython::PyObject do
   end
 
   describe "#newList" do
-    it "should wrap supplied args in a Python list" do
+    it "wraps supplied args in a Python list" do
       args = AnArray.map do |obj|
         described_class.new obj
       end
@@ -178,21 +178,21 @@ describe RubyPython::PyObject do
 
   describe "#function_or_method?" do
 
-    it "should be true for a method" do
+    it "is true for a method" do
       mockObjClass = @objects.RubyPythonMockObject.pObject
       mockObjClass.getAttr('square_elements').should be_a_function_or_method
     end
 
-    it "should be true for a function" do
+    it "is true for a function" do
       @objects.pObject.getAttr('identity').should be_a_function_or_method
     end
 
-    it "should return true for a builtin function" do
+    it "is true for a builtin function" do
       any = @builtin.pObject.getAttr('any')
       any.should be_a_function_or_method
     end
 
-    it "should return false for a class" do
+    it "is false for a class" do
       @objects.RubyPythonMockObject.pObject.should_not be_a_function_or_method
     end
 
@@ -200,20 +200,20 @@ describe RubyPython::PyObject do
 
   describe "#class?" do
 
-    it "should return true if wrapped object is an old style class" do
+    it "is true if wrapped object is an old style class" do
       @objects.RubyPythonMockObject.pObject.should be_a_class
     end
 
-    it "should return true if wrapped object is an new style class" do
+    it "is true if wrapped object is an new style class" do
       @objects.NewStyleClass.pObject.should be_a_class
     end
 
-    it "should return true if wrapped object is a builtin class" do
+    it "is true if wrapped object is a builtin class" do
       strClass = @builtin.pObject.getAttr('str')
       strClass.should be_a_class
     end
 
-    it "should return false for an object instance" do
+    it "is false for an object instance" do
       @objects.RubyPythonMockObject.new.pObject.should_not be_a_class
     end
 
@@ -221,25 +221,25 @@ describe RubyPython::PyObject do
 
   describe "#callable?" do
 
-    it "should be true for a method" do
+    it "is true for a method" do
       mockObjClass = @objects.RubyPythonMockObject.pObject
       mockObjClass.getAttr('square_elements').should be_callable
     end
 
-    it "should be true for a function" do
+    it "is true for a function" do
       @objects.pObject.getAttr('identity').should be_callable
     end
 
-    it "should return true for a builtin function" do
+    it "is true for a builtin function" do
       any = @builtin.pObject.getAttr('any')
       any.should be_callable
     end
 
-    it "should return true for a class" do
+    it "is true for a class" do
       @objects.RubyPythonMockObject.pObject.should be_callable
     end
 
-    it "should return false for a non-callable instance" do
+    it "is false for a non-callable instance" do
       @objects.RubyPythonMockObject.new.pObject.should_not be_callable
     end
 
@@ -249,17 +249,17 @@ describe RubyPython::PyObject do
 
   describe ".convert" do
 
-    it "should not modify PyObjects passed to it" do
+    it "does not modify PyObjects passed to it" do
       args = AnArray.map { |x| described_class.new(x) }
       described_class.convert(*args).should == args
     end
 
-    it "should pull PyObjects out of RubyPyProxy instances" do
+    it "pulls PyObjects out of RubyPyProxy instances" do
       args = @objects.an_array.to_a
       described_class.convert(*args).should == args.map {|x| x.pObject}
     end
 
-    it "should create new PyObject instances of simple Ruby types" do
+    it "creates new PyObject instances of simple Ruby types" do
       described_class.convert(*AnArray).each do |x|
         x.should be_a_kind_of described_class
       end

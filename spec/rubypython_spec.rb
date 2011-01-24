@@ -11,20 +11,20 @@ describe RubyPython do
   end
 
   describe "#import" do
-    it "should handle multiple imports" do
+    it "handles multiple imports" do
       lambda do
         RubyPython.import 'cPickle'
         RubyPython.import 'urllib'
       end.should_not raise_exception
     end
 
-    it "should propagate Python errors" do
+    it "propagates Python errors" do
       lambda do
         RubyPython.import 'nonExistentModule'
       end.should raise_exception(RubyPython::PythonError)
     end
 
-    it "should return a RubyPyModule" do
+    it "returns a RubyPyModule" do
       RubyPython.import('urllib2').should be_a(RubyPython::RubyPyModule)
     end
   end
@@ -33,14 +33,14 @@ end
 
 describe RubyPython, "#session" do
 
-  it "should start interpreter" do
+  it "starts interpreter" do
     RubyPython.session do
       cPickle = RubyPython.import "cPickle"
       cPickle.loads("(dp1\nS'a'\nS'n'\ns(I1\nS'2'\ntp2\nI4\ns.").rubify.should == {"a"=>"n", [1, "2"]=>4}
     end
   end
 
-  it "should stop the interpreter" do
+  it "stops the interpreter" do
     RubyPython.session do
       cPickle = RubyPython.import "cPickle"
     end
@@ -51,14 +51,14 @@ end
 
 describe RubyPython, "#run" do
 
-  it "should start interpreter" do
+  it "starts interpreter" do
     RubyPython.run do
       cPickle = import "cPickle"
       cPickle.loads("(dp1\nS'a'\nS'n'\ns(I1\nS'2'\ntp2\nI4\ns.").rubify.should == {"a"=>"n", [1, "2"]=>4}
     end
   end
 
-  it "should stop the interpreter" do
+  it "stops the interpreter" do
     RubyPython.run do
       cPickle = import "cPickle"
     end
@@ -79,7 +79,7 @@ describe RubyPython, '#reload_library' do
 end
 
 describe RubyPython, '.configure' do
-  it 'should allow python executable to be specified', :if =>(not `which python2.6`.empty?) do
+  it 'allows python executable to be specified', :if =>(not `which python2.6`.empty?) do
     RubyPython.configure :python_exe => 'python2.6'
     RubyPython.run do
       sys = RubyPython.import 'sys'

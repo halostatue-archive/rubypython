@@ -26,7 +26,7 @@ describe 'RubyPython Legacy Mode Module' do
   end
 
   describe "when required" do
-    it "should enable legacy mode" do
+    it "enables legacy mode" do
       RubyPython.legacy_mode.should == true
     end
 
@@ -41,7 +41,7 @@ describe 'RubyPython Legacy Mode Module' do
       ["python False", "false", false],
       ["python None", "nil", nil]
     ].each do |py_type, rb_type, output|
-      it "should implicitly convert #{py_type} to #{rb_type}" do
+      it "implicitly converts #{py_type} to #{rb_type}" do
         @objects.__send__(py_type.sub(' ', '_')).should == output
       end
     end
@@ -50,7 +50,7 @@ describe 'RubyPython Legacy Mode Module' do
       ["proc", AProc],
       ["method", AMethod]
     ].each do |rb_type, rb_obj| 
-      it "should raise an exception if a #{rb_type} callback is supplied" do
+      it "raises an exception if a #{rb_type} callback is supplied" do
         lambda do
           @objects.apply_callback(rb_obj, [1, 1])
         end.should raise_exception(RubyPython::Conversion::UnsupportedConversion)

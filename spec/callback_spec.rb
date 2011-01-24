@@ -18,7 +18,7 @@ describe 'Callbacks' do
     [ 'procs', AProc ],
     [ 'methods', AMethod]
   ].each do |rb_type, rb_object|
-    it "should accept #{rb_type} as functions" do
+    it "accepts #{rb_type} as functions" do
       [
         [2, 2],
         ["a", "Word"],
@@ -40,7 +40,7 @@ describe 'Callbacks' do
     ["false", false],
     ["nil", nil]
   ].each do |rb_type, rb_value|
-    it "should be able to return #{rb_type}" do
+    it "is able to return #{rb_type}" do
       callback = Proc.new do 
         rb_value
       end
@@ -49,12 +49,12 @@ describe 'Callbacks' do
     end
   end
 
-  it "should be able to be stored by python variables" do
+  it "is able to be stored by python variables" do
     mockObject = @objects.RubyPythonMockObject.new
     mockObject.callback = AProc
   end
 
-  it "should be callable as a python instance variable" do
+  it "is callable as a python instance variable" do
     mockObject = @objects.RubyPythonMockObject.new
     mockObject.callback = AProc
     mockObject.callback(2, 2).rubify.should == 4

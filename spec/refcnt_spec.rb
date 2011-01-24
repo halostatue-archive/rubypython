@@ -27,12 +27,12 @@ describe 'Reference Counting' do
     RubyPython.stop
   end
 
-  it "should be one for a new object" do
+  it "is one for a new object" do
     pyObj = @objects.RubyPythonMockObject.new
     get_refcnt(pyObj).should == 1
   end
 
-  it "should increase when a new reference is passed into Ruby" do
+  it "increases when a new reference is passed into Ruby" do
     pyObj = @objects.RubyPythonMockObject
     refcnt = get_refcnt(pyObj)
     pyObj2 = @objects.RubyPythonMockObject
@@ -42,7 +42,7 @@ describe 'Reference Counting' do
   describe RubyPython::PyObject do
 
     describe "#xIncref" do
-      it "should increase the reference count" do
+      it "increases the reference count" do
         pyObj = @objects.RubyPythonMockObject.new
         refcnt = get_refcnt(pyObj)
         pyObj.pObject.xIncref
@@ -51,7 +51,7 @@ describe 'Reference Counting' do
     end
 
     describe "#xDecref" do
-      it "should decrease the reference count" do
+      it "decreases the reference count" do
         pyObj = @objects.RubyPythonMockObject.new
         pyObj.pObject.xIncref
         refcnt = get_refcnt(pyObj)

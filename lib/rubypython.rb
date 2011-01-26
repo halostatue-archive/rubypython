@@ -70,6 +70,10 @@ module RubyPython
     #@return [Boolean] returns true if the interpreter was started here
     #    and false otherwise
     def start
+      unless @loaded
+        @loaded = true
+        reload_library
+      end
       if Python.Py_IsInitialized != 0
         return false
       end
@@ -148,6 +152,7 @@ module RubyPython
     def reload_library
       remove_const :Python
       load 'rubypython/python.rb'
+      true
     end
 
     private :reload_library

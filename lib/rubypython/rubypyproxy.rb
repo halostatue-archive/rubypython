@@ -169,27 +169,23 @@ module RubyPython
     end
 
     #Returns the string representation of the wrapped object via a call to the
-    #object's \_\_repr\_\_ method. Falls back on the default Ruby behavior when
-    #this method cannot be found.
+    #object's \_\_repr\_\_ method. 
     #
     #@return [String]
     def inspect
-      self.__repr__.rubify rescue _inspect
-    rescue
-      class << self; define_method :_inspect, RubyPyProxy.find_hidden_method(:inspect); end
-      _inspect
+      self.__repr__.rubify
+    rescue PythonError, NoMethodError
+      RubyPython::PyMain.repr(self).rubify
     end
 
     #Returns the string representation of the wrapped object via a call to the
-    #object's \_\_str\_\_ method. Falls back on the default Ruby behavior when
-    #this method cannot be found.
+    #object's \_\_str\_\_ method. 
     #
     #@return [String]
     def to_s
-      self.__str__.rubify rescue _to_s
-    rescue
-      class << self; define_method :_to_s, RubyPyProxy.find_hidden_method(:to_s); end
-      _to_s
+      self.__str__.rubify
+    rescue PythonError, NoMethodError
+      RubyPython::PyMain.str(self).rubify
     end
 
     #Converts the wrapped Python object to a Ruby Array. Note that this only converts

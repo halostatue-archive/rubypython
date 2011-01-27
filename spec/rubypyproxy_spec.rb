@@ -78,6 +78,10 @@ describe RubyPython::RubyPyProxy do
       lambda { @objects.RubyPythonMockObject.inspect }.should_not raise_exception
     end
 
+    it "always tries the 'repr' function if __repr__ produces an error" do
+      RubyPython::PyMain.list.inspect.should == run_python_command('print repr(list)').chomp
+    end
+
   end
 
   describe "#to_s" do
@@ -87,6 +91,10 @@ describe RubyPython::RubyPyProxy do
 
     it "gracefully handles lack of defined __str__" do
       lambda { @objects.RubyPythonMockObject.to_s }.should_not raise_exception
+    end
+
+    it "always tries the 'str' function if __repr__ produces an error" do
+      RubyPython::PyMain.list.to_s.should == run_python_command('print str(list)').chomp
     end
   end
 

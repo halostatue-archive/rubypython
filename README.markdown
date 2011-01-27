@@ -18,6 +18,7 @@ provides a means for wrapping and converting Python objects.
 * Python objects can be treated as Ruby objects!
 * Python's standard library available to you from within Ruby.
 * Pass Ruby methods and procs as callbacks and call them from within Python code.
+* Specify the python executable to be loaded.
 
 ### Known Problems
 

@@ -66,7 +66,8 @@ module RubyPython
 
     #Starts ups the Python interpreter. This method **must** be run
     #before using any Python code. The only alternatives are use of the
-    #{session} and {run} methods.
+    #{session} and {run} methods. If the Python interpreter needs to 
+    #be loaded or reloaded, it will be done here.
     #@return [Boolean] returns true if the interpreter was started here
     #    and false otherwise
     def start
@@ -129,11 +130,15 @@ module RubyPython
 
     #The same as {session} except that the block is executed within the scope 
     #of the RubyPython module.
+    #@return the result of evaluating the  given block.
     def run(&block)
       start
       result = module_eval(&block)
       stop
+      result
     end
+
+    private
 
     def add_observer(object)
       @observers ||= []
@@ -155,7 +160,6 @@ module RubyPython
       true
     end
 
-    private :reload_library
   end
 
   [

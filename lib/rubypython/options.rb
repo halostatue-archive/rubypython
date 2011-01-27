@@ -2,6 +2,7 @@ module RubyPython
   #A hash for storing RubyPython execution options.
   @options = {}
 
+  #A list of options which require the Python library to be reloaded.
   NEED_RELOAD = [
     :python_exe,
     :python_lib
@@ -11,9 +12,14 @@ module RubyPython
     #Allows one to set options for RubyPython's execution. Parameters 
     #may be set either by supplying a hash argument or by supplying 
     #a block and calling setters on the provided OpenStruct.
-    #@param [Hash] a hash of options to set
+    #@param [Hash] opts a hash of options to set
+    #@option opts [String] :python_exe The python executable for 
+    #  the python version you wish to use. Can be anything in your 
+    #  execution path as well as a local or relative path.
+    #@option opts [String] :python_lib The full path to the python 
+    #  library you wish to load.
     #@return [Hash] a copy of the new options hash
-    def configure(hash={})
+    def configure(opts={})
       old_values = @options.select { |k,v| NEED_RELOAD.include? k }
 
       if block_given?
@@ -25,7 +31,7 @@ module RubyPython
           end.flatten
         end]
       end
-      @options.merge!(hash)
+      @options.merge!(opts)
 
       @reload = true if NEED_RELOAD.any? { |k| @options[k] != old_values[k] } 
       options
@@ -40,6 +46,8 @@ module RubyPython
       @options.dup
     end
 
+    #Reset the options hash.
+    #@return [void]
     def clear_options
       @options.clear
     end

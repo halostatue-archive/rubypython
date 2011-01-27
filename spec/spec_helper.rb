@@ -47,4 +47,3 @@ end
 class RubyPython::RubyPyProxy
   [:should, :should_not, :class].each { |m| reveal(m) }
 end
-

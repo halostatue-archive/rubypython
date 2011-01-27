@@ -4,11 +4,13 @@ require 'yard'
 desc "Run all examples"
 RSpec::Core::RakeTask.new('spec') do |t|
   t.pattern = 'spec/**/*_spec.rb'
+  t.rspec_opts = '-t ~@slow' unless ENV['filter'] == 'none'
 end
 
 desc "Run all examples with RCov"
 RSpec::Core::RakeTask.new('spec:rcov') do |t|
   t.pattern = 'spec/**/*.rb'
+  t.rspec_opts = '--tag ~slow:true' unless ENV['filter'] == 'none'
   t.rcov = true
   t.rcov_opts = ['--exclude', 'spec']
 end

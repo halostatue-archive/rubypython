@@ -13,6 +13,56 @@ module RubyPython
   #
   #Note: All RubyPyProxy objects become invalid when the Python interpreter
   #is halted.
+  #
+  #Calling Methods With Blocks
+  #-----------------------------
+  #Any method which is forwarded to a Python object may be called with 
+  #a block. The result of the method will passed as the argument to 
+  #that block.
+  #
+  #@example Supplying a block to a method call
+  #  irb(main):001:0> RubyPython.start
+  #  => true
+  #  irb(main):002:0> RubyPython::PyMain.float(10) do |f|
+  #  irb(main):003:1*     2*f.rubify
+  #  irb(main):004:1> end
+  #  => 20.0
+  #  irb(main):005:0> RubyPython.stop
+  #  => true
+  #
+  #
+  #Passing Procs and Methods to methods
+  #-------------------------------------
+  #RubyPython now supports passing Proc and Method objects to Python 
+  #methods. The Proc or Method object must be passed explicitly. As 
+  #seen above, supplying a block to a method will result in the return 
+  #value of the method call being passed to the block.
+  #
+  #When a Proc or Method is supplied as a callback, then arguments that 
+  #it will be called with will be wrapped Python objects.
+  #
+  #@example Passing a Proc to Python
+  #  #Python Code
+  #  def apply_callback(callback, argument):
+  #    return callback(argument)
+  #
+  #  #IRB Session
+  #  irb(main):001:0> RubyPython.start
+  #  => true
+  #  irb(main):002:0> sys = RubyPython.import 'sys'
+  #  => <module 'sys' (built-in)>
+  #  irb(main):003:0> sys.path.append('.')
+  #  => None
+  #  irb(main):004:0> sample = RubyPython.import 'sample'
+  #  => <module 'sample' from './sample.pyc'>
+  #  irb(main):005:0> callback = Proc.new do |arg|
+  #  irb(main):006:1*   arg * 2
+  #  irb(main):007:1> end
+  #  => #<Proc:0x000001018df490@(irb):5>
+  #  irb(main):008:0> sample.apply_callback(callback, 21).rubify
+  #  => 42
+  #  irb(main):009:0> RubyPython.stop
+  #
   class RubyPyProxy < BlankObject
     include Operators
 
@@ -147,7 +197,7 @@ module RubyPython
     #objects which have an \_\_iter\_\_ method may be converted using to_a.
     #
     #Note that for Dict objects, this method returns what you would get in
-    #Python, not in Ruby i.e. a_dict.to_a returns an array of the
+    #Python, not in Ruby i.e. a\_dict.to\_a returns an array of the
     #dictionary's keys.
     #@return [Array<RubyPyProxy>]
     #@example List
@@ -173,7 +223,7 @@ module RubyPython
     #    => [1, 'three']
     #    irb(main):005:0> RubyPython.stop
     #    => true
-    
+    #
     def to_a
       iter = self.__iter__
       ary = []

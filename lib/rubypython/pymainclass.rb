@@ -17,13 +17,13 @@ module RubyPython
     attr_writer :main, :builtin
     
     #@return [RubyPyModule] a proxy object wrapping the Python \__main\__
-    #namespace.
+    #  namespace.
     def main 
       @main||=RubyPython.import "__main__"
     end
     
     #@return [RubyPyModule] a proxy object wrapping the Python \__builtin\__
-    #namespace.
+    #  namespace.
     def builtin
       @builtin||=RubyPython.import "__builtin__"
     end
@@ -46,6 +46,9 @@ module RubyPython
       block ? block.call(result) : result
     end
 
+    #For internal use only. Called by {RubyPython} when the 
+    #interpreter is started or stopped so that the neccesary 
+    #preperation or cleanup can be done.
     def update(status)
       if status.equal? :stop
         @main = nil

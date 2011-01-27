@@ -10,8 +10,6 @@ module RubyPython
   #subclasses.
   class PyObject
 
-    #@private
-    #
     #This class wraps C PyObject\*s so that the Python reference count is
     #automatically decreased when the Ruby object referencing them 
     #goes out of scope.
@@ -34,6 +32,10 @@ module RubyPython
           end
         end
 
+
+        #For internal use only. Called by {RubyPython} when the 
+        #interpreter is started or stopped so that the neccesary 
+        #preperation or cleanup can be done.
         def update(status)
           current_pointers.clear if status.equal? :stop
         end

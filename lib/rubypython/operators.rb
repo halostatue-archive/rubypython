@@ -107,6 +107,9 @@ module RubyPython
       PyMain.cmp(self, other)
     end
 
+    #For internal use only. Called by {RubyPython} when the 
+    #interpreter is started or stopped so that the neccesary 
+    #preperation or cleanup can be done.
     def self.update(status)
       @@operator = nil if status.equal? :stop
     end

@@ -19,6 +19,19 @@ module RubyPython
     #@option opts [String] :python_lib The full path to the python 
     #  library you wish to load.
     #@return [Hash] a copy of the new options hash
+    #
+    #@example
+    #  irb(main):001:0> RubyPython.run do
+    #  irb(main):002:1*   RubyPython.import('sys').version.rubify.to_f
+    #  irb(main):003:1> end
+    #  => 2.7
+    #  irb(main):004:0> RubyPython.configure :python_exe => 'python2.6'
+    #  => {:python_exe=>"python2.6"}
+    #  irb(main):005:0> RubyPython.run do
+    #  irb(main):006:1*   RubyPython.import('sys').version.rubify.to_f
+    #  irb(main):007:1> end
+    #  => 2.6
+    #  
     def configure(opts={})
       old_values = @options.select { |k,v| NEED_RELOAD.include? k }
 

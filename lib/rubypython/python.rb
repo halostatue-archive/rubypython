@@ -3,6 +3,8 @@ require 'open3'
 require 'rubypython/options'
 
 module RubyPython
+  #Check to see whether the Python Library has been loaded yet. If not 
+  #then we dfer loading the library until this file has been reloaded.
   if @loaded
     #This module provides access to the Python C API functions via the Ruby ffi
     #gem. Documentation for these functions may be found [here](http://docs.python.org/c-api/). Likewise the FFI gem documentation may be found [here](http://rdoc.info/projects/ffi/ffi).

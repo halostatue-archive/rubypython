@@ -1,3 +1,8 @@
+## 0.3.2 2011-01-30
+* Major Enhancements
+  * Allow procs and methods to be passed to Ruby.
+  * Allow configuration of the loaded Python library.
+
 ## 0.3.1 2011-01-19
 * Compatability Updates
   * Cleanup of code which finds Python library thanks to Austin Ziegler.

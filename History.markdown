@@ -1,4 +1,4 @@
-## 0.3.2 2011-01-30
+## 0.3.2 2011-02-02
 * Major Enhancements
   * Allow procs and methods to be passed to Ruby.
   * Allow configuration of the loaded Python library.

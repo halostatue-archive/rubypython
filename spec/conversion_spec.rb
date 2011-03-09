@@ -1,20 +1,9 @@
 require File.dirname(__FILE__) + '/spec_helper.rb'
 
 include TestConstants
+
 describe RubyPython::Conversion do
-
   subject { RubyPython::Conversion }
-
-  before do
-    RubyPython.start
-    sys = RubyPython.import 'sys'
-    sys.path.append './spec/python_helpers'
-    @objects = RubyPython.import 'objects'
-  end
-
-  after do
-    RubyPython.stop
-  end
 
   context "when converting from Python to Ruby" do
     [
@@ -28,18 +17,17 @@ describe RubyPython::Conversion do
       ["python False", "false", false],
       ["python None", "nil", nil]
     ].each do |py_type, rb_type, output|
-      it "converts #{py_type} to #{rb_type}" do
+      it "should convert #{py_type} to #{rb_type}" do
         py_object_ptr = @objects.__send__(py_type.sub(' ', '_')).pObject.pointer
         subject.ptorObject(py_object_ptr).should == output
       end
     end
 
-    it "returns an FFI::Pointer when it cannot convert" do
+    it "should return an FFI::Pointer when it cannot convert" do
       unconvertable = @objects.RubyPythonMockObject.pObject.pointer
       subject.ptorObject(unconvertable).should be_a_kind_of(FFI::Pointer)
     end
   end
-
 
   context "when converting Ruby to Python" do
     [
@@ -54,8 +42,7 @@ describe RubyPython::Conversion do
       ["python None", "nil", nil],
       ["a function", "a proc", AProc, true]
     ].each do |py_type, rb_type, input, no_compare|
-
-      it "converts #{rb_type} to #{py_type}" do
+      it "should convert #{rb_type} to #{py_type}" do
         py_object_ptr = subject.rtopObject(input)
         unless no_compare
           output = @objects.__send__(rb_type.sub(' ', '_')).pObject.pointer
@@ -64,11 +51,8 @@ describe RubyPython::Conversion do
       end
     end
 
-    it "raises an exception when it cannot convert" do
+    it "should raise an exception when it cannot convert" do
       lambda { subject.rtopObject(Class) }.should raise_exception(subject::UnsupportedConversion)
     end
-
   end
-
-
 end

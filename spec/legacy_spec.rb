@@ -3,20 +3,6 @@ require File.dirname(__FILE__) + '/spec_helper.rb'
 include TestConstants
 
 describe 'RubyPython Legacy Mode Module' do
-
-  before do
-    RubyPython.start
-    sys = RubyPython.import 'sys'
-    path = sys.path
-    path.push './spec/python_helpers'
-    sys.path = path
-    @objects = RubyPython.import 'objects'
-  end
-
-  after do
-    RubyPython.stop
-  end
-
   before :all do
     require 'rubypython/legacy'
   end
@@ -26,7 +12,7 @@ describe 'RubyPython Legacy Mode Module' do
   end
 
   describe "when required" do
-    it "enables legacy mode" do
+    it "should enable legacy mode" do
       RubyPython.legacy_mode.should == true
     end
 
@@ -57,5 +43,4 @@ describe 'RubyPython Legacy Mode Module' do
       end
     end
   end
-
 end

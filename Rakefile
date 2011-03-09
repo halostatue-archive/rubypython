@@ -1,22 +1,28 @@
-require 'rspec/core/rake_task'
-require 'yard'
+# -*- ruby encoding: utf-8 -*-
 
-desc "Run all examples"
-RSpec::Core::RakeTask.new('spec') do |t|
-  t.pattern = 'spec/**/*_spec.rb'
-  t.rspec_opts = '-t ~@slow' unless ENV['filter'] == 'none'
+require 'rubygems'
+require 'hoe'
+
+Hoe.plugin :doofus
+Hoe.plugin :gemspec
+Hoe.plugin :git
+Hoe.plugin :hg
+
+Hoe.spec 'rubypython' do
+  developer('Steeve Morin', 'swiuzzz+rubypython@gmail.com')
+  developer('Austin Ziegler', 'austin@rubyforge.org')
+  developer('Zach Raines', 'raineszm+rubypython@gmail.com')
+
+  self.history_file = 'History.rdoc'
+  self.readme_file = 'README.rdoc'
+  self.extra_rdoc_files = FileList["*.rdoc"].to_a
+
+  self.extra_deps << ['ffi', '~> 1.0']
+  self.extra_deps << ['blankslate', '>= 2.1.2.3']
+
+  self.extra_dev_deps << ['rspec', '~> 2.0']
+  
+  self.spec_extras[:requirements]  = [ "Python, ~> 2.4" ]
 end
 
-desc "Run all examples with RCov"
-RSpec::Core::RakeTask.new('spec:rcov') do |t|
-  t.pattern = 'spec/**/*.rb'
-  t.rspec_opts = '--tag ~slow:true' unless ENV['filter'] == 'none'
-  t.rcov = true
-  t.rcov_opts = ['--exclude', 'spec']
-end
-
-YARD::Rake::YardocTask.new do |t|
-  t.options = [ '--markup','markdown', '--title', 'RubyPython Documentation' ]
-end
-
-Dir['tasks/**/*.rake'].each { |rake| load rake }
+# vim: syntax=ruby

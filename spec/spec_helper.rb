@@ -40,7 +40,7 @@ def run_python_command(cmd)
 end
 
 RSpec.configure do |config|
-  config.before(:all) do
+  config.before(:all, :self_start => nil) do
     RubyPython.start
 
     class RubyPython::RubyPyProxy

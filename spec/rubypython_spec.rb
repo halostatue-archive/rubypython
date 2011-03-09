@@ -21,7 +21,7 @@ describe RubyPython do
   end
 end
 
-describe RubyPython, :self_start => :true do
+describe RubyPython, :self_start => true do
 
   describe "#session" do
     it "should start interpreter" do

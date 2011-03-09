@@ -5,8 +5,8 @@ module RubyPython
   # A singleton object providing access to the python \_\_main\_\_ and
   # \_\_builtin\_\_ modules.  This can be conveniently accessed through the
   # already instaniated PyMain constant.  The \_\_main\_\_ namespace is
-  # searched before the \_\_builtin\_\_ namespace. As such, naming clashes will
-  # be resolved in that order.
+  # searched before the \_\_builtin\_\_ namespace. As such, naming clashes
+  # will be resolved in that order.
   #
   # ## Block Syntax
   # The PyMainClass object provides somewhat experimental block support.  A
@@ -15,22 +15,22 @@ module RubyPython
   class PyMainClass < BlankObject
     include Singleton
     attr_writer :main, :builtin
-    
-    #@return [RubyPyModule] a proxy object wrapping the Python \__main\__
-    #  namespace.
-    def main 
-      @main||=RubyPython.import "__main__"
-    end
-    
-    #@return [RubyPyModule] a proxy object wrapping the Python \__builtin\__
-    #  namespace.
-    def builtin
-      @builtin||=RubyPython.import "__builtin__"
+
+    # @return [RubyPyModule] a proxy object wrapping the Python \__main\__
+    #                        namespace.
+    def main
+      @main ||= RubyPython.import "__main__"
     end
 
-    #Delegates any method calls on this object to the Python \__main\__ or
-    #\__builtin\__ namespaces. Method call resolution occurs in that order.
-    def method_missing(name,*args,&block)
+    # @return [RubyPyModule] a proxy object wrapping the Python
+    #                        \__builtin\__ namespace.
+    def builtin
+      @builtin ||= RubyPython.import "__builtin__"
+    end
+
+    # Delegates any method calls on this object to the Python \__main\__ or
+    # \__builtin\__ namespaces. Method call resolution occurs in that order.
+    def method_missing(name, *args, &block)
       proxy = if main.respond_to?(name)
                 main
               elsif builtin.respond_to?(name)
@@ -41,21 +41,21 @@ module RubyPython
       result = if proxy.is_real_method?(name)
                  proxy.__send__(name, *args)
                else
-                 proxy.__send__(:method_missing, name,*args)
+                 proxy.__send__(:method_missing, name, *args)
                end
       block ? block.call(result) : result
     end
 
-    #For internal use only. Called by {RubyPython} when the 
-    #interpreter is started or stopped so that the neccesary 
-    #preperation or cleanup can be done.
+    # Called by RubyPython when the interpreter is started or stopped so
+    # that the neccesary preperation or cleanup can be done. For internal
+    # use only.
     def update(status)
-      if status.equal? :stop
+      case status
+      when :stop
         @main = nil
         @builtin = nil
       end
     end
-
   end
 
   PyMain = PyMainClass.instance

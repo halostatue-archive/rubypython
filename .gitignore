@@ -1,0 +1,12 @@
+spec/ldap.yml
+.rvmrc
+*.gemspec
+pkg/
+*.swp
+*.pyc
+html/
+doc/
+publish/
+coverage/
+coverage.info
+.rake_tasks~

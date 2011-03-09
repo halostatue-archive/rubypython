@@ -1,19 +1,8 @@
 require File.dirname(__FILE__) + '/spec_helper.rb'
 
+include TestConstants
+
 describe 'Callbacks' do
-  include TestConstants
-  
-  before do
-    RubyPython.start
-    @sys = RubyPython.import 'sys'
-    @sys.path.append './spec/python_helpers'
-    @objects = RubyPython.import 'objects'
-  end
-
-  after do
-    RubyPython.start
-  end
-
   [
     [ 'procs', AProc ],
     [ 'methods', AMethod]
@@ -59,5 +48,4 @@ describe 'Callbacks' do
     mockObject.callback = AProc
     mockObject.callback(2, 2).rubify.should == 4
   end
-
 end

@@ -2,19 +2,25 @@ require 'ffi'
 require 'rubypython/python'
 
 module RubyPython
-  #Contains Python C API macros reimplmented in Ruby. For internal use only.
+  # Contains Python C API macros reimplmented in Ruby. For internal use only.
   module Macros
     def self.Py_TYPE(pObjPointer)
       pStruct = Python::PyObjectStruct.new pObjPointer
       pStruct[:ob_type]
     end
 
+    # This has been modified from the C API macro to allow for multiple
+    # pointer objects to be passed. It simplifies a number of checks.
     def self.PyObject_TypeCheck(pObject, pTypePointer)
-      if Py_TYPE(pObject) == pTypePointer
-        1
-      else
-        0
+      type = self.Py_TYPE(pObject)
+
+      [ pTypePointer ].flatten.each do |pointer|
+        if type == pointer
+          return 1
+        end
       end
+
+      return 0
     end
 
     def self.Py_True

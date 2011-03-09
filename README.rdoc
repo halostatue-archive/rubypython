@@ -1,0 +1,233 @@
+= RubyPython: Python in your Ruby
+
+== Description
+
+RubyPython is a bridge between the Ruby and Python interpreters. It embeds a
+running Python interpreter in the application's process using FFI and provides
+a means for wrapping and converting Python objects.
+
+RubyPython uses FFI to marshall the data between the Ruby and Python VMs and
+make Python calls. Recently, RubyPython has added the ability to:
+
+* Inherit from Python classes;
+* Configure callbacks from Python;
+* Run Python generators (on Ruby 1.9.2 or later).
+
+== Where
+
+RubyPython can be found on {RubyForge}[http://rubypython.rubyforge.org/] and on
+{RubyGems}[http://rubygems.org/gems/rubypython]. The source for RubyPython is
+hosted both on {Bitbucket}[http://raineszm.bitbucket.org/rubypython/] and on
+{GitHub}[https://github.com/halostatue/rubypython], although the BitBucket
+repository should be considered canonical.
+
+== Synopsis
+
+=== Basic Usage
+
+  require "rubypython"
+
+  RubyPython.start # start the Python VM
+
+  cPickle = RubyPython.import("cPickle")
+  p cPickle.dumps("Testing rubypython").rubify
+
+  RubyPython.stop # stop the Python VM
+
+=== Specific Python Version
+
+  require "rubypython"
+
+  RubyPython.start(:python => "python2.7") # Can also be a full path
+
+  cPickle = RubyPython.import("cPickle")
+  p cPickle.dumps("Testing rubypython").rubify
+
+  RubyPython.stop # stop the Python VM
+
+=== VirtualEnv
+
+  # Easy
+  RubyPython.start_from_virtualenv("/path/to/virtualenv")
+
+  # Or verbose
+  RubyPython.start(:python => "/path/to/virtualenv/bin/python")
+  RubyPython.activate
+
+=== Iterator support
+
+  # Python
+  def readfile():
+    for line in open("/some/file"):
+      yield line
+
+  # Ruby
+  readfile.to_enum.each do |line|
+    puts line
+  end
+
+
+=== Python to Ruby callbacks
+
+  # Python
+  def dosomething(callback):
+    print callback(5)
+
+  # Ruby
+  dosomething(lambda do |value|
+    value * 2
+  end)
+
+  def mycallback(value)
+    return value * 2
+  end
+
+  dosomething(method(:mycallback))
+
+=== Python-style Generators
+
+  # Python
+  def test_generator(callback):
+    for i in callback():
+      print "Got %d" % i
+
+  # Ruby
+  test_generator(RubyPython.generator do
+    (0..10).each do |i|
+      RubyPython.yield i
+    end
+  end)
+
+== Features / Problems
+
+=== Features
+
+* Can handle simple conversion of Python builtin types to Ruby builtin types
+  and vice versa
+* Can import Python modules
+* Can execute arbitrary methods on imported modules and return the result
+* Python objects can be treated as Ruby objects!
+* Python's standard library available to you from within Ruby.
+* Pass Ruby methods and procs as callbacks and call them from within Python
+  code.
+* Specify the python executable to be loaded, including virtualenv.
+
+=== Known Problems
+
+* Builtin Python methods which require a top level frame object (eval, dir,
+  ...) do not work properly at present.
+* There is no support for passing complicated (non-basic) Ruby types to Python.
+
+== Supported Versions
+
+=== Python
+RubyPython is known to work with the C-based Python interpreter, versions 2.4 through
+2.7; no work has yet been done to enable Python 3.0 support or to work with
+alternative Python implementations.
+
+=== Ruby
+RubyPython is known to work with the C-based (MRI) Ruby interpreter on versions 1.8.7
+and 1.9.2. However, it uses Ruby-FFI, so it may work with other implementations
+without modification.
+
+== What's planned
+There are features that are not currently supported in RubyPython that may be
+considered for future releases, dependent on need, interest, and solutions.
+
+=== Simpler Imports
+It might be nice to have some nice import helpers provided by RubyPython to make the
+interface more seamless and provide advanced import features:
+
+==== Import Aliasing
+
+  # Python
+  from mod2.mod1 import sym as mysym
+
+  # Ruby
+  py :from => "mod2.mod1", :import => "sym", :as => "mysym"
+  py :from => "mod2.mod1", :import => :sym, :as => :mysym
+  py :from => [ :mod2, :mod1 ], :import => :sym, :as => :mysym
+
+  # Python
+  import mod1 as mymod
+
+  # Ruby
+  py :import => "mod1", :as => "mymod"
+  py :import => :mod1, :as => :mymod
+
+  # Python
+  from mod2.mod1 import *
+
+  # Ruby
+  py :from => "mod2.mod1", :import => :*
+  pyrequire "mod2/mod1" # ruby style imports
+
+=== Python named arguments
+
+  # Python
+  def foo(arg1, arg2):
+    pass
+
+  # Ruby
+  foo(:arg2 => "bar2", :arg1 => "bar1")
+
+  # with Ruby 1.9
+  foo(arg2: "bar2", arg1: "bar1")
+
+=== Catch Exceptions from Ruby
+
+  # Python
+  class MyFirstException(Exception):
+    pass
+
+  class MySecondException(MyFirstException):
+    pass
+
+  def test():
+    raise MySecondException
+
+  # Ruby
+  begin
+    test
+  rescue MyFirstException => e
+    # We may need to work out name collisions
+    puts e.message
+  end
+
+== Requirements
+
+* Python >= 2.4, < 3.0
+* Ruby >= 1.8.6
+* You must be able to build the ffi gem under your environment.
+
+Note: RubyPython has been tested on Mac OS 10.5, Mac OS 10.6, and Ubuntu 10.10
+(64-bit Intel).
+
+== Install
+    gem install rubypython
+
+== License
+See License.rdoc for full details.
+
+(The MIT License)
+
+Copyright 2011 Zach Raines, Steeve Morin, and Austin Ziegler
+Copyright 2008–2010 Zach Raines
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the 'Software'), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
+so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

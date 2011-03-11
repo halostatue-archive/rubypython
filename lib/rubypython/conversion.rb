@@ -10,7 +10,8 @@ module RubyPython::Conversion
 
   # Convert a Ruby string to a Python string.
   def self.rtopString(rString)
-    RubyPython::Python.PyString_FromString(rString)
+    size = rString.respond_to?(:bytesize) ? rString.bytesize : rString.size
+    RubyPython::Python.PyString_FromStringAndSize(rString, size)
   end
 
   # Convert a Ruby Array to Python List
@@ -125,7 +126,23 @@ module RubyPython::Conversion
 
   # Convert a Python String to a Ruby String
   def self.ptorString(pString)
-    RubyPython::Python.PyString_AsString(pString)
+    strPtr  = FFI::MemoryPointer.new(:buffer_in)
+    sizePtr = FFI::MemoryPointer.new(:ssize_t)
+
+    RubyPython::Python.PyString_AsStringAndSize(pString, strPtr, sizePtr)
+
+    size = case FFI.find_type(:ssize_t)
+           when FFI.find_type(:long)
+             sizePtr.read_long
+           when FFI.find_type(:int)
+             sizePtr.read_int
+           when FFI.find_type(:long_long)
+             sizePtr.read_long_long
+           else
+             nil
+           end
+
+    strPtr.read_pointer.read_string(size)
   end
 
   # Convert a Python List to a Ruby Array.

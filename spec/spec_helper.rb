@@ -12,7 +12,7 @@ require 'rubypython'
 
 module TestConstants
   # REDEFINE THESE SO THEY ARE VISIBILE
-  AString = "STRING"
+  AString = "STRING\0WITH\0NULLS"
   AnInt = 1
   AChar = 'a'
   AFloat = 1.0

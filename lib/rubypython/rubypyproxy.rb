@@ -123,21 +123,22 @@ module RubyPython
         end
       end
 
-      if name =~ /=/
+      setter = kwargs = false
+
+      if name =~ /=$/
         setter = true
         name.chomp! "="
-      else
-        setter = false
+      elsif name =~ /!$/
+        kwargs = true
+        name.chomp! "!"
       end
 
       if !@pObject.hasAttr(name) and !setter
         raise NoMethodError.new(name)
       end
 
-      args = PyObject.convert(*args)
-
       if setter
-        return @pObject.setAttr(name, args[0])
+        return @pObject.setAttr(name, PyObject.convert(*args)[0])
       end
 
       pFunc = @pObject.getAttr(name)
@@ -146,8 +147,17 @@ module RubyPython
         if args.empty? and pFunc.class?
           pReturn = pFunc
         else
+          if kwargs and args.last.is_a?(Hash)
+            pKeywords = *PyObject.convert(args.pop)
+          end
+
+          args = PyObject.convert(*args)
           pTuple = PyObject.buildArgTuple(*args)
-          pReturn = pFunc.callObject(pTuple)
+          pReturn = if pKeywords
+            pFunc.callObjectKeywords(pTuple, pKeywords)
+          else
+            pFunc.callObject(pTuple)
+          end
           if PythonError.error?
             raise PythonError.handle_error
           end

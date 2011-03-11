@@ -62,6 +62,7 @@ if RubyPython.loaded?
 
     attach_function :PyObject_Compare, [:pointer, :pointer], :int
 
+    attach_function :PyObject_Call, [:pointer, :pointer, :pointer], :pointer
     attach_function :PyObject_CallObject, [:pointer, :pointer], :pointer
     attach_function :PyCallable_Check, [:pointer], :int
 

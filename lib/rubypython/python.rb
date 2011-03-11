@@ -69,6 +69,8 @@ if RubyPython.loaded?
     # String Methods
     attach_function :PyString_AsString, [:pointer], :string
     attach_function :PyString_FromString, [:string], :pointer
+    attach_function :PyString_AsStringAndSize, [:pointer, :pointer, :pointer], :int
+    attach_function :PyString_FromStringAndSize, [:buffer_out, :ssize_t], :pointer
 
     # List Methods
     attach_function :PyList_GetItem, [:pointer, :int], :pointer

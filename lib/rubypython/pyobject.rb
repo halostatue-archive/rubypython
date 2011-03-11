@@ -100,6 +100,17 @@ class RubyPython::PyObject
   # Calls the wrapped RubyPython::Python object with the supplied arguments.
   # @param [PyObject] rbPyArgs a {PyObject} wrapping a tuple of the
   # supplied arguments
+  # @param [PyObject] rbPyKeywords a {PyObject} wrapping keyword arguments.
+  # @return [PyObject] a {PyObject} wrapper around the returned object
+  # (this may be NULL).
+  def callObjectKeywords(rbPyArgs, rbPyKeywords)
+    pyReturn = RubyPython::Python.PyObject_Call(@pointer, rbPyArgs.pointer, rbPyKeywords.pointer)
+    self.class.new pyReturn
+  end
+
+  # Calls the wrapped RubyPython::Python object with the supplied arguments.
+  # @param [PyObject] rbPyArgs a {PyObject} wrapping a tuple of the
+  # supplied arguments
   # @return [PyObject] a {PyObject} wrapper around the returned object
   # (this may be NULL).
   def callObject(rbPyArgs)

@@ -97,7 +97,7 @@ module RubyPython
     #     RubyPython.stop
     #
     # @example
-    #     RubyPython.start(:python => 'python2.7')
+    #     RubyPython.start(:python_exe => 'python2.7')
     #     sys = RubyPython.import 'sys'
     #     p sys.version # => "2.7.1"
     #     RubyPython.stop

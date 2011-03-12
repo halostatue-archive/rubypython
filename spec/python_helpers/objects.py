@@ -34,7 +34,8 @@ an_int = 1
 a_char = 'a'
 a_float = 1.0
 a_symbol = 'sym'
-a_string = "STRING\0WITH\0NULLS"
+a_string = "STRING"
+a_string_with_nulls = "STRING\0WITH\0NULLS"
 an_array = a_list = [an_int, a_char, a_float, a_string]
 a_hash = a_dict = { an_int: an_int, a_char: a_char, a_symbol: a_float,
     a_string: a_string }

@@ -126,7 +126,7 @@ module RubyPython::Conversion
 
   # Convert a Python String to a Ruby String
   def self.ptorString(pString)
-    strPtr  = FFI::MemoryPointer.new(:buffer_in)
+    strPtr  = FFI::MemoryPointer.new(:pointer)
     sizePtr = FFI::MemoryPointer.new(:ssize_t)
 
     RubyPython::Python.PyString_AsStringAndSize(pString, strPtr, sizePtr)

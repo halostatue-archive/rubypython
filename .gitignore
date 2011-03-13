@@ -11,3 +11,4 @@ coverage/
 coverage.info
 .rake_tasks~
 .DS_Store
+website/index.html

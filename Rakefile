@@ -97,4 +97,6 @@ namespace :website do
   end
 end
 
+task "docs" => "website:build"
+
 # vim: syntax=ruby

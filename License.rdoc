@@ -2,10 +2,9 @@
 
 This software is available under the terms of the MIT license.
 
-== \RubyPython
-
-Copyright 2011 Zach Raines, Steeve Morin, and Austin Ziegler
-Copyright 2008–2010 Zach Raines
+* Copyright 2011 Zach Raines, Steeve Morin, Austin Ziegler, and other
+  contributors.
+* Copyright 2008–2010 Zach Raines.
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the

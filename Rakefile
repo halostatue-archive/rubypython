@@ -21,8 +21,80 @@ Hoe.spec 'rubypython' do
   self.extra_deps << ['blankslate', '>= 2.1.2.3']
 
   self.extra_dev_deps << ['rspec', '~> 2.0']
+  self.extra_dev_deps << ['tilt', '~> 1.0']
   
   self.spec_extras[:requirements]  = [ "Python, ~> 2.4" ]
+end
+
+namespace :website do
+  desc "Build the website files."
+  task :build => [ "website/index.html" ]
+
+  deps = FileList["website/**/*"].exclude { |f| File.directory? f }
+  deps.include(*%w(Rakefile))
+  deps.include(*FileList["*.rdoc"].to_a)
+  deps.exclude(*%w(website/index.html website/images/*))
+
+  file "website/index.html" => deps do |t|
+    require 'tilt'
+    require 'rubypython'
+
+    puts "Generating #{t.name}…"
+
+    # Let's modify the rdoc for presenation purposes.
+    body_rdoc = File.read("README.rdoc")
+
+    contrib = File.read("Contributors.rdoc").gsub(/^=/, '==')
+    body_rdoc.gsub!(/^== Contributors.*== /m) { "#{contrib}\n\n== " }
+
+    license = File.read("License.rdoc").gsub(/^=/, '==')
+    body_rdoc.sub!(/^== License.*\Z/m, license)
+    toc_elements = body_rdoc.grep(/^(=+) (.*)$/) { [ $1.count('='), $2 ] }
+    body_rdoc.gsub!(/^(=.*)/) { "#{$1.downcase}" }
+    body = Tilt::RDocTemplate.new(nil) { body_rdoc }.render
+
+    title = nil
+    body.gsub!(%r{<h1>(.*)</h1>}) { title = $1; "" }
+
+    toc_elements = toc_elements.select { |e| e[0].between?(2, 3) }
+
+    last_level = 0
+    toc = ""
+
+    toc_elements.each do |element|
+      level, text = *element
+      ltext = text.downcase
+      id = text.downcase.gsub(/[^a-z]+/, '-')
+
+      body.gsub!(%r{<h#{level}>#{ltext}</h#{level}>}) {
+        %Q(<h#{level} id="#{id}">#{ltext}</h#{level}>)
+      }
+
+      if last_level != level
+        if level > last_level
+          toc << "<ol>"
+        else
+          toc << "</li></ol></li>"
+        end
+
+        last_level = level
+      end
+
+      toc << %Q(<li><a href="##{id}">#{text}</a>)
+    end
+    toc << "</li></ol>"
+
+    template = Tilt.new("website/index.rhtml", :trim => "<>%")
+    context = {
+      :title => title,
+      :toc => toc,
+      :body => body,
+      :download => "http://rubyforge.org/frs/?group_id=6737",
+      :version => RubyPython::VERSION,
+      :modified => Time.now
+    }
+    File.open(t.name, "w") { |f| f.write template.render(self, context) }
+  end
 end
 
 # vim: syntax=ruby

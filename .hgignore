@@ -10,3 +10,4 @@ ext/*/Makefile
 *.swp
 .yardoc/*
 .DS_Store
+website/index.html

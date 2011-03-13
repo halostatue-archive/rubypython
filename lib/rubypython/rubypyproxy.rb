@@ -148,7 +148,7 @@ module RubyPython
           pReturn = pFunc
         else
           if kwargs and args.last.is_a?(Hash)
-            pKeywords = *PyObject.convert(args.pop)
+            pKeywords = PyObject.convert(args.pop).first
           end
 
           args = PyObject.convert(*args)

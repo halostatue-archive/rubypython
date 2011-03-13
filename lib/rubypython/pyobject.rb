@@ -146,9 +146,9 @@ class RubyPython::PyObject
   # callable.
   def function_or_method?
     check = RubyPython::Macros.PyObject_TypeCheck(@pointer, [
-                                            RubyPython::Python.PyFunction_Type.to_ptr,
-                                            RubyPython::Python.PyCFunction_Type.to_ptr,
-                                            RubyPython::Python.PyMethod_Type.to_ptr
+      RubyPython::Python.PyFunction_Type.to_ptr,
+      RubyPython::Python.PyCFunction_Type.to_ptr,
+      RubyPython::Python.PyMethod_Type.to_ptr
     ])
     check != 0
   end

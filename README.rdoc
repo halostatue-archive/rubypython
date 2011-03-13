@@ -98,6 +98,18 @@ repository should be considered canonical.
     end
   end)
 
+=== Python named arguments (experimental!)
+
+  # Python
+  def foo(arg1, arg2):
+    pass
+
+  # Ruby
+  foo!(:arg2 => "bar2", :arg1 => "bar1")
+
+  # with Ruby 1.9
+  foo!(arg2: "bar2", arg1: "bar1")
+
 == Features / Problems
 
 === Features
@@ -161,18 +173,6 @@ interface more seamless and provide advanced import features:
   # Ruby
   py :from => "mod2.mod1", :import => :*
   pyrequire "mod2/mod1" # ruby style imports
-
-=== Python named arguments
-
-  # Python
-  def foo(arg1, arg2):
-    pass
-
-  # Ruby
-  foo(:arg2 => "bar2", :arg1 => "bar1")
-
-  # with Ruby 1.9
-  foo(arg2: "bar2", arg1: "bar1")
 
 === Catch Exceptions from Ruby
 

@@ -3,15 +3,19 @@
 == Description
 
 RubyPython is a bridge between the Ruby and Python interpreters. It embeds a
-running Python interpreter in the application's process using FFI and provides
-a means for wrapping and converting Python objects.
+running Python interpreter in the Ruby application's process using FFI and
+provides a means for wrapping, converting, and calling Python objects and
+methods.
 
 RubyPython uses FFI to marshall the data between the Ruby and Python VMs and
 make Python calls. Recently, RubyPython has added the ability to:
 
-* Inherit from Python classes;
-* Configure callbacks from Python;
+* Inherit from Python classes.
+* Configure callbacks from Python.
 * Run Python generators (on Ruby 1.9.2 or later).
+
+New in this release is an experimental method to call Python methods that use
+named parameters or expect keyword arguments.
 
 == Where
 
@@ -33,6 +37,12 @@ repositories in sync.
 
 == Synopsis
 
+RubyPython is fairly easy to start using; there are three phases to its use:
+
+1. Start the Python VM (+RubyPython.start+).
+2. Import the Python methods or modules required (+RubyPython.import+).
+3. Stop the Python VM (+RubyPython.stop+).
+
 === Basic Usage
 
   require "rubypython"
@@ -48,7 +58,7 @@ repositories in sync.
 
   require "rubypython"
 
-  RubyPython.start(:python => "python2.7") # Can also be a full path
+  RubyPython.start(:python_exe => "python2.7") # Can also be a full path
 
   cPickle = RubyPython.import("cPickle")
   p cPickle.dumps("Testing rubypython").rubify

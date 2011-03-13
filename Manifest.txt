@@ -3,6 +3,7 @@
 .hgignore
 .hgtags
 .rspec
+Contributors.rdoc
 History.rdoc
 License.rdoc
 Manifest.txt

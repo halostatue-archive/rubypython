@@ -164,6 +164,14 @@ describe RubyPython::RubyPyProxy do
       urllib2 = RubyPython.import('urllib2')
       urllib2.Request.should be_a(RubyPython::RubyPyClass)
     end
+
+    it "should pass through keyword arguments via bang method" do
+      builtinProxy = described_class.new @builtin
+      builtinProxy.dict!({'dict'=>'val'}, :keyword=>true).rubify.should == {
+        'dict' => 'val',
+        'keyword' => true
+      }
+    end
   end
 
   describe "when used with an operator" do

@@ -165,6 +165,10 @@ describe RubyPython::RubyPyProxy do
       urllib2.Request.should be_a(RubyPython::RubyPyClass)
     end
 
+    it "should pass named args via bang method" do
+      @objects.named_args!(:arg2 => 2, :arg1 => 1).rubify.should == [4,2]
+    end
+
     it "should pass through keyword arguments via bang method" do
       builtinProxy = described_class.new @builtin
       builtinProxy.dict!({'dict'=>'val'}, :keyword=>true).rubify.should == {

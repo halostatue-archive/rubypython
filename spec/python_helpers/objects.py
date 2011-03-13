@@ -6,6 +6,9 @@ def identity(object):
 def apply_callback(callback, args):
     return callback(*args)
 
+def named_args(arg1, arg2):
+  return [arg2*2, arg1*2]
+
 class RubyPythonMockObject:
   STRING = "STRING"
   STRING_LIST = ["STRING1", "STRING2"]

@@ -64,7 +64,6 @@ class RubyPython::PythonExec
 
     # Remove redundant locations
     locations.uniq!
-pp locations
 
     library = nil
 

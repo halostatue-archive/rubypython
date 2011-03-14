@@ -2,16 +2,18 @@
 # RubyPython::Python. For internal use only.
 class RubyPython::PythonExec
   def initialize(python_executable)
-    @python = python_executable
-    if @python.nil?
-      @python = %x(python -c "import sys; print sys.executable").chomp
-    end
+    @python = python_executable || "python"
+    @python = %x(#{@python} -c "import sys; print sys.executable").chomp
 
     @version = run_command 'import sys; print "%d.%d" % sys.version_info[:2]'
-    @realname = "#{@python}#{@version}"
+
+    @realname = @python.dup
+    if @realname !~ /#{@version}$/
+      @realname = "#{@python}#{@version}"
+    end
+
     @sys_prefix = run_command 'import sys; print sys.prefix'
     @library = find_python_lib
-    self.freeze
   end
 
   def find_python_lib
@@ -80,13 +82,28 @@ class RubyPython::PythonExec
   attr_reader :sys_prefix
   # The Python library.
   attr_reader :library
+  #  The version
+  attr_reader :version
 
   # Run a Python command-line command.
   def run_command(command)
-    %x(#{@python} -c '#{command}').chomp
+    %x(#{@python} -c '#{command}').chomp if @python
   end
 
   def to_s
     @realname
   end
+
+  def inspect
+    if @python
+      "#<#{realname} #{sys_prefix}>"
+    else
+      "#<invalid interpreter>"
+    end
+  end
+
+  def invalidate!
+    @python = @version = @realname = @sys_prefix = @library = nil
+  end
+  private :invalidate!
 end

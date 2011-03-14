@@ -11,6 +11,7 @@ class RubyPython::PythonExec
     if @realname !~ /#{@version}$/
       @realname = "#{@python}#{@version}"
     end
+    @basename = File.basename(@realname)
 
     @sys_prefix = run_command 'import sys; print sys.prefix'
     @library = find_python_lib
@@ -19,7 +20,7 @@ class RubyPython::PythonExec
   def find_python_lib
     # By default, the library name will be something like
     # libpython2.6.so, but that won't always work.
-    libbase = "#{FFI::Platform::LIBPREFIX}#{@realname}"
+    libbase = "#{FFI::Platform::LIBPREFIX}#{@basename}"
     libext = FFI::Platform::LIBSUFFIX
     libname = "#{libbase}.#{libext}"
 
@@ -41,17 +42,20 @@ class RubyPython::PythonExec
 
     if FFI::Platform.unix?
       # On Unixes, let's look in some standard alternative places, too.
-      # Just in case.
-      locations << File.join("/opt/local/lib", libname)
-      locations << File.join("/opt/lib", libname)
-      locations << File.join("/usr/local/lib", libname)
-      locations << File.join("/usr/lib", libname)
+      # Just in case. Some Unixes don't include a .so symlink when they
+      # should, so let's look for the base case of .so.1, too.
+      [ libname, "#{libname}.1" ].each do |name|
+        locations << File.join("/opt/local/lib", name)
+        locations << File.join("/opt/lib", name)
+        locations << File.join("/usr/local/lib", name)
+        locations << File.join("/usr/lib", name)
+      end
     end
 
     # Let's add alternative extensions; again, just in case.
     locations.dup.each do |location|
       path = File.dirname(location)
-      base = File.basename(location, libext)
+      base = File.basename(location, ".#{libext}")
       locations << File.join(path, "#{base}.so")    # Standard Unix
       locations << File.join(path, "#{base}.dylib") # Mac OS X
       locations << File.join(path, "#{base}.dll")   # Windows
@@ -60,6 +64,7 @@ class RubyPython::PythonExec
 
     # Remove redundant locations
     locations.uniq!
+pp locations
 
     library = nil
 

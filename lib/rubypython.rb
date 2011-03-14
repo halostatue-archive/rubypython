@@ -1,6 +1,11 @@
-# This module provides the direct user interface for the RubyPython library.
+# RubyPython is a bridge between the Ruby and Python interpreters. It embeds
+# a running Python interpreter in the Ruby application's process using FFI
+# and provides a means for wrapping, converting, and calling Python objects
+# and methods.
 #
-# RubyPython interfaces to the Python C API via the {Python} module using the Ruby
+# RubyPython wraps the Python C API (in RubyPython::Python) with the Ruby
+# FFI library. 
+# via the {Python} module using the Ruby
 # FFI gem. However, the end user should only worry about dealing with the
 # methods made avaiable via the RubyPython module.
 #
@@ -29,9 +34,11 @@
 module RubyPython
   VERSION = '0.5.0'
 
-  # Indicates whether the Python DLL has been loaded.
-  def self.loaded?
-    @loaded
+  @load_ffi = false
+
+  # Indicates whether the Python DLL has been load_ffi.
+  def self.load_ffi?
+    @load_ffi
   end
 end
 
@@ -109,19 +116,20 @@ module RubyPython
     def start(options = {})
       RubyPython.configure(options)
 
-      unless @loaded
-        @loaded = true
+      unless @load_ffi
+        @load_ffi = true
+        @reload = false
         reload_library
       end
 
-      return false if Python.Py_IsInitialized != 0
+      return false if RubyPython::Python.Py_IsInitialized != 0
 
       if @reload
         reload_library
         @reload = false
       end
 
-      Python.Py_Initialize
+      RubyPython::Python.Py_Initialize
       notify :start
       true
     end
@@ -149,10 +157,14 @@ module RubyPython
     #
     # @return [RubyPyModule] a proxy object wrapping the requested module
     def import(mod_name)
-      pModule = Python.PyImport_ImportModule mod_name
-      raise PythonError.handle_error if PythonError.error?
-      pymod = PyObject.new pModule
-      RubyPyModule.new(pymod)
+      if defined? Python.Py_IsInitialized and Python.Py_IsInitialized != 0
+        pModule = Python.PyImport_ImportModule mod_name
+        raise PythonError.handle_error if PythonError.error?
+        pymod = PyObject.new pModule
+        RubyPyModule.new(pymod)
+      else
+        raise "Python has not been started."
+      end
     end
 
     # Execute the given block, starting the Python interperter before its
@@ -217,11 +229,16 @@ module RubyPython
       result
     end
 
+    # Returns information about the currently active Python interpreter.
+    def python
+      RubyPython::Python::EXEC
+    end
+
     # Used to activate the virtualenv.
     def activate
       imp = import("imp")
       imp.load_source("activate_this",
-                      File.join(File.dirname(RubyPython::Python::PYTHON.python),
+                      File.join(File.dirname(RubyPython::Python::EXEC.python),
                       "activate_this.py"))
     end
     private :activate
@@ -234,15 +251,19 @@ module RubyPython
     private :add_observer
 
     def notify(status)
-      if not @observers.nil?
-        @observers.each do |o|
-          o.update status
-        end
+      @observers ||= []
+      @observers.each do |o|
+        next if nil === o
+        o.update status
       end
     end
     private :notify
 
     def reload_library
+      # Invalidate the current Python instance, if defined.
+      if defined? RubyPython::Python::EXEC and RubyPython::Python::EXEC
+        RubyPython::Python::EXEC.instance_eval { invalidate! }
+      end
       remove_const :Python
       load RubyPython::PYTHON_RB
       true

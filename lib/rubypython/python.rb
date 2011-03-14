@@ -11,7 +11,7 @@ module RubyPython
   module Python; end
 end
 
-if RubyPython.loaded?
+if RubyPython.load_ffi?
   # This module provides access to the Python C API functions via the Ruby
   # ffi gem. Documentation for these functions may be found
   # [here](http://docs.python.org/c-api/). Likewise the FFI gem
@@ -19,12 +19,12 @@ if RubyPython.loaded?
   module RubyPython::Python
     extend FFI::Library
 
-    PYTHON = RubyPython::PythonExec.new(RubyPython.options[:python_exe])
+    EXEC = RubyPython::PythonExec.new(RubyPython.options[:python_exe])
 
-    PYTHON_LIB = PYTHON.library
+    PYTHON_LIB = EXEC.library
     # FFI::DynamicLibrary::RTLD_LAZY | FFI::DynamicLibrary::RTLD_GLOBAL
     ffi_lib_flags :lazy, :global
-    ffi_lib PYTHON.library
+    ffi_lib EXEC.library
 
     # The class is a little bit of a hack to extract the address of global
     # structs. If someone knows a better way please let me know.

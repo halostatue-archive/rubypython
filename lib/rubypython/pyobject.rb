@@ -227,8 +227,8 @@ class RubyPython::PyObject
   # tuple.
   # @return [PyObject<tuple>]
   def self.buildArgTuple(*args)
-    pList = RubyPython::PyObject.newList(*args)
-    pTuple = RubyPython::PyObject.makeTuple(pList)
+    pList = newList(*args)
+    pTuple = makeTuple(pList)
     pList.xDecref
     pTuple
   end

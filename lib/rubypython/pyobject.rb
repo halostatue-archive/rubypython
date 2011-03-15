@@ -210,7 +210,7 @@ class RubyPython::PyObject
   # Converts the supplied arguments to PyObject instances.
   # @return [Array<PyObject>]
   def self.convert(*args)
-    args.map! do |arg|
+    args.map do |arg|
       if arg.kind_of? RubyPython::PyObject
         arg
       elsif arg.kind_of? RubyPython::RubyPyProxy

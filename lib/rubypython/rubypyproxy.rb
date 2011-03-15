@@ -151,6 +151,7 @@ module RubyPython
             pKeywords = PyObject.convert(args.pop).first
           end
 
+          orig_args = args
           args = PyObject.convert(*args)
           pTuple = PyObject.buildArgTuple(*args)
           pReturn = if pKeywords
@@ -158,6 +159,18 @@ module RubyPython
           else
             pFunc.callObject(pTuple)
           end
+
+          # cleanup unused python vars instead of waiting on ruby's GC to do it.
+          pFunc.xDecref
+          pTuple.xDecref
+          pKeywords.xDecref if pKeywords
+          orig_args.each_with_index do |arg, i|
+            # only decref objects that were created in PyObject.convert
+            if !arg.kind_of?(RubyPython::PyObject) and !arg.kind_of?(RubyPython::RubyPyProxy)
+              args[i].xDecref
+            end
+          end
+
           if PythonError.error?
             raise PythonError.handle_error
           end

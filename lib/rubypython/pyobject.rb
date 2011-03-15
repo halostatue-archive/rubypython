@@ -200,6 +200,7 @@ class RubyPython::PyObject
     rbList = self.new RubyPython::Python.PyList_New(args.length)
 
     args.each_with_index do |el, i|
+      el.xIncref # PyList_SetItem steals references!
       RubyPython::Python.PyList_SetItem rbList.pointer, i, el.pointer
     end
 

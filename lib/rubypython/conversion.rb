@@ -152,6 +152,7 @@ module RubyPython::Conversion
 
     list_size.times do |i|
       element = RubyPython::Python.PyList_GetItem(pList, i)
+      # PyList_GetItem returns borrowed ref
       RubyPython::Python.Py_IncRef element
       rObject = ptorObject(element)
       rb_array.push rObject

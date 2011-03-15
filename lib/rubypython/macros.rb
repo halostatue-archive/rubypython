@@ -4,6 +4,11 @@ require 'rubypython/python'
 module RubyPython
   # Contains Python C API macros reimplmented in Ruby. For internal use only.
   module Macros
+    def self.Py_REFCNT(pObjPointer)
+      pStruct = Python::PyObjectStruct.new pObjPointer
+      pStruct[:ob_refcnt]
+    end
+
     def self.Py_TYPE(pObjPointer)
       pStruct = Python::PyObjectStruct.new pObjPointer
       pStruct[:ob_type]

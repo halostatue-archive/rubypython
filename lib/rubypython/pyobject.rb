@@ -28,7 +28,8 @@ class RubyPython::PyObject
       # would need to the use this method directly.
       def release(pointer)
         obj_id = pointer.object_id
-        if @current_pointers.delete(obj_id) and (RubyPython::Python.Py_IsInitialized != 0)
+        deleted = @current_pointers.delete(obj_id)
+        if deleted and (RubyPython::Python.Py_IsInitialized != 0)
           RubyPython::Python.Py_DecRef pointer
         end
       end

@@ -1,17 +1,25 @@
 === 0.5.0 / 2011-03-dd
 * Major Enhancements:
-  * Python to Ruby inheritance: It's now possible for a Ruby class to inherit
-    from a Python class. [steeve]
+  * Python to Ruby inheritance: A Ruby class can inherit from a Python class.
+    [steeve]
   * Procs and methods can be passed to Ruby. [raineszm]
-  * The Python library can now be reloaded. [raineszm]
+  * The Python library can now be reloaded (EXPERIMENTAL). There is a good
+    chance of a segfault if this is used with a native extension. [raineszm]
+  * Python functions and methods can be called with a terminal exclamation
+    point to enable keyword argument processing in Python. [tmm1]
 * Minor Enhancements:
   * Improved Python generator support. [steeve]
   * PythonError now inherits from RuntimeError. [halostatue]
+  * Added a Py_REFCNT macro for debugging reference counting. [tmm1]
 * Changes:
   * Moved to RSpec2. [halostatue]
   * Moved Rakefile to hoe; added autotest. [halostatue]
 * Bug Fixes:
   * Fixed a reference counting bug that could crash the Python VM. [steeve]
+  * Fixed a memory leak/reference counting bug related to method invocation
+    (when turning the argument list into a tuple, PyList_SetItem steals
+    references). Depends on FFI 1.0.7 (or higher) with modifications to
+    aggressively free temporary Python objects created. [tmm1]
   * Restored Ruby 1.8.7 compatibility where possible. [halostatue]
   * Fixed FFI loader to be more robust and do more through FFI. [halostatue]
   * Fixed documentation errors. [halostatue]

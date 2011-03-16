@@ -44,12 +44,14 @@ namespace :website do
     # Let's modify the rdoc for presenation purposes.
     body_rdoc = File.read("README.rdoc")
 
-    contrib = File.read("Contributors.rdoc").gsub(/^=/, '==')
-    body_rdoc.gsub!(/^== Contributors.*== /m) { "#{contrib}\n\n== " }
+    contrib = File.read("Contributors.rdoc")
+    body_rdoc.gsub!(/^:include: Contributors.rdoc/, contrib)
 
-    license = File.read("License.rdoc").gsub(/^=/, '==')
-    body_rdoc.sub!(/^== License.*\Z/m, license)
+    license = File.read("License.rdoc")
+    body_rdoc.sub!(/^:include: License.rdoc/, license)
     toc_elements = body_rdoc.grep(/^(=+) (.*)$/) { [ $1.count('='), $2 ] }
+    toc_elements << [ 2, 'Contributors' ]
+    toc_elements << [ 2, 'License' ]
     body_rdoc.gsub!(/^(=.*)/) { "#{$1.downcase}" }
     body = Tilt::RDocTemplate.new(nil) { body_rdoc }.render
 
@@ -93,8 +95,7 @@ namespace :website do
       :version => RubyPython::VERSION,
       :modified => Time.now
     }
-    File.open(t.name, "w") { |f| f.write template.render(self, context) }
-  end
+    File.open(t.name, "w") { |f| f.write template.render(self, context) } end
 end
 
 task "docs" => "website:build"

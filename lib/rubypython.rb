@@ -1,43 +1,29 @@
-# RubyPython is a bridge between the Ruby and Python interpreters. It embeds
-# a running Python interpreter in the Ruby application's process using FFI
-# and provides a means for wrapping, converting, and calling Python objects
+# RubyPython is a bridge between the Ruby and \Python interpreters. It
+# embeds a \Python interpreter in the Ruby application's process using FFI
+# and provides a means for wrapping, converting, and calling \Python objects
 # and methods.
 #
-# RubyPython wraps the Python C API (in RubyPython::Python) with the Ruby
-# FFI library. 
-# via the {Python} module using the Ruby
-# FFI gem. However, the end user should only worry about dealing with the
-# methods made avaiable via the RubyPython module.
+# == Usage
+# The \Python interpreter must be started before the RubyPython bridge is
+# functional. The user can either manually manage the running of the
+# interpreter as shown below, or use the +RubyPython.run+ or
+# +RubyPython.session+ methods to automatically start and stop the
+# interpreter.
 #
-# Usage
-# -----
-# It is important to remember that the Python Interpreter must be started
-# before the bridge is functional.  This will start the embedded
-# interpreter. If this approach is used, the user should remember to call
-# RubyPython.stop when they are finished with Python.
-#
-# @example
-#     RubyPython.start
-#     cPickle = RubyPython.import "cPickle"
-#     puts cPickle.dumps("RubyPython is awesome!").rubify
-#     RubyPython.stop
-#
-# Legacy Mode vs Normal Mode
-# ---------------------------
-# By default RubyPython always returns a proxy class which refers method calls to
-# the wrapped Python object. If you instead would like RubyPython to aggressively
-# attempt conversion of return values, as it did in RubyPython 0.2.x, then you
-# should set {RubyPython.legacy_mode} to true. In this case RubyPython will attempt to
-# convert any return value from Python to a native Ruby type, and only
-# return a proxy if conversion is not possible. For further examples see
-# {RubyPython.legacy_mode}.
+#   RubyPython.start
+#   cPickle = RubyPython.import "cPickle"
+#   puts cPickle.dumps("RubyPython is awesome!").rubify
+#   RubyPython.stop
 module RubyPython
-  VERSION = '0.5.0'
+  VERSION = '0.5.0' #:nodoc:
 
+  # Do not load the FFI interface by default. Wait until the user asks for
+  # it.
   @load_ffi = false
 
-  # Indicates whether the Python DLL has been load_ffi.
-  def self.load_ffi?
+  # Indicates whether the \Python DLL has been loaded. For internal use
+  # only.
+  def self.load_ffi? #:nodoc:
     @load_ffi
   end
 end
@@ -53,66 +39,62 @@ require 'rubypython/pygenerator'
 
 module RubyPython
   class << self
-    # Determines whether RubyPython is operating in Normal Mode or Legacy Mode. If
-    # legacy_mode is true, RubyPython switches into a mode compatible with
-    # versions < 0.3.0. All Python objects returned by method invocations
-    # are automatically converted to natve Ruby Types if RubyPython knows how to
-    # do this. Only if no such conversion is known are the objects wrapped
-    # in proxy objects.  Otherwise RubyPython automatically wraps all returned
-    # objects as an instance of {RubyPyProxy} or one of its subclasses.
+    # Controls whether RubyPython is operating in <em>Normal Mode</em> or
+    # <em>Legacy Mode</em>.
     #
-    # @return [Boolean]
+    # === Normal Mode
+    # By default, +legacy_mode+ is +false+, meaning that any object returned
+    # from a \Python function call will be wrapped in an instance of
+    # +RubyPyProxy+ or one of its subclasses. This allows \Python method
+    # calls to be forwarded to the \Python object, even if it would otherwise
+    # be a native Ruby object.
     #
-    # @example Normal Mode
-    #     RubyPython.start
+    #   RubyPython.session do
     #     string = RubyPython.import 'string'
-    #
-    #     # Here ascii_letters is a proxy object
     #     ascii_letters = string.ascii_letters
+    #     puts ascii_letters.isalpha # => True
+    #     puts ascii_letters.rubify.isalpha # throws NoMethodError
+    #   end
     #
-    #     # Use the rubify method to convert it to a native type.
-    #     puts ascii_letters.rubify
-    #     RubyPython.stop
+    # === Legacy Mode
+    # If +legacy_mode+ is +true+, RubyPython automatically tries to convert
+    # returned objects to native Ruby object types. If there is no such
+    # conversion, the object remains wrapped in +RubyPyProxy+. This
+    # behaviour is the same as RubyPython 0.2 and earlier. This mode is not
+    # recommended and may be phased out for RubyPython 1.0.
     #
-    # @example Legacy Mode
-    #     RubyPython.legacy_mode = true
-    #     RubyPython.start
+    #   RubyPython.legacy_mode = true
+    #   RubyPython.session do
     #     string = RubyPython.import 'string'
-    #
-    #     # Here ascii_letters is a native ruby string
     #     ascii_letters = string.ascii_letters
-    #
-    #     # No explicit conversion is neccessary
-    #     puts ascii_letters
-    #     RubyPython.stop
+    #     puts ascii_letters.isalpha # throws NoMethodError
+    #   end
     attr_accessor :legacy_mode
 
-    # Starts up the Python interpreter. This method **must** be run before
-    # using any Python code. The only alternatives are use of the {session}
-    # and {run} methods.
+    # Starts the \Python interpreter. Either +RubyPython.start+,
+    # +RubyPython.session+, or +RubyPython.run+ must be run before using any
+    # \Python code. Returns +true+ if the interpreter was started; +false+
+    # otherwise.
     #
-    # @param options[Hash]  Provides interpreter start options. Principally
-    #                       used for providing an alternative Python
-    #                       interpreter to start.
-    # @return [Boolean] returns true if the interpreter was started here
-    #                   and false otherwise
+    # [options] Configures the interpreter prior to starting it. Principally
+    #           used to provide an alternative \Python interpreter to start.
     #
-    # @example
-    #     RubyPython.start
-    #     sys = RubyPython.import 'sys'
-    #     p sys.version # => "2.6.6"
-    #     RubyPython.stop
+    # With no options provided:
+    #   RubyPython.start
+    #   sys = RubyPython.import 'sys'
+    #   p sys.version # => "2.6.6"
+    #   RubyPython.stop
     #
-    # @example
-    #     RubyPython.start(:python_exe => 'python2.7')
-    #     sys = RubyPython.import 'sys'
-    #     p sys.version # => "2.7.1"
-    #     RubyPython.stop
+    # With an alternative \Python executable:
+    #   RubyPython.start(:python_exe => 'python2.7')
+    #   sys = RubyPython.import 'sys'
+    #   p sys.version # => "2.7.1"
+    #   RubyPython.stop
     #
-    # @note
-    # In the current version of RubyPython, it is not possible to change python
-    # interpreters in a single Ruby session. This may change in a future
-    # version.
+    # *NOTE*: In the current version of RubyPython, it _is_ possible to
+    # change \Python interpreters in a single Ruby process execution, but it
+    # is *strongly* discouraged as this may lead to segmentation faults.
+    # This feature is highly experimental and may be disabled in the future.
     def start(options = {})
       RubyPython.configure(options)
 
@@ -134,12 +116,10 @@ module RubyPython
       true
     end
 
-    # Stops the Python interpreter if it is running. Returns true if the
-    # intepreter is stopped by this invocation. All wrapped Python objects
-    # should be considered invalid after invocation of this method.
-    #
-    # @return [Boolean] returns true if the interpreter was stopped here
-    #                   and false otherwise
+    # Stops the \Python interpreter if it is running. Returns +true+ if the
+    # intepreter is stopped. All wrapped \Python objects are invalid after
+    # invocation of this method. If you need the values within the \Python
+    # proxy objects, be sure to call +RubyPyProxy#rubify+ on them.
     def stop
       if defined? Python.Py_IsInitialized and Python.Py_IsInitialized != 0
         Python.Py_Finalize
@@ -150,12 +130,12 @@ module RubyPython
       end
     end
 
-    # Import a Python module into the interpreter and return a proxy object
-    # for it. This is the preferred way to gain access to Python object.
+    # Import a \Python module into the interpreter and return a proxy object
+    # for it.
     #
-    # @param [String] mod_name the name of the module to import
+    # This is the preferred way to gain access to \Python objects.
     #
-    # @return [RubyPyModule] a proxy object wrapping the requested module
+    # [mod_name] The name of the module to import.
     def import(mod_name)
       if defined? Python.Py_IsInitialized and Python.Py_IsInitialized != 0
         pModule = Python.PyImport_ImportModule mod_name
@@ -167,69 +147,82 @@ module RubyPython
       end
     end
 
-    # Execute the given block, starting the Python interperter before its
-    # execution and stopping the interpreter after its execution. The last
-    # expression of the block is returned; be careful that this is not a
-    # Python object as it will become invalid when the interpreter is
+    # Starts the \Python interpreter (optionally with options) and +yields+
+    # to the provided block. When the block exits for any reason, the
+    # \Python interpreter is stopped automatically.
+    #
+    # The last executed expression of the block is returned. Be careful that
+    # the last expression of the block does not return a RubyPyProxy object,
+    # because the proxy object will be invalidated when the interpreter is
     # stopped.
     #
-    # @param options[Hash]  Provides interpreter start options. Principally
-    #                       used for providing an alternative Python
-    #                       interpreter to start.
-    # @param [Block] block  The code to be executed while the interpreter is
-    #                       running
+    # [options] Configures the interpreter prior to starting it. Principally
+    #           used to provide an alternative \Python interpreter to start.
     #
-    # @return the result of evaluating the given block
+    # *NOTE*: In the current version of RubyPython, it _is_ possible to change
+    # \Python interpreters in a single Ruby process execution, but it is
+    # *strongly* discouraged as this may lead to segmentation faults. This
+    # feature is highly experimental and may be disabled in the future.
+    #
+    # :call-seq:
+    # session(options = {}) { block to execute }
     def session(options = {})
       start(options)
-      result = yield
+      yield
+    ensure
       stop
-      result
     end
 
-    # The same as {session} except that the block is executed within the
-    # scope of the RubyPython module.
+    # Starts the \Python interpreter (optionally with options) and executes
+    # the provided block in the RubyPython module scope. When the block
+    # exits for any reason, the \Python interpreter is stopped
+    # automatically.
     #
-    # @param options[Hash]  Provides interpreter start options. Principally
-    #                       used for providing an alternative Python
-    #                       interpreter to start.
-    # @param [Block] block  The code to be executed while the interpreter is
-    #                       running
+    # The last executed expression of the block is returned. Be careful that
+    # the last expression of the block does not return a RubyPyProxy object,
+    # because the proxy object will be invalidated when the interpreter is
+    # stopped.
     #
-    # @return the result of evaluating the given block
+    # [options] Configures the interpreter prior to starting it. Principally
+    #           used to provide an alternative \Python interpreter to start.
+    #
+    # *NOTE*: In the current version of RubyPython, it _is_ possible to
+    # change \Python interpreters in a single Ruby process execution, but it
+    # is *strongly* discouraged as this may lead to segmentation faults.
+    # This feature is highly experimental and may be disabled in the future.
+    #
+    # :call-seq:
+    # run(options = {}) { block to execute in RubyPython context }
     def run(options = {}, &block)
       start(options)
-      result = module_eval(&block)
+      module_eval(&block)
+    ensure
       stop
-      result
     end
 
-    # Starts up the Python interpreter. This method **must** be run before
-    # using any Python code. The only alternatives are use of the {session}
-    # and {run} methods.
+    # Starts the \Python interpreter for a
+    # {virtualenv}[http://pypi.python.org/pypi/virtualenv] virtual
+    # environment. Returns +true+ if the interpreter was started.
     #
-    # @param virtualenv[String] Provides the root path to the virtualenv-
-    #                           installed Python.
-    # @return [Boolean] returns true if the interpreter was started here
-    #                   and false otherwise
+    # [virtualenv]  The root path to the virtualenv-installed \Python
+    #               interpreter.
     #
-    # @example
-    #     RubyPython.start_from_virtualenv('/path/to/virtualenv')
-    #     sys = RubyPython.import 'sys'
-    #     p sys.version # => "2.7.1"
-    #     RubyPython.stop
+    #   RubyPython.start_from_virtualenv('/path/to/virtualenv')
+    #   sys = RubyPython.import 'sys'
+    #   p sys.version # => "2.7.1"
+    #   RubyPython.stop
     #
-    # @note
-    # In the current version of RubyPython, it is not possible to change python
-    # interpreters in a single Ruby session. This may change in a future
-    # version.
+    # *NOTE*: In the current version of RubyPython, it _is_ possible to
+    # change \Python interpreters in a single Ruby process execution, but it
+    # is *strongly* discouraged as this may lead to segmentation faults.
+    # This feature is highly experimental and may be disabled in the future.
     def start_from_virtualenv(virtualenv)
       result = start(:python => File.join(virtualenv, "bin", "python"))
       activate
       result
     end
 
-    # Returns information about the currently active Python interpreter.
+    # Returns an object describing the currently active Python interpreter.
     def python
       RubyPython::Python::EXEC
     end

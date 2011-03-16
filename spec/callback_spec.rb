@@ -3,10 +3,10 @@ require File.dirname(__FILE__) + '/spec_helper.rb'
 include TestConstants
 
 describe 'Callbacks' do
-  [
-    [ 'procs', AProc ],
-    [ 'methods', AMethod]
-  ].each do |rb_type, rb_object|
+  {
+    'procs' => AProc,
+    'methods' => AMethod,
+  }.each do |rb_type, rb_object|
     it "accepts #{rb_type} as functions" do
       [
         [2, 2],
@@ -22,6 +22,7 @@ describe 'Callbacks' do
     ["an int", AnInt],
     ["a float", AFloat],
     ["a string", AString],
+    ["a string with nulls", AStringWithNULLs],
     ["an array", AnArray],
     ["an array", AnArray],
     ["a hash", AConvertedHash],
@@ -48,4 +49,5 @@ describe 'Callbacks' do
     mockObject.callback = AProc
     mockObject.callback(2, 2).rubify.should == 4
   end
+
 end

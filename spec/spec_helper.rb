@@ -11,9 +11,8 @@ $:.unshift(File.join(dir, '..', 'lib'))
 require 'rubypython'
 
 module TestConstants
-  # REDEFINE THESE SO THEY ARE VISIBILE
   AString = "STRING"
-  AStringWithNulls = "STRING\0WITH\0NULLS"
+  AStringWithNULLs = "STRING\0WITH\0NULLS"
   AnInt = 1
   AChar = 'a'
   AFloat = 1.0
@@ -41,16 +40,24 @@ def run_python_command(cmd)
 end
 
 RSpec.configure do |config|
-  config.before(:all, :self_start => nil) do
-    RubyPython.start
+  if RUBY_VERSION < '1.9.2'
+    p "I'm here."
+    config.filter_run_excluding :ruby_version => '1.9'
+  end
 
+  config.before(:all) do
     class RubyPython::RubyPyProxy
       [:should, :should_not, :class].each { |m| reveal(m) }
     end
+  end
+
+  config.before(:all, :self_start => nil) do
+    RubyPython.start
 
     @sys = RubyPython.import 'sys'
     @sys.path.append File.join(dir, 'python_helpers')
     @objects = RubyPython.import 'objects'
+    @basics = RubyPython.import 'basics'
   end
 
   config.after(:all) do

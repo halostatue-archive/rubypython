@@ -41,7 +41,6 @@ end
 
 RSpec.configure do |config|
   if RUBY_VERSION < '1.9.2'
-    p "I'm here."
     config.filter_run_excluding :ruby_version => '1.9'
   end
 

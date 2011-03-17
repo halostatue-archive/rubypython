@@ -12,11 +12,13 @@ module RubyPython
 end
 
 if RubyPython.load_ffi?
-  # This module provides access to the Python C API functions via the Ruby
-  # ffi gem. Documentation for these functions may be found
-  # [here](http://docs.python.org/c-api/). Likewise the FFI gem
-  # documentation may be found [here](http://rdoc.info/projects/ffi/ffi).
-  module RubyPython::Python
+  # This module provides access to the \Python C API functions via the Ruby
+  # FFI gem.
+  #
+  # === Documentation
+  # * {Python C API}[http://docs.python.org/c-api/]
+  # * {Ruby FFI}[http://rdoc.info/projects/ffi/ffi]
+  module RubyPython::Python # :nodoc: all
     extend FFI::Library
 
     EXEC = RubyPython::PythonExec.new(RubyPython.options[:python_exe])
@@ -28,7 +30,7 @@ if RubyPython.load_ffi?
 
     # The class is a little bit of a hack to extract the address of global
     # structs. If someone knows a better way please let me know.
-    class DummyStruct < FFI::Struct
+    class DummyStruct < FFI::Struct # :nodoc:
       layout :dummy_var, :int
     end
 

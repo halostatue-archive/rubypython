@@ -1,6 +1,16 @@
-# A class that wraps a python executable. Replaces lots of constants under
-# RubyPython::Python. For internal use only.
+# A class that represents a \Python executable.
+#
+# End users may get the instance that represents the current running \Python
+# interpreter (from +RubyPython.python+), but should not directly
+# instantiate this class.
 class RubyPython::PythonExec
+  # Based on the name of or path to the \Python executable provided, will
+  # determine:
+  #
+  # * The full path to the \Python executable.
+  # * The version of \Python being run.
+  # * The system prefix.
+  # * The main loadable \Python library for this version.
   def initialize(python_executable)
     @python = python_executable || "python"
     @python = %x(#{@python} -c "import sys; print sys.executable").chomp
@@ -80,7 +90,7 @@ class RubyPython::PythonExec
 
   # The python executable to use.
   attr_reader :python
-  # The realname of the python executable (with version).
+  # The real name of the python executable (with version).
   attr_reader :realname
   # The sys.prefix for Python.
   attr_reader :sys_prefix

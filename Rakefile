@@ -13,6 +13,10 @@ Hoe.spec 'rubypython' do
   developer('Austin Ziegler', 'austin@rubyforge.org')
   developer('Zach Raines', 'raineszm+rubypython@gmail.com')
 
+  self.rubyforge_name = 'rubypython'
+  self.remote_rdoc_dir = 'rdoc'
+  rsync_args << ' --exclude=statsvn/'
+
   self.history_file = 'History.rdoc'
   self.readme_file = 'README.rdoc'
   self.extra_rdoc_files = FileList["*.rdoc"].to_a
@@ -49,9 +53,8 @@ namespace :website do
 
     license = File.read("License.rdoc")
     body_rdoc.sub!(/^:include: License.rdoc/, license)
-    toc_elements = body_rdoc.grep(/^(=+) (.*)$/) { [ $1.count('='), $2 ] }
-    toc_elements << [ 2, 'Contributors' ]
-    toc_elements << [ 2, 'License' ]
+    toc_elements = body_rdoc.scan(/^(=+) (.*)$/)
+    toc_elements.map! { |e| [ e[0].count('='), e[1] ] }
     body_rdoc.gsub!(/^(=.*)/) { "#{$1.downcase}" }
     body = Tilt::RDocTemplate.new(nil) { body_rdoc }.render
 

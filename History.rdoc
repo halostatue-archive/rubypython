@@ -1,12 +1,12 @@
 === 0.5.0 / 2011-03-dd
 * Major Enhancements:
-  * Python to Ruby inheritance: A Ruby class can inherit from a Python class.
-    [steeve]
-  * Procs and methods can be passed to Ruby. [raineszm]
+  * Procs and methods can be passed to Python. [raineszm]
+  * Python to Ruby inheritance: A Ruby class can inherit from a Python class
+    (EXPERIMENTAL). [steeve]
   * The Python library can now be reloaded (EXPERIMENTAL). There is a good
     chance of a segfault if this is used with a native extension. [raineszm]
   * Python functions and methods can be called with a terminal exclamation
-    point to enable keyword argument processing in Python. [tmm1]
+    point to enable keyword argument processing in Python (EXPERIMENTAL). [tmm1]
 * Minor Enhancements:
   * Improved Python generator support. [steeve]
   * PythonError now inherits from RuntimeError. [halostatue]

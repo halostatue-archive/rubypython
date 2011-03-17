@@ -1,4 +1,5 @@
 module RubyPython
+  # Creates a Ruby class that inherits from a proxied Python object.
   def self.Type(name)
     mod, match, klass = name.rpartition(".")
     pymod = RubyPython.import(mod)

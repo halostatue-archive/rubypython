@@ -9,6 +9,11 @@ require "rubypython/rubypyproxy"
 if defined? Fiber
   module RubyPython
     class << self
+      # Creates a \Python generator object called +rubypython_generator+
+      # that accepts a callback and yields to it.
+      #
+      # *Note*: This method only exists in the RubyPython if the Fiber
+      # exists.
       def generator_type
         @generator_type ||= lambda do
           code = <<-EOM
@@ -26,6 +31,12 @@ def rubypython_generator(callback):
         end.call
       end
 
+      # Creates a Ruby lambda that acts like a \Python generator. Uses
+      # +RubyPython.generator_type+ and Fiber to work the generator as a
+      # coroutine.
+      #
+      # *Note*: This method only exists in the RubyPython if the Fiber
+      # exists.
       def generator
         return lambda do |*args|
           fib = Fiber.new do
@@ -37,6 +48,11 @@ def rubypython_generator(callback):
         end
       end
 
+      # Performs a +Fiber.yield+ with the provided arguments, continuing the
+      # coroutine execution of the generator.
+      #
+      # *Note*: This method only exists in the RubyPython if the Fiber
+      # exists.
       def yield(*args)
         Fiber.yield(*args)
       end

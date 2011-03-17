@@ -1,20 +1,26 @@
 require 'rubypython/python'
 require 'rubypython/macros'
 
-# This modules encapsulates the work of converting between native Ruby and
-# Python types. Unsupported conversions raise {UnsupportedConversion}.
+# Acts as a namespace for methods to bidirectionally convert between native
+# Ruby types and native \Python types. Unsupported conversions raise
+# UnsupportedConversion.
+#
+# The methods in this module should be considered internal implementation to
+# RubyPython as they all return FFI pointers to \Python objects.
 module RubyPython::Conversion
-  # Raised when RubyPython does not know how to convert an object from Python to
-  # Ruby or vice versa.
+  # Raised when RubyPython does not know how to convert an object from
+  # \Python to Ruby or vice versa.
   class UnsupportedConversion < Exception; end
 
-  # Convert a Ruby string to a Python string.
+  # Convert a Ruby string to a \Python string. Returns an FFI::Pointer to
+  # a PyStringObject.
   def self.rtopString(rString)
     size = rString.respond_to?(:bytesize) ? rString.bytesize : rString.size
     RubyPython::Python.PyString_FromStringAndSize(rString, size)
   end
 
-  # Convert a Ruby Array to Python List
+  # Convert a Ruby Array to \Python List. Returns an FFI::Pointer to
+  # a PyListObject.
   def self.rtopArrayToList(rArray)
     size = rArray.length
     pList = RubyPython::Python.PyList_New size
@@ -24,7 +30,8 @@ module RubyPython::Conversion
     pList
   end
 
-  # Convert a Ruby Array to Python Tuple
+  # Convert a Ruby Array to \Python Tuple. Returns an FFI::Pointer to a
+  # PyTupleObject.
   def self.rtopArrayToTuple(rArray)
     pList = rtopArrayToList(rArray)
     pTuple = RubyPython::Python.PySequence_Tuple(pList)
@@ -32,63 +39,96 @@ module RubyPython::Conversion
     pTuple
   end
 
-  # Convert a Ruby Hash to a Python Dictionary
+  # Convert a Ruby Hash to a \Python Dict. Returns an FFI::Pointer to a
+  # PyDictObject.
   def self.rtopHash(rHash)
     pDict = RubyPython::Python.PyDict_New
     rHash.each do |k,v|
-      RubyPython::Python.PyDict_SetItem pDict, rtopObject(k, key=true), rtopObject(v)
+      RubyPython::Python.PyDict_SetItem pDict, rtopObject(k, key = true),
+        rtopObject(v)
     end
     pDict
   end
 
-  # Convert a Ruby Fixnum to a Python Int
+  # Convert a Ruby Fixnum to a \Python Int. Returns an FFI::Pointer to a
+  # PyIntObject.
   def self.rtopFixnum(rNum)
     RubyPython::Python.PyInt_FromLong(rNum)
   end
 
-  # Convert a Ruby Big Number to a Pythong Long
+  # Convert a Ruby Bignum to a \Python Long. Returns an FFI::Pointer to a
+  # PyLongObject.
   def self.rtopBigNum(rNum)
     RubyPython::Python.PyLong_FromLong(rNum)
   end
 
-  # Convert a Ruby float to a Python float.
+  # Convert a Ruby float to a \Python Float. Returns an FFI::Pointer to a
+  # PyFloatObject.
   def self.rtopFloat(rNum)
     RubyPython::Python.PyFloat_FromDouble(rNum)
   end
 
-  # Convert a Ruby false to a Python False.
+  # Returns a \Python False value (equivalent to Ruby's +false+). Returns an
+  # FFI::Pointer to Py_ZeroStruct.
   def self.rtopFalse
     RubyPython::Macros.Py_RETURN_FALSE
   end
 
-  # Convert a Ruby true to a Python True.
+  # Returns a \Python True value (equivalent to Ruby's +true+). Returns an
+  # FFI::Pointer to Py_TrueStruct.
   def self.rtopTrue
     RubyPython::Macros.Py_RETURN_TRUE
   end
 
-  # Convert a Ruby nil to a Python None.
+  # Returns a \Python None value (equivalent to Ruby's +nil+). Returns an
+  # FFI::Pointer to Py_NoneStruct.
   def self.rtopNone
     RubyPython::Macros.Py_RETURN_NONE
   end
 
-  # Convert a Ruby Symbol to a Python String
+  # Convert a Ruby Symbol to a \Python String. Returns an FFI::Pointer to a
+  # PyStringObject.
   def self.rtopSymbol(rSymbol)
     RubyPython::Python.PyString_FromString rSymbol.to_s
   end
 
-  # If possible converts a ruby type to an equivalent python native type.
-  # @param rObj a native ruby type
-  # @param [Boolean] is_key whether this object will be used as a key in a
-  #                  python dict.
-  # @return [FFI::Pointer] a to a C PyObject\*
-  # @raise [UnsupportedConversion]
+  # Convert a Ruby Proc to a \Python Function. Returns an FFI::Pointer to a
+  # PyCFunction.
+  def self.rtopFunction(rObj)
+    proc = FFI::Function.new(:pointer, [:pointer, :pointer]) do |p_self, p_args|
+      retval = rObj.call(*ptorTuple(p_args))
+      pObject = retval.is_a?(RubyPython::RubyPyProxy) ? retval.pObject : RubyPython::PyObject.new(retval)
+
+      # make sure the refcount is >1 when pObject is destroyed
+      pObject.xIncref
+      pObject.pointer
+    end
+
+    defn = RubyPython::Python::PyMethodDef.new
+    defn[:ml_name] = FFI::MemoryPointer.from_string("RubyPython::Proc::%s" % rObj.object_id)
+    defn[:ml_meth] = proc
+    defn[:ml_flags] = RubyPython::Python::METH_VARARGS
+    defn[:ml_doc] = nil
+
+    return RubyPython::Python.PyCFunction_New(defn, nil)
+  end
+
+  # This will attempt to convert a Ruby object to an equivalent \Python
+  # native type. Returns an FFI::Pointer to a \Python object (the
+  # appropriate Py…Object C structure). If the conversion is unsuccessful,
+  # will raise UnsupportedConversion.
+  #
+  # [rObj]    A native Ruby object.
+  # [is_key]  Set to +true+ if the provided Ruby object will be used as a
+  #           key in a \Python +dict+. (This primarily matters for Array
+  #           conversion.)
   def self.rtopObject(rObj, is_key = false)
     case rObj
     when String
       rtopString rObj
     when Array
-      # If this object is going to be used as a hash key we should make it
-      # a tuple instead of a list
+      # If this object is going to be used as a hash key we should make it a
+      # tuple instead of a list
       if is_key
         rtopArrayToTuple rObj
       else
@@ -110,7 +150,7 @@ module RubyPython::Conversion
       rtopSymbol rObj
     when Proc, Method
       if RubyPython.legacy_mode
-        raise UnsupportedConversion.new("Python to Ruby callbacks not suppported in legacy mode")
+        raise UnsupportedConversion.new("Callbacks are not supported in Legacy Mode.")
       end
       rtopFunction rObj
     when Method
@@ -120,11 +160,12 @@ module RubyPython::Conversion
     when RubyPython::PyObject
       rObj.pointer
     else
-      raise UnsupportedConversion.new("Unsupported type for RTOP conversion.")
+      raise UnsupportedConversion.new("Unsupported type #{rObj.class} for conversion.")
     end
   end
 
-  # Convert a Python String to a Ruby String
+  # Convert an FFI::Pointer to a \Python String (PyStringObject) to a Ruby
+  # String.
   def self.ptorString(pString)
     strPtr  = FFI::MemoryPointer.new(:pointer)
     sizePtr = FFI::MemoryPointer.new(:ssize_t)
@@ -145,7 +186,8 @@ module RubyPython::Conversion
     strPtr.read_pointer.read_string(size)
   end
 
-  # Convert a Python List to a Ruby Array.
+  # Convert an FFI::Pointer to a \Python List (PyListObject) to a Ruby
+  # Array.
   def self.ptorList(pList)
     rb_array = []
     list_size = RubyPython::Python.PyList_Size(pList)
@@ -161,23 +203,26 @@ module RubyPython::Conversion
     rb_array
   end
 
-  # Convert a Python Int to a Ruby Fixnum
+  # Convert an FFI::Pointer to a \Python Int (PyIntObject) to a Ruby Fixnum.
   def self.ptorInt(pNum)
-    RubyPython::Python.PyInt_AsLong pNum
+    RubyPython::Python.PyInt_AsLong(pNum)
   end
 
-  # Convert a Python Long to a Ruby Fixnum
+  # Convert an FFI::Pointer to a \Python Long (PyLongObject) to a Ruby
+  # Fixnum. This version does not do overflow checking, but probably should.
   def self.ptorLong(pNum)
     RubyPython::Python.PyLong_AsLong(pNum)
     # TODO Overflow Checking
   end
 
-  # Convert a Python Float to a Ruby Float
+  # Convert an FFI::Pointer to a \Python Float (PyFloatObject) to a Ruby
+  # Float.
   def self.ptorFloat(pNum)
     RubyPython::Python.PyFloat_AsDouble(pNum)
   end
 
-  # Convert a Python Tuple to a Ruby Array
+  # Convert an FFI::Pointer to a \Python Tuple (PyTupleObject) to a Ruby
+  # Array.
   def self.ptorTuple(pTuple)
     pList = RubyPython::Python.PySequence_List pTuple
     rArray = ptorList pList
@@ -185,7 +230,8 @@ module RubyPython::Conversion
     rArray
   end
 
-  # Convert a Python Dictionary to a Ruby Hash
+  # Convert an FFI::Pointer to a \Python Dictionary (PyDictObject) to a Ruby
+  # Hash.
   def self.ptorDict(pDict)
     rb_hash = {}
 
@@ -205,31 +251,11 @@ module RubyPython::Conversion
     rb_hash
   end
 
-  # Convert a Ruby Proc to a Python Function.
-  def self.rtopFunction(rObj)
-    proc = FFI::Function.new(:pointer, [:pointer, :pointer]) do |p_self, p_args|
-      retval = rObj.call(*ptorTuple(p_args))
-      pObject = retval.is_a?(RubyPython::RubyPyProxy) ? retval.pObject : RubyPython::PyObject.new(retval)
-
-      # make sure the refcount is >1 when pObject is destroyed
-      pObject.xIncref
-      pObject.pointer
-    end
-
-    defn = RubyPython::Python::PyMethodDef.new
-    defn[:ml_name] = FFI::MemoryPointer.from_string("RubyPython::Proc::%s" % rObj.object_id)
-    defn[:ml_meth] = proc
-    defn[:ml_flags] = RubyPython::Python::METH_VARARGS
-    defn[:ml_doc] = nil
-
-    return RubyPython::Python.PyCFunction_New(defn, nil)
-  end
-
-  # Converts a pointer to a Python object into a native ruby type, if
-  # possible. Otherwise raises an error.
-  # @param [FFI::Pointer] pObj a pointer to a Python object
-  # @return a native ruby object.
-  # @raise {UnsupportedConversion}
+  # Converts a pointer to a \Python object into a native Ruby type, if
+  # possible. If the conversion cannot be done, the Python object will be
+  # returned unmodified.
+  #
+  # [pObj]  An FFI::Pointer to a \Python object.
   def self.ptorObject(pObj)
     if RubyPython::Macros.PyObject_TypeCheck(pObj, RubyPython::Python.PyString_Type.to_ptr) != 0
       ptorString pObj

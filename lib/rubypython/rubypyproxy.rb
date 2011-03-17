@@ -5,68 +5,80 @@ require 'rubypython/operators'
 require 'rubypython/blankobject'
 
 module RubyPython
-  # This is the object that the end user will most often be interacting
-  # with. It holds a reference to an object in the Python VM an delegates
-  # method calls to it, wrapping and returning the results. The user should
-  # not worry about reference counting of this object an instance will
-  # decrement its objects reference count when it is garbage collected.
+  # In most cases, users will interact with RubyPyProxy objects that hold
+  # references to active objects in the \Python interpreter. RubyPyProxy
+  # delegates method calls to \Python objects, wrapping and returning the
+  # results as RubyPyProxy objects.
   #
-  # Note: All RubyPyProxy objects become invalid when the Python interpreter
-  # is halted.
+  # The allocation, deallocation, and reference counting on RubyPyProxy
+  # objects is automatic: RubyPython takes care of it all. When the object
+  # is garbage collected, the instance will automatically decrement its
+  # object reference count.
   #
-  # Calling Methods With Blocks
-  # -----------------------------
-  # Any method which is forwarded to a Python object may be called with
-  # a block. The result of the method will passed as the argument to
-  # that block.
+  # [NOTE:]  All RubyPyProxy objects become invalid when the \Python
+  #          interpreter is halted.
   #
-  # @example Supplying a block to a method call
-  #   irb(main):001:0> RubyPython.start
-  #   => true
-  #   irb(main):002:0> RubyPython::PyMain.float(10) do |f|
-  #   irb(main):003:1*     2*f.rubify
-  #   irb(main):004:1> end
-  #   => 20.0
-  #   irb(main):005:0> RubyPython.stop
-  #   => true
+  # == Calling Methods With Blocks
+  # Any method which is forwarded to a \Python object may be called with a
+  # block. The result of the method will passed as the argument to that
+  # block.
   #
+  #   RubyPython.run do
+  #     sys = RubyPython.import 'sys'
+  #     sys.version { |v| v.rubify.split(' ') }
+  #   end
+  #   # => [ "2.6.1", … ]
+  #   
+  # == Passing Procs and Methods to \Python Methods
+  # RubyPython supports passing Proc and Method objects to \Python methods.
+  # The Proc or Method object must be passed explicitly. As seen above,
+  # supplying a block to a method will result in the return value of the
+  # method call being passed to the block.
   #
-  # Passing Procs and Methods to methods
-  # -------------------------------------
-  # RubyPython now supports passing Proc and Method objects to Python
-  # methods. The Proc or Method object must be passed explicitly. As
-  # seen above, supplying a block to a method will result in the return
-  # value of the method call being passed to the block.
+  # When a Proc or Method is supplied as a callback, then arguments that it
+  # will be called with will be wrapped \Python objects. It will therefore
+  # typically be necessary to write a wrapper around any Ruby callback that
+  # requires native Ruby objects.
   #
-  # When a Proc or Method is supplied as a callback, then arguments that
-  # it will be called with will be wrapped Python objects.
-  #
-  # @example Passing a Proc to Python
-  #   # Python Code
+  #   # Python Code: sample.py
   #   def apply_callback(callback, argument):
   #     return callback(argument)
   #
   #   # IRB Session
-  #   irb(main):001:0> RubyPython.start
+  #   >> RubyPython.start
   #   => true
-  #   irb(main):002:0> sys = RubyPython.import 'sys'
+  #   >> sys = RubyPython.import 'sys'
   #   => <module 'sys' (built-in)>
-  #   irb(main):003:0> sys.path.append('.')
+  #   >> sys.path.append('.')
   #   => None
-  #   irb(main):004:0> sample = RubyPython.import 'sample'
+  #   >> sample = RubyPython.import 'sample'
   #   => <module 'sample' from './sample.pyc'>
-  #   irb(main):005:0> callback = Proc.new do |arg|
-  #   irb(main):006:1*   arg * 2
-  #   irb(main):007:1> end
+  #   >> callback = Proc.new { |arg| arg * 2 }
   #   => # <Proc:0x000001018df490@(irb):5>
-  #   irb(main):008:0> sample.apply_callback(callback, 21).rubify
+  #   >> sample.apply_callback(callback, 21).rubify
   #   => 42
-  #   irb(main):009:0> RubyPython.stop
+  #   >> RubyPython.stop
+  #   => true
   class RubyPyProxy < BlankObject
     include Operators
 
     attr_reader :pObject
 
+    # Creates a \Python proxy for the provided Ruby object.
+    #
+    # Only the following Ruby types can be represented in \Python:
+    # * String
+    # * Array
+    # * Hash
+    # * Fixnum
+    # * Bignum
+    # * Float
+    # * Symbol (as a String)
+    # * Proc
+    # * Method
+    # * +true+ (as True)
+    # * +false+ (as False)
+    # * +nil+ (as None)
     def initialize(pObject)
       if pObject.kind_of? PyObject
         @pObject = pObject
@@ -75,12 +87,12 @@ module RubyPython
       end
     end
 
-    # Handles the job of wrapping up anything returned by a {RubyPyProxy}
+    # Handles the job of wrapping up anything returned by a RubyPyProxy
     # instance. The behavior differs depending on the value of
-    # {RubyPython.legacy_mode}. If legacy mode is inactive, every returned object
-    # is wrapped by an instance of {RubyPyProxy}. If legacy mode is active,
-    # RubyPython first attempts to convert the returned object to a native Ruby
-    # type, and then only wraps the object if this fails.
+    # +RubyPython.legacy_mode+. If legacy mode is inactive, every returned
+    # object is wrapped by an instance of +RubyPyProxy+. If legacy mode is
+    # active, RubyPython first attempts to convert the returned object to a
+    # native Ruby type, and then only wraps the object if this fails.
     def _wrap(pyobject)
       if pyobject.class?
         RubyPyClass.new(pyobject)
@@ -92,15 +104,18 @@ module RubyPython
     rescue Conversion::UnsupportedConversion => exc
       RubyPyProxy.new pyobject
     end
+    private :_wrap
 
     reveal(:respond_to?)
 
-    # Moves the old respond_to? method to is_real_method?
+    # The standard Ruby +#respond_to?+ method has been renamed to allow
+    # RubyPython to query if the proxied \Python object supports the method
+    # desired. Setter methods (e.g., +foo=+) are always supported.
     alias :is_real_method? :respond_to?
 
-    # RubyPython checks the attribute dictionary of the wrapped object to check
-    # whether it will respond to a method call. This should not return false
-    # positives but it may return false negatives. The builitin Ruby
+    # RubyPython checks the attribute dictionary of the wrapped object to
+    # check whether it will respond to a method call. This should not return
+    # false positives but it may return false negatives. The built-in Ruby
     # respond_to? method has been aliased to is_real_method?.
     def respond_to?(mname)
       return true if is_real_method?(mname)
@@ -109,7 +124,21 @@ module RubyPython
       @pObject.hasAttr(mname)
     end
 
-    # Implements the method call delegation.
+    # Delegates method calls to proxied \Python objects.
+    #
+    # == Delegation Rules
+    # 1. If the method ends with a question-mark (e.g., +nil?+), it can only
+    #    be a Ruby method on RubyPyProxy. Attempt to reveal it (RubyPyProxy
+    #    is a BlankObject) and call it.
+    # 2. If the method ends with equals signs (e.g., +value=+) it's a setter
+    #    and we can always set an attribute on a \Python object.
+    # 3. If the method ends with an exclamation point (e.g., +foo!+) we are
+    #    attempting to call a method with keyword arguments.
+    # 4. The Python method or value will be called, if it's callable.
+    # 5. RubyPython will wrap the return value in a RubyPyProxy object
+    #    (unless legacy_mode has been turned on).
+    # 6. If a block has been provided, the wrapped return value will be
+    #    passed into the block.
     def method_missing(name, *args, &block)
       name = name.to_s
 
@@ -123,23 +152,17 @@ module RubyPython
         end
       end
 
-      setter = kwargs = false
+      kwargs = false
 
       if name =~ /=$/
-        setter = true
-        name.chomp! "="
+        return @pObject.setAttr(name.chomp('='),
+                                PyObject.convert(*args).first)
       elsif name =~ /!$/
         kwargs = true
         name.chomp! "!"
       end
 
-      if !@pObject.hasAttr(name) and !setter
-        raise NoMethodError.new(name)
-      end
-
-      if setter
-        return @pObject.setAttr(name, PyObject.convert(*args)[0])
-      end
+      raise NoMethodError.new(name) if !@pObject.hasAttr(name)
 
       pFunc = @pObject.getAttr(name)
 
@@ -160,86 +183,95 @@ module RubyPython
             pFunc.callObject(pTuple)
           end
 
-          # cleanup unused python vars instead of waiting on ruby's GC to do it.
+          # Clean up unused Python vars instead of waiting on Ruby's GC to
+          # do it.
           pFunc.xDecref
           pTuple.xDecref
           pKeywords.xDecref if pKeywords
           orig_args.each_with_index do |arg, i|
-            # only decref objects that were created in PyObject.convert
+            # Only decref objects that were created in PyObject.convert.
             if !arg.kind_of?(RubyPython::PyObject) and !arg.kind_of?(RubyPython::RubyPyProxy)
               args[i].xDecref
             end
           end
 
-          if PythonError.error?
-            raise PythonError.handle_error
-          end
+          raise PythonError.handle_error if PythonError.error?
         end
       else
         pReturn = pFunc
       end
 
-      return _wrap(pReturn)
+      result = _wrap(pReturn)
+
+      if block
+        block.call(result)
+      else
+        result
+      end
     end
 
-    # RubyPython will attempt to translate the wrapped object into a native Ruby
-    # object. This will only succeed for simple builtin type.
+    # RubyPython will attempt to translate the wrapped object into a native
+    # Ruby object. This will only succeed for simple built-in type.
     def rubify
       @pObject.rubify
     end
 
-    # Returns the string representation of the wrapped object via a call to
-    # the object's \_\_repr\_\_ method.
-    #
-    # @return [String]
+    # Returns the String representation of the wrapped object via a call to
+    # the object's <tt>__repr__</tt> method, or the +repr+ method in PyMain.
     def inspect
       self.__repr__.rubify
     rescue PythonError, NoMethodError
       RubyPython::PyMain.repr(self).rubify
     end
 
-    # Returns the string representation of the wrapped object via a call to the
-    # object's \_\_str\_\_ method.
-    #
-    # @return [String]
+    # Returns the string representation of the wrapped object via a call to
+    # the object's <tt>__str__</tt> method or the +str+ method in PyMain.
     def to_s
       self.__str__.rubify
     rescue PythonError, NoMethodError
       RubyPython::PyMain.str(self).rubify
     end
 
-    # Converts the wrapped Python object to a Ruby Array. Note that this
+    # Converts the wrapped \Python object to a Ruby Array. Note that this
     # only converts one level, so a nested array will remain a proxy object.
-    # Only wrapped objects which have an \_\_iter\_\_ method may be
-    # converted using to_a.
+    # Only wrapped objects which have an <tt>__iter__</tt> method may be
+    # converted using +to_a+.
     #
-    # Note that for Dict objects, this method returns what you would get in
-    # Python, not in Ruby i.e. a\_dict.to\_a returns an array of the
+    # Note that for \Python Dict objects, this method returns what you would
+    # get in \Python, not in Ruby: +a_dict.to_a+ returns an array of the
     # dictionary's keys.
-    # @return [Array<RubyPyProxy>]
-    # @example List
-    #     irb(main):001:0> RubyPython.start
-    #     => true
-    #     irb(main):002:0> a_list = RubyPython::RubyPyProxy.new [1, 'a', 2, 'b']
-    #     => [1, 'a', 2, 'b']
-    #     irb(main):003:0> a_list.kind_of? RubyPython::RubyPyProxy
-    #     => true
-    #     irb(main):004:0> a_list.to_a
-    #     => [1, 'a', 2, 'b']
-    #     irb(main):005:0> RubyPython.stop
-    #     => true
     #
-    # @example Dict
-    #     irb(main):001:0> RubyPython.start
-    #     => true
-    #     irb(main):002:0> a_dict = RubyPython::RubyPyProxy.new({1 => '2', :three => [4,5]})
-    #     => {1: '2', 'three': [4, 5]}
-    #     irb(main):003:0> a_dict.kind_of? RubyPython::RubyPyProxy
-    #     => true
-    #     irb(main):004:0> a_dict.to_a
-    #     => [1, 'three']
-    #     irb(main):005:0> RubyPython.stop
-    #     => true
+    # === List #to_a Returns an Array
+    #   >> RubyPython.start
+    #   => true
+    #   >> list = RubyPython::RubyPyProxy.new([1, 'a', 2, 'b'])
+    #   => [1, 'a', 2, 'b']
+    #   >> list.kind_of? RubyPython::RubyPyProxy
+    #   => true
+    #   >> list.to_a
+    #   => [1, 'a', 2, 'b']
+    #   >> RubyPython.stop
+    #   => true
+    #
+    # === Dict #to_a Returns An Array of Keys
+    #   >> RubyPython.start
+    #   => true
+    #   >> dict = RubyPython::RubyPyProxy.new({1 => '2', :three => [4,5]})
+    #   => {1: '2', 'three': [4, 5]}
+    #   >> dict.kind_of? RubyPython::RubyPyProxy
+    #   => true
+    #   >> dict.to_a
+    #   => [1, 'three']
+    #   >> RubyPython.stop
+    #   => true
+    #
+    # === Non-Array Values Do Not Convert
+    #   >> RubyPython.start
+    #   => true
+    #   >> item = RubyPython::RubyPyProxy.new(42)
+    #   => 42
+    #   >> item.to_a
+    #   NoMethodError: __iter__
     def to_a
       iter = self.__iter__
       ary = []
@@ -251,43 +283,48 @@ module RubyPython
       ary
     end
 
+    # Returns the methods on the \Python object by calling the +dir+
+    # built-in.
     def methods
-      return pObject.dir.map { |x| x.to_sym }
+      pObject.dir.map { |x| x.to_sym }
     end
 
+    # Creates a PyEnumerable for this object. The object must have the
+    # <tt>__iter__</tt> method.
     def to_enum
-      return PyEnumerable.new(@pObject)
+      PyEnumerable.new(@pObject)
     end
   end
 
-  # A class to wrap Python Modules. It behaves exactly the same as
-  # {RubyPyProxy}. It is just here for Bookkeeping and aesthetics.
+  # A class to wrap \Python modules. It behaves exactly the same as
+  # RubyPyProxy. It is just here for Bookkeeping and aesthetics.
   class RubyPyModule < RubyPyProxy; end
 
-  # A class to wrap Python Classes.
+  # A class to wrap \Python classes.
   class RubyPyClass < RubyPyProxy
     # Create an instance of the wrapped class. This is a workaround for the
-    # fact that Python classes are meant to be callable.
+    # fact that \Python classes are meant to be callable.
     def new(*args)
       args = PyObject.convert(*args)
       pTuple = PyObject.buildArgTuple(*args)
       pReturn = @pObject.callObject(pTuple)
-      if PythonError.error?
-        raise PythonError.handle_error
-      end
+      raise PythonError.handle_error if PythonError.error?
       RubyPyInstance.new pReturn
     end
   end
 
-  # An object representing an instance of a Python Class.
+  # An object representing an instance of a \Python class. It behaves
+  # exactly the same as RubyPyProxy. It is just here for Bookkeeping and
+  # aesthetics.
   class RubyPyInstance < RubyPyProxy; end
 
+  # An object representing a Python enumerable object.
   class PyEnumerable < RubyPyProxy
     include Enumerable
 
     def each
       iter = self.__iter__
-      while true
+      loop do
         begin
           yield iter.next
         rescue RubyPython::PythonError => exc

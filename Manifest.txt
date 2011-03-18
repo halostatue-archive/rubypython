@@ -26,13 +26,13 @@ lib/rubypython/pythonerror.rb
 lib/rubypython/pythonexec.rb
 lib/rubypython/rubypyproxy.rb
 lib/rubypython/type.rb
-lib/rubypython/version.rb
 spec/basic_spec.rb
 spec/callback_spec.rb
 spec/conversion_spec.rb
 spec/legacy_spec.rb
 spec/pymainclass_spec.rb
 spec/pyobject_spec.rb
+spec/python_helpers/basics.py
 spec/python_helpers/objects.py
 spec/pythonerror_spec.rb
 spec/refcnt_spec.rb

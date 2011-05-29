@@ -71,7 +71,7 @@ start before running the code provided in the block and stop it afterwards.
   RubyPython.start_from_virtualenv("/path/to/virtualenv")
 
   # Or verbose
-  RubyPython.start(:python => "/path/to/virtualenv/bin/python")
+  RubyPython.start(:python_exe => "/path/to/virtualenv/bin/python")
   RubyPython.activate
 
 === Iterator support

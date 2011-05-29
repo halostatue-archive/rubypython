@@ -217,7 +217,7 @@ module RubyPython
     # is *strongly* discouraged as this may lead to segmentation faults.
     # This feature is highly experimental and may be disabled in the future.
     def start_from_virtualenv(virtualenv)
-      result = start(:python => File.join(virtualenv, "bin", "python"))
+      result = start(:python_exe => File.join(virtualenv, "bin", "python"))
       activate
       result
     end

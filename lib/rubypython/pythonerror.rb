@@ -4,11 +4,14 @@ require 'rubypython/macros'
 # Raised when an error occurs in the \Python interpreter.
 class RubyPython::PythonError < RuntimeError
 
+  # The \Python traceback object associated with this error. This will be
+  # a RubyPython::RubyPyProxy object.
   attr_reader :traceback
 
   # Creates the PythonError.
   # [typeName] The class name of the \Python error.
   # [msg] The message attached to the \Python error.
+  # [traceback] The traceback, if any, associated with the \Python error.
   def initialize(typeName, msg, traceback = nil)
     @type = typeName
     @traceback = traceback

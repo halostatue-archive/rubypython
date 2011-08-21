@@ -71,6 +71,19 @@ class RubyPython::PythonExec
       locations << File.join(path, "#{base}.dll")   # Windows
       locations << File.join(path, "#{base}.a")     # Non-DLL
     end
+    
+    if FFI::Platform.windows?
+      # Do this after trying to add alternative extensions, 
+      # since windows install has a python27.a and can cause 
+      # troble. FFI fails at guessing pythons directory and libs.
+      # Find the windows lib by looking in the libs directory
+      # where the python exe is located.
+      path = File.dirname(@python)
+      # Windows Python doesn't like ' with inner " so we have to switch it around. 
+      winversion = %x(#{@python} -c "import sys; print '%d%d' % sys.version_info[:2]").chomp
+      locations << File.join(path, "python#{winversion}.dll")
+      locations << File.join(path, "libs", "python#{winversion}.dll")
+    end
 
     # Remove redundant locations
     locations.uniq!

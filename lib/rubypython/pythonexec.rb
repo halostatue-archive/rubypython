@@ -15,11 +15,13 @@ class RubyPython::PythonExec
     @python = python_executable || "python"
     @python = %x(#{@python} -c "import sys; print sys.executable").chomp
 
-    @version = run_command 'import sys; print "%d.%d" % sys.version_info[:2]'
+    @version = run_command "import sys; print '%d.%d' % sys.version_info[:2]"
 
     @realname = @python.dup
-    if @realname !~ /#{@version}$/
+    if (@realname !~ /#{@version}$/ and @realname !~ /\.exe$/)
       @realname = "#{@python}#{@version}"
+    else
+      @realname = "#{@python.chomp ".exe"}#{@version.gsub '.', ''}"
     end
     @basename = File.basename(@realname)
 
@@ -62,6 +64,13 @@ class RubyPython::PythonExec
       end
     end
 
+    if FFI::Platform.windows?
+      #On windows, the appropriate DLL seems to be in either C:\\WINDOWS\\System
+      #or C:\\WINDOWS\\System32
+      locations << File.join("C:\\WINDOWS", "System", libname)
+      locations << File.join("C:\\WINDOWS", "System32", libname)
+    end
+
     # Let's add alternative extensions; again, just in case.
     locations.dup.each do |location|
       path = File.dirname(location)
@@ -101,7 +110,7 @@ class RubyPython::PythonExec
 
   # Run a Python command-line command.
   def run_command(command)
-    %x(#{@python} -c '#{command}').chomp if @python
+    %x(#{@python} -c "#{command}").chomp if @python
   end
 
   def to_s

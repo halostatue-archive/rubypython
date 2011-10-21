@@ -259,10 +259,10 @@ It should work with other implementations that support the Ruby FFI gem with no
 modification.
 
 === OS Support
-RubyPython has been tested on Mac OS 10.5 and 10.6, and Ubuntu 10.10 (64-bit
-Intel). If your platform has a DLL or shared object version of Python and
-supports the FFI gem, it should work. Feedback on other platforms is always
-welcome.
+RubyPython has been extensively tested on Mac OS 10.5 and 10.6, and Ubuntu
+10.10 (64-bit Intel). If your platform has a DLL or shared object version of
+Python and supports the FFI gem, it should work. Feedback on other platforms is
+always welcome.
 
 == Install
   gem install rubypython

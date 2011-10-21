@@ -17,11 +17,13 @@ class RubyPython::PythonExec
 
     @version = run_command "import sys; print '%d.%d' % sys.version_info[:2]"
 
+    @dirname = File.dirname(@python)
     @realname = @python.dup
     if (@realname !~ /#{@version}$/ and @realname !~ /\.exe$/)
       @realname = "#{@python}#{@version}"
     else
-      @realname = "#{@python.chomp ".exe"}#{@version.gsub '.', ''}"
+      basename = File.basename(@python, '.exe')
+      @realname = File.join(@dirname, "#{basename}#{@version.gsub(/\./, '')}")
     end
     @basename = File.basename(@realname)
 
@@ -65,10 +67,17 @@ class RubyPython::PythonExec
     end
 
     if FFI::Platform.windows?
-      #On windows, the appropriate DLL seems to be in either C:\\WINDOWS\\System
-      #or C:\\WINDOWS\\System32
-      locations << File.join("C:\\WINDOWS", "System", libname)
-      locations << File.join("C:\\WINDOWS", "System32", libname)
+      # On Windows, the appropriate DLL is usually be found in
+      # %SYSTEMROOT%\system or %SYSTEMROOT%\system32; as a fallback we'll
+      # use C:\Windows\system{,32} as well as the install directory and the
+      # install directory + libs.
+      system_root = File.expand_path(ENV['SYSTEMROOT']).gsub(/\\/, '/')
+      locations << File.join(system_root, 'system', libname)
+      locations << File.join(system_root, 'system32', libname)
+      locations << File.join("C:/WINDOWS", "System", libname)
+      locations << File.join("C:/WINDOWS", "System32", libname)
+      locations << File.join(@dirname, libname)
+      locations << File.join(@dirname, 'libs', libname)
     end
 
     # Let's add alternative extensions; again, just in case.
@@ -105,7 +114,7 @@ class RubyPython::PythonExec
   attr_reader :sys_prefix
   # The Python library.
   attr_reader :library
-  #  The version
+  # The Python version
   attr_reader :version
 
   # Run a Python command-line command.

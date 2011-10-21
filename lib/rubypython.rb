@@ -15,7 +15,7 @@
 #   puts cPickle.dumps("RubyPython is awesome!").rubify
 #   RubyPython.stop
 module RubyPython
-  VERSION = '0.5.0' #:nodoc:
+  VERSION = '0.5.1' #:nodoc:
 
   # Do not load the FFI interface by default. Wait until the user asks for
   # it.

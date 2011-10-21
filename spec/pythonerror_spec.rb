@@ -35,4 +35,18 @@ describe RubyPython::PythonError do
       rbType.getAttr("__name__").rubify.should == "ImportError"
     end
   end
+
+  describe ".last_traceback" do
+    it "should make availble the Python traceback of the last error" do
+      traceback = RubyPython.import 'traceback'
+      errors = RubyPython.import 'errors'
+      begin
+        errors.nested_error
+      rescue RubyPython::PythonError => exc
+        tb = exc.traceback
+        list = traceback.format_tb(tb)
+        list.rubify[0].should =~ /1 \/ 0/
+      end
+    end
+  end
 end

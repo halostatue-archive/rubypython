@@ -1,11 +1,11 @@
-=== 0.5.1 / 2011-10-21
+=== 0.5.2 / 2011-10-21
 * Minor Enhancements:
   * The traceback for Python exceptions is now returned usefully. [raineszm]
 * Bug Fixes:
   * Improved the robustness of Windows DLL detection. Based on work by
     bendoerr, raineszm, and halostatue.
 
-=== 0.5.0 / 2011-03-17
+=== 0.5.1 / 2011-03-17
 * Major Enhancements:
   * Procs and methods can be passed to Python. [raineszm]
   * Python to Ruby inheritance: A Ruby class can inherit from a Python class

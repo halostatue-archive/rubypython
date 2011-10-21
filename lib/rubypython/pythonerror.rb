@@ -3,7 +3,6 @@ require 'rubypython/macros'
 
 # Raised when an error occurs in the \Python interpreter.
 class RubyPython::PythonError < RuntimeError
-
   # The \Python traceback object associated with this error. This will be
   # a RubyPython::RubyPyProxy object.
   attr_reader :traceback

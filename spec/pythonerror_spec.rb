@@ -48,6 +48,5 @@ describe RubyPython::PythonError do
         list.rubify[0].should =~ /1 \/ 0/
       end
     end
-
   end
 end

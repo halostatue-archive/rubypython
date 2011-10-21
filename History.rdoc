@@ -1,4 +1,6 @@
 === 0.5.1 / 2011-10-21
+* Minor Enhancements:
+  * The traceback for Python exceptions is now returned usefully. [raineszm]
 * Bug Fixes:
   * Improved the robustness of Windows DLL detection. Based on work by
     bendoerr, raineszm, and halostatue.

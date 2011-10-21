@@ -5,6 +5,7 @@ require 'hoe'
 
 Hoe.plugin :doofus
 Hoe.plugin :gemspec
+Hoe.plugin :rubyforge
 Hoe.plugin :git
 Hoe.plugin :hg
 

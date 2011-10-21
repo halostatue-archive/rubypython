@@ -7,3 +7,4 @@ RubyPython has a growing list of contributors.
 * Steeve Morin (steeve)
 * Austin Ziegler (halostatue)
 * Aman Gupta (tmm1)
+* Ben Doerr (bendoerr)

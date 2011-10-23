@@ -9,27 +9,27 @@ Hoe.plugin :rubyforge
 Hoe.plugin :git
 Hoe.plugin :hg
 
-Hoe.spec 'rubypython' do |spec|
-  spec.rubyforge_name = spec.name
+Hoe.spec 'rubypython' do
+  self.rubyforge_name = self.name
 
   developer('Steeve Morin', 'swiuzzz+rubypython@gmail.com')
   developer('Austin Ziegler', 'austin@rubyforge.org')
   developer('Zach Raines', 'raineszm+rubypython@gmail.com')
 
-  spec.remote_rdoc_dir = 'rdoc'
-  spec.rsync_args << ' --exclude=statsvn/'
+  self.remote_rdoc_dir = 'rdoc'
+  self.rsync_args << ' --exclude=statsvn/'
 
-  spec.history_file = 'History.rdoc'
-  spec.readme_file = 'README.rdoc'
-  spec.extra_rdoc_files = FileList["*.rdoc"].to_a
+  self.history_file = 'History.rdoc'
+  self.readme_file = 'README.rdoc'
+  self.extra_rdoc_files = FileList["*.rdoc"].to_a
 
-  spec.extra_deps << ['ffi', '~> 1.0.7']
-  spec.extra_deps << ['blankslate', '>= 2.1.2.3']
+  self.extra_deps << ['ffi', '~> 1.0.7']
+  self.extra_deps << ['blankslate', '>= 2.1.2.3']
 
-  spec.extra_dev_deps << ['rspec', '~> 2.0']
-  spec.extra_dev_deps << ['tilt', '~> 1.0']
+  self.extra_dev_deps << ['rspec', '~> 2.0']
+  self.extra_dev_deps << ['tilt', '~> 1.0']
 
-  spec.spec_extras[:requirements]  = [ "Python, ~> 2.4" ]
+  self.spec_extras[:requirements]  = [ "Python, ~> 2.4" ]
 end
 
 namespace :website do

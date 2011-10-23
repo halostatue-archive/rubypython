@@ -1,3 +1,9 @@
+=== 0.6.0 / 2011-MM-DD
+* Minor Enhancements:
+  * Added RubyPython::Tuple, a simple subclass of ::Array that will correctly
+    be converted to a Python tuple object such that isinstance(x, tuple)
+    returns True.
+
 === 0.5.3 / 2011-10-22
 * Bug Fixes:
   * Improved 64-bit Python detection on Unixes with Linux-like semantics (e.g.,

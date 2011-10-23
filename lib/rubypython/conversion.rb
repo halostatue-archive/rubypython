@@ -30,8 +30,8 @@ module RubyPython::Conversion
     pList
   end
 
-  # Convert a Ruby Array to \Python Tuple. Returns an FFI::Pointer to a
-  # PyTupleObject.
+  # Convert a Ruby Array (including the subclass RubyPython::Tuple) to
+  # \Python \tuple. Returns an FFI::Pointer to a PyTupleObject.
   def self.rtopArrayToTuple(rArray)
     pList = rtopArrayToList(rArray)
     pTuple = RubyPython::Python.PySequence_Tuple(pList)
@@ -126,6 +126,8 @@ module RubyPython::Conversion
     case rObj
     when String
       rtopString rObj
+    when RubyPython::Tuple
+      rtopArrayToTuple rObj
     when Array
       # If this object is going to be used as a hash key we should make it a
       # tuple instead of a list
@@ -221,13 +223,13 @@ module RubyPython::Conversion
     RubyPython::Python.PyFloat_AsDouble(pNum)
   end
 
-  # Convert an FFI::Pointer to a \Python Tuple (PyTupleObject) to a Ruby
-  # Array.
+  # Convert an FFI::Pointer to a \Python Tuple (PyTupleObject) to an
+  # instance of RubyPython::Tuple, a subclass of the Ruby Array class.
   def self.ptorTuple(pTuple)
     pList = RubyPython::Python.PySequence_List pTuple
     rArray = ptorList pList
     RubyPython::Python.Py_DecRef pList
-    rArray
+    RubyPython::Tuple.tuple(rArray)
   end
 
   # Convert an FFI::Pointer to a \Python Dictionary (PyDictObject) to a Ruby

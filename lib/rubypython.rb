@@ -15,7 +15,7 @@
 #   puts cPickle.dumps("RubyPython is awesome!").rubify
 #   RubyPython.stop
 module RubyPython
-  VERSION = '0.5.3' #:nodoc:
+  VERSION = '0.6.0' #:nodoc:
 
   # Do not load the FFI interface by default. Wait until the user asks for
   # it.
@@ -36,6 +36,7 @@ require 'rubypython/pyobject'
 require 'rubypython/rubypyproxy'
 require 'rubypython/pymainclass'
 require 'rubypython/pygenerator'
+require 'rubypython/tuple'
 
 module RubyPython
   class << self

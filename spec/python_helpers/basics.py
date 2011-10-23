@@ -18,3 +18,6 @@ def simple_generator(callback):
 
 def named_args(arg1, arg2):
   return [arg1, arg2]
+
+def expects_tuple(tvalue):
+  return isinstance(tvalue, tuple)

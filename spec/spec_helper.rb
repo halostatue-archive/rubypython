@@ -17,6 +17,8 @@ module TestConstants
   AChar = 'a'
   AFloat = 1.0
   AnArray = [AnInt, AChar, AFloat, AString]
+  ATuple = RubyPython::Tuple.tuple(AnArray)
+# ATuple << AnInt << AChar << AFloat << AString
   ASym = :sym
   AHash = {
     AnInt => AnInt,

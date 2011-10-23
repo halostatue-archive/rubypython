@@ -63,6 +63,10 @@ class RubyPython::PythonExec
         locations << File.join("/opt/lib", name)
         locations << File.join("/usr/local/lib", name)
         locations << File.join("/usr/lib", name)
+        locations << File.join("/opt/local/lib64", name)
+        locations << File.join("/opt/lib64", name)
+        locations << File.join("/usr/local/lib64", name)
+        locations << File.join("/usr/lib64", name)
       end
     end
 

@@ -96,7 +96,7 @@ module RubyPython
     def _wrap(pyobject)
       if pyobject.class?
         RubyPyClass.new(pyobject)
-      elsif RubyPython.legacy_mode
+      elsif RubyPython.__send__ :legacy_mode?
         pyobject.rubify
       else
         RubyPyProxy.new(pyobject)

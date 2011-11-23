@@ -16,20 +16,10 @@
 #   RubyPython.stop
 module RubyPython
   VERSION = '0.6'
-
-  # Do not load the FFI interface by default. Wait until the user asks for
-  # it.
-  @load_ffi = false
-
-  # Indicates whether the \Python DLL has been loaded. For internal use
-  # only.
-  def self.load_ffi? #:nodoc:
-    @load_ffi
-  end
 end
 
 require 'rubypython/blankobject'
-require 'rubypython/options'
+require 'rubypython/interpreter'
 require 'rubypython/python'
 require 'rubypython/pythonerror'
 require 'rubypython/pyobject'
@@ -37,6 +27,7 @@ require 'rubypython/rubypyproxy'
 require 'rubypython/pymainclass'
 require 'rubypython/pygenerator'
 require 'rubypython/tuple'
+require 'thread'
 
 module RubyPython
   class << self
@@ -86,13 +77,19 @@ module RubyPython
       @legacy_mode
     end
 
+    def legacy_mode?
+      @legacy_mode = nil unless defined? @legacy_mode
+      @legacy_mode
+    end
+    private :legacy_mode?
+
     def warn_legacy_mode_deprecation
       warn "RubyPython's Legacy Mode is deprecated and will be removed after version #{VERSION}."
     end
     private :warn_legacy_mode_deprecation
 
-    # Starts the \Python interpreter. Either +RubyPython.start+,
-    # +RubyPython.session+, or +RubyPython.run+ must be run before using any
+    ## Starts the \Python interpreter. One of +RubyPython.start+,
+    # RubyPython.session+, or +RubyPython.run+ must be run before using any
     # \Python code. Returns +true+ if the interpreter was started; +false+
     # otherwise.
     #
@@ -111,21 +108,24 @@ module RubyPython
     #   p sys.version # => "2.7.1"
     #   RubyPython.stop
     def start(options = {})
-      RubyPython.configure(options)
+      Mutex.new.synchronize do
+        # Has the Runtime interpreter been defined?
+        if self.const_defined?(:Runtime, false)
+          # If this constant is defined, then yes it is. Since it is, let's
+          # see if we should print a warning to the user.
+          unless Runtime == options
+            warn "The Python interpreter has already been loaded from #{Runtime.basename} and cannot be changed in this process. Continuing with the current runtime."
+          end
+        else
+          self.const_set(:Runtime, RubyPython::Interpreter.new(options))
+        end
 
-      unless @load_ffi
-        @load_ffi = true
-        @reload = false
-        reload_library
+        unless defined? RubyPython::Python.ffi_libraries
+          Runtime.__send__(:infect!, RubyPython::Python)
+        end
       end
 
       return false if RubyPython::Python.Py_IsInitialized != 0
-
-      if @reload
-        reload_library
-        @reload = false
-      end
-
       RubyPython::Python.Py_Initialize
       notify :start
       true
@@ -210,7 +210,7 @@ module RubyPython
     # run(options = {}) { block to execute in RubyPython context }
     def run(options = {}, &block)
       start(options)
-      module_eval(&block)
+      self.module_eval(&block)
     ensure
       stop
     end
@@ -233,23 +233,28 @@ module RubyPython
     # This feature is highly experimental and may be disabled in the future.
     def start_from_virtualenv(virtualenv)
       result = start(:python_exe => File.join(virtualenv, "bin", "python"))
-      activate
+      activate_virtualenv
       result
     end
 
-    # Returns an object describing the currently active Python interpreter.
+    # Returns an object describing the active Python interpreter. Returns
+    # +nil+ if there is no active interpreter.
     def python
-      RubyPython::Python::EXEC
+      if self.const_defined? :Runtime
+        self::Runtime
+      else
+        nil
+      end
     end
 
     # Used to activate the virtualenv.
-    def activate
+    def activate_virtualenv
       imp = import("imp")
       imp.load_source("activate_this",
-                      File.join(File.dirname(RubyPython::Python::EXEC.python),
+                      File.join(File.dirname(RubyPython::Runtime.python),
                       "activate_this.py"))
     end
-    private :activate
+    private :activate_virtualenv
 
     def add_observer(object)
       @observers ||= []
@@ -262,7 +267,7 @@ module RubyPython
       @observers ||= []
       @observers.each do |o|
         next if nil === o
-        o.update status
+        o.__send__ :python_interpreter_update, status
       end
     end
     private :notify

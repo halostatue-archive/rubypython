@@ -15,7 +15,7 @@
 #   puts cPickle.dumps("RubyPython is awesome!").rubify
 #   RubyPython.stop
 module RubyPython
-  VERSION = '0.6.0' #:nodoc:
+  VERSION = '0.6'
 
   # Do not load the FFI interface by default. Wait until the user asks for
   # it.
@@ -40,15 +40,18 @@ require 'rubypython/tuple'
 
 module RubyPython
   class << self
-    # Controls whether RubyPython is operating in <em>Normal Mode</em> or
-    # <em>Legacy Mode</em>.
+    ##
+    # :attr_accessor:
+    # Controls whether RubyPython is operating in <em>Proxy Mode</em> or
+    # <em>Legacy Mode</em>. This behavioural difference is deprecated as of
+    # RubyPython 0.6 and will be removed in a subsequent release.
     #
-    # === Normal Mode
+    # === Proxy Mode
     # By default, +legacy_mode+ is +false+, meaning that any object returned
-    # from a \Python function call will be wrapped in an instance of
-    # +RubyPyProxy+ or one of its subclasses. This allows \Python method
-    # calls to be forwarded to the \Python object, even if it would otherwise
-    # be a native Ruby object.
+    # from a \Python function call will be wrapped in a Ruby-Python proxy
+    # (an instance of +RubyPyProxy+ or one of its subclasses). This allows
+    # \Python method calls to be forwarded to the \Python object, even if it
+    # would otherwise be a native Ruby object.
     #
     #   RubyPython.session do
     #     string = RubyPython.import 'string'
@@ -61,8 +64,8 @@ module RubyPython
     # If +legacy_mode+ is +true+, RubyPython automatically tries to convert
     # returned objects to native Ruby object types. If there is no such
     # conversion, the object remains wrapped in +RubyPyProxy+. This
-    # behaviour is the same as RubyPython 0.2 and earlier. This mode is not
-    # recommended and may be phased out for RubyPython 1.0.
+    # behaviour is the same as RubyPython 0.2 and earlier. This mode is
+    # deprecated as of RubyPython 0.6 and will be removed.
     #
     #   RubyPython.legacy_mode = true
     #   RubyPython.session do
@@ -70,7 +73,23 @@ module RubyPython
     #     ascii_letters = string.ascii_letters
     #     puts ascii_letters.isalpha # throws NoMethodError
     #   end
-    attr_accessor :legacy_mode
+    def legacy_mode=(value)
+      warn_legacy_mode_deprecation unless defined? @legacy_mode
+      @legacy_mode = value
+    end
+
+    def legacy_mode
+      unless defined? @legacy_mode
+        warn_legacy_mode_deprecation
+        @legacy_mode = nil
+      end
+      @legacy_mode
+    end
+
+    def warn_legacy_mode_deprecation
+      warn "RubyPython's Legacy Mode is deprecated and will be removed after version #{VERSION}."
+    end
+    private :warn_legacy_mode_deprecation
 
     # Starts the \Python interpreter. Either +RubyPython.start+,
     # +RubyPython.session+, or +RubyPython.run+ must be run before using any
@@ -91,11 +110,6 @@ module RubyPython
     #   sys = RubyPython.import 'sys'
     #   p sys.version # => "2.7.1"
     #   RubyPython.stop
-    #
-    # *NOTE*: In the current version of RubyPython, it _is_ possible to
-    # change \Python interpreters in a single Ruby process execution, but it
-    # is *strongly* discouraged as this may lead to segmentation faults.
-    # This feature is highly experimental and may be disabled in the future.
     def start(options = {})
       RubyPython.configure(options)
 
@@ -252,17 +266,6 @@ module RubyPython
       end
     end
     private :notify
-
-    def reload_library
-      # Invalidate the current Python instance, if defined.
-      if defined? RubyPython::Python::EXEC and RubyPython::Python::EXEC
-        RubyPython::Python::EXEC.instance_eval { invalidate! }
-      end
-      remove_const :Python
-      load RubyPython::PYTHON_RB
-      true
-    end
-    private :reload_library
   end
 
   add_observer PyMain

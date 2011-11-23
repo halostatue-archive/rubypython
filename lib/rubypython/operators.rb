@@ -106,13 +106,17 @@ module RubyPython::Operators
     RubyPython::PyMain.cmp(self, other)
   end
 
-  # Called by RubyPython when the interpreter is started or stopped so that the
-  # necessary preparation or cleanup can be done. For internal use only.
-  def self.update(status)
-    case status
-    when :stop
-      @@operator = nil
+  class << self
+    # Called by RubyPython when the interpreter is started or stopped so
+    # that the necessary preparation or cleanup can be done. For internal
+    # use only.
+    def python_interpreter_update(status)
+      case status
+      when :stop
+        @@operator = nil
+      end
     end
+    private :python_interpreter_update
   end
 
   # Aliases eql? to == for Python objects.

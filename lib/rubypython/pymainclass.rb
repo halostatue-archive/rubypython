@@ -63,15 +63,16 @@ module RubyPython
     end
 
     # Called by RubyPython when the interpreter is started or stopped so
-    # that the neccesary preperation or cleanup can be done. For internal
+    # that the neccesary preparation or cleanup can be done. For internal
     # use only.
-    def update(status)
+    def python_interpreter_update(status)
       case status
       when :stop
         @main = nil
         @builtin = nil
       end
     end
+    private :python_interpreter_update
   end
 
   # The accessible instance of PyMainClass.

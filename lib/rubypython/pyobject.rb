@@ -35,12 +35,13 @@ class RubyPython::PyObject # :nodoc: all
       # Called by RubyPython when the interpreter is started or stopped so
       # that the necessary preparation or cleanup can be done. For internal
       # use only.
-      def update(status)
+      def python_interpreter_update(status)
         case status
         when :stop
           current_pointers.clear
         end
       end
+      private :python_interpreter_update
     end
 
     self.current_pointers = {}

@@ -1,9 +1,23 @@
+# An instance of this class represents information about a particular
+# \Python interpreter.
+#
+# This class represents the current Python interpreter.
 # A class that represents a \Python executable.
 #
 # End users may get the instance that represents the current running \Python
 # interpreter (from +RubyPython.python+), but should not directly
 # instantiate this class.
-class RubyPython::PythonExec
+class RubyPython::Interpreter
+  # Compare the current Interpreter to the provided Interpreter or
+  # configuration hash. If comparing against a configuration hash, only the
+  # :python_exe basename is used. If comparing against another Interpreter
+  # object, the Interpreter basename and version are used.
+  def ==(other)
+    other = self.class.new(other) if other.kind_of? Hash
+    return false unless other.kind_of? self.class
+    (self.version == other.version) && (self.basename == other.basename)
+  end
+
   # Based on the name of or path to the \Python executable provided, will
   # determine:
   #
@@ -11,8 +25,8 @@ class RubyPython::PythonExec
   # * The version of \Python being run.
   # * The system prefix.
   # * The main loadable \Python library for this version.
-  def initialize(python_executable)
-    @python = python_executable || "python"
+  def initialize(options)
+    @python = options[:python_exe] || "python"
     @python = %x(#{@python} -c "import sys; print sys.executable").chomp
 
     @version = run_command "import sys; print '%d.%d' % sys.version_info[:2]"
@@ -120,6 +134,8 @@ class RubyPython::PythonExec
   attr_reader :library
   # The Python version
   attr_reader :version
+  # The basename of the Python interpreter
+  attr_reader :basename
 
   # Run a Python command-line command.
   def run_command(command)

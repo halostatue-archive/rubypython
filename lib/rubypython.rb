@@ -114,7 +114,7 @@ module RubyPython
           # If this constant is defined, then yes it is. Since it is, let's
           # see if we should print a warning to the user.
           unless Runtime == options
-            warn "The Python interpreter has already been loaded from #{Runtime.basename} and cannot be changed in this process. Continuing with the current runtime."
+            warn "The Python interpreter has already been loaded from #{Runtime.python} and cannot be changed in this process. Continuing with the current runtime."
           end
         else
           self.const_set(:Runtime, RubyPython::Interpreter.new(options))

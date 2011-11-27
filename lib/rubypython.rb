@@ -110,14 +110,19 @@ module RubyPython
     def start(options = {})
       Mutex.new.synchronize do
         # Has the Runtime interpreter been defined?
-        if self.const_defined?(:Runtime, false)
+        if self.const_defined?(:Runtime)
           # If this constant is defined, then yes it is. Since it is, let's
           # see if we should print a warning to the user.
           unless Runtime == options
             warn "The Python interpreter has already been loaded from #{Runtime.python} and cannot be changed in this process. Continuing with the current runtime."
           end
         else
-          self.const_set(:Runtime, RubyPython::Interpreter.new(options))
+          interp = RubyPython::Interpreter.new(options)
+          if interp.valid?
+            self.const_set(:Runtime, interp)
+          else
+            raise RubyPython::InvalidInterpreter, "An invalid interpreter was specified."
+          end
         end
 
         unless defined? RubyPython::Python.ffi_libraries

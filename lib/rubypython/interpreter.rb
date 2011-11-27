@@ -1,5 +1,8 @@
 # -*- ruby encoding: utf-8 -*-
 
+class RubyPython::InvalidInterpreter < Exception
+end
+
 ##
 # An instance of this class represents information about a particular
 # \Python interpreter.
@@ -11,6 +14,7 @@
 # interpreter (from +RubyPython.python+), but should not directly
 # instantiate this class.
 class RubyPython::Interpreter
+
   ##
   # Compare the current Interpreter to the provided Interpreter or
   # configuration hash. A configuration hash will be converted to an
@@ -36,9 +40,12 @@ class RubyPython::Interpreter
     @python_exe = options[:python_exe]
     # Windows: 'C:\\Python27\python.exe'
     # Mac OS X: '/usr/bin/
-    @python     = runpy "import sys; print sys.executable"
-    @version    = runpy "import sys; print '%d.%d' % sys.version_info[:2]"
-    @sys_prefix = runpy "import sys; print sys.prefix"
+    rc, @python     = runpy "import sys; print sys.executable"
+    if rc.exitstatus.nonzero?
+      raise RubyPython::InvalidInterpreter, "An invalid interpreter was specified."
+    end
+    rc, @version    = runpy "import sys; print '%d.%d' % sys.version_info[:2]"
+    rc, @sys_prefix = runpy "import sys; print sys.prefix"
 
     if FFI::Platform.windows?
       flat_version  = @version.tr('.', '')
@@ -178,7 +185,14 @@ class RubyPython::Interpreter
 
   # Run a Python command-line command.
   def runpy(command)
-    %x(#{@python || @python_exe || 'python'} -c "#{command}").chomp
+    i = @python || @python_exe || 'python'
+    if FFI::Platform.windows?
+      o = %x(#{i} -c "#{command}" 2> NUL:)
+    else
+      o = %x(#{i} -c "#{command}" 2> /dev/null)
+    end
+
+    [ $?, o.chomp ]
   end
   private :runpy
 

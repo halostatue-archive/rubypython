@@ -1,4 +1,4 @@
-=== 0.6 / 2011-MM-DD
+=== 0.6 / 2011-04-17
 * Major Enhancements:
   * Previous versions of RubyPython theoretically allowed the loading of
     different Python interpreters during a single Ruby session. Because of the

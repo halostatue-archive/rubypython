@@ -95,16 +95,18 @@ class RubyPython::Interpreter
     if FFI::Platform.unix?
       # On Unixes, let's look in some standard alternative places, too.
       # Just in case. Some Unixes don't include a .so symlink when they
-      # should, so let's look for the base case of .so.1, too.
-      [ @libname, "#{@libname}.1" ].each do |name|
+      # should, so let's look for the base cases of .so.1 and .so.1.0, too.
+      [ @libname, "#{@libname}.1", "#{@libname}.1.0" ].each do |name|
+        if FFI::Platform::ARCH != 'i386'
+          @locations << File.join("/opt/local/lib64", name)
+          @locations << File.join("/opt/lib64", name)
+          @locations << File.join("/usr/local/lib64", name)
+          @locations << File.join("/usr/lib64", name)
+        end
         @locations << File.join("/opt/local/lib", name)
         @locations << File.join("/opt/lib", name)
         @locations << File.join("/usr/local/lib", name)
         @locations << File.join("/usr/lib", name)
-        @locations << File.join("/opt/local/lib64", name)
-        @locations << File.join("/opt/lib64", name)
-        @locations << File.join("/usr/local/lib64", name)
-        @locations << File.join("/usr/lib64", name)
       end
     end
 

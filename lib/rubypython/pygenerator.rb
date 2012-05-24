@@ -42,7 +42,7 @@ def rubypython_generator(callback):
           fib = Fiber.new do
             yield *args
             Python.PyErr_SetNone(Python.PyExc_StopIteration)
-            FFI::Pointer::NULL
+            ::FFI::Pointer::NULL
           end
           generator_type.__call__(lambda { fib.resume })
         end

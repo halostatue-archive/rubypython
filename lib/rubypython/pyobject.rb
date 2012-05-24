@@ -11,7 +11,7 @@ class RubyPython::PyObject # :nodoc: all
   # This class wraps C <tt>Py…Object</tt>s so that the RubyPython::Python
   # reference count is automatically decreased when the Ruby object
   # referencing them goes out of scope.
-  class AutoPyPointer < FFI::AutoPointer # :nodoc:
+  class AutoPyPointer < ::FFI::AutoPointer # :nodoc:
     class << self
       # Keeps track of which objects are associated with the currently
       # running RubyPython::Python interpreter, so that RubyPython knows not

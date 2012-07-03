@@ -1,10 +1,11 @@
 require 'ffi'
-require 'thread'
+require 'monitor'
 require 'rubypython/interpreter'
 
 module RubyPython
   # This module will hold the loaded RubyPython interpreter.
   module Python #:nodoc: all
+    extend MonitorMixin
   end
 end
 
@@ -13,7 +14,7 @@ class RubyPython::Interpreter
   # has been infected, the #infect! method is removed from
   # RubyPython::Interpreter.
   def infect!(mod)
-    Mutex.new.synchronize do
+    RubyPython::Python.synchronize do
       self.class.class_eval do
         undef :infect!
       end

@@ -52,7 +52,7 @@ RSpec.configure do |config|
     end
   end
 
-  config.before(:all, :self_start => nil) do
+  config.before(:all) do
     RubyPython.start
 
     @sys = RubyPython.import 'sys'

@@ -24,14 +24,14 @@ end
 describe RubyPython, :self_start => true do
 
   describe "#session" do
-    xit "should start interpreter" do
+    it "should start interpreter" do
       RubyPython.session do
         cPickle = RubyPython.import "cPickle"
         cPickle.loads("(dp1\nS'a'\nS'n'\ns(I1\nS'2'\ntp2\nI4\ns.").rubify.should == {"a"=>"n", [1, "2"]=>4}
       end
     end
 
-    xit "should stop the interpreter" do
+    it "should stop the interpreter" do
       RubyPython.session do
         cPickle = RubyPython.import "cPickle"
       end
@@ -41,14 +41,14 @@ describe RubyPython, :self_start => true do
   end
 
   describe "#run" do
-    xit "should start interpreter" do
+    it "should start interpreter" do
       RubyPython.run do
         cPickle = import "cPickle"
         cPickle.loads("(dp1\nS'a'\nS'n'\ns(I1\nS'2'\ntp2\nI4\ns.").rubify.should == {"a"=>"n", [1, "2"]=>4}
       end
     end
 
-    xit "should stop the interpreter" do
+    it "should stop the interpreter" do
       RubyPython.run do
         cPickle = import "cPickle"
       end

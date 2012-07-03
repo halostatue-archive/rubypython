@@ -61,6 +61,10 @@ RSpec.configure do |config|
     @basics = RubyPython.import 'basics'
   end
 
+  config.before(:all, :self_start => true) do 
+    RubyPython.stop
+  end
+
   config.after(:all) do
     RubyPython.stop
   end

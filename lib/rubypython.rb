@@ -88,6 +88,9 @@ module RubyPython
     end
     private :warn_legacy_mode_deprecation
 
+    ## Used to ensure that the \Python interpreter is started and stopped atomically.
+    @@interpreter_lock = Mutex.new
+
     ## Starts the \Python interpreter. One of +RubyPython.start+,
     # RubyPython.session+, or +RubyPython.run+ must be run before using any
     # \Python code. Returns +true+ if the interpreter was started; +false+
@@ -108,7 +111,7 @@ module RubyPython
     #   p sys.version # => "2.7.1"
     #   RubyPython.stop
     def start(options = {})
-      Mutex.new.synchronize do
+      @@interpreter_lock.synchronize do
         # Has the Runtime interpreter been defined?
         if self.const_defined?(:Runtime)
           # If this constant is defined, then yes it is. Since it is, let's
@@ -141,12 +144,14 @@ module RubyPython
     # invocation of this method. If you need the values within the \Python
     # proxy objects, be sure to call +RubyPyProxy#rubify+ on them.
     def stop
-      if defined? Python.Py_IsInitialized and Python.Py_IsInitialized != 0
-        Python.Py_Finalize
-        notify :stop
-        true
-      else
-        false
+      @@interpreter_lock.synchronize do
+        if defined? Python.Py_IsInitialized and Python.Py_IsInitialized != 0
+          Python.Py_Finalize
+          notify :stop
+          true
+        else
+          false
+        end
       end
     end
 

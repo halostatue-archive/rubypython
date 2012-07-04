@@ -88,7 +88,6 @@ module RubyPython
     end
     private :warn_legacy_mode_deprecation
 
-
     ## Starts the \Python interpreter. One of +RubyPython.start+,
     # RubyPython.session+, or +RubyPython.run+ must be run before using any
     # \Python code. Returns +true+ if the interpreter was started; +false+

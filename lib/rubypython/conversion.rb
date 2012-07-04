@@ -151,11 +151,6 @@ module RubyPython::Conversion
     when Symbol
       rtopSymbol rObj
     when Proc, Method
-      if RubyPython.legacy_mode
-        raise UnsupportedConversion.new("Callbacks are not supported in Legacy Mode.")
-      end
-      rtopFunction rObj
-    when Method
       rtopFunction rObj
     when nil
       rtopNone

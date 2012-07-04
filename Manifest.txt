@@ -12,7 +12,6 @@ lib/rubypython.rb
 lib/rubypython/blankobject.rb
 lib/rubypython/conversion.rb
 lib/rubypython/interpreter.rb
-lib/rubypython/legacy.rb
 lib/rubypython/macros.rb
 lib/rubypython/operators.rb
 lib/rubypython/pygenerator.rb
@@ -26,7 +25,6 @@ lib/rubypython/type.rb
 spec/basic_spec.rb
 spec/callback_spec.rb
 spec/conversion_spec.rb
-spec/legacy_spec.rb
 spec/pymainclass_spec.rb
 spec/pyobject_spec.rb
 spec/python_helpers/basics.py

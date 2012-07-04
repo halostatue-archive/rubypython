@@ -31,63 +31,6 @@ require 'thread'
 
 module RubyPython
   class << self
-    ##
-    # :attr_accessor:
-    # Controls whether RubyPython is operating in <em>Proxy Mode</em> or
-    # <em>Legacy Mode</em>. This behavioural difference is deprecated as of
-    # RubyPython 0.6 and will be removed in a subsequent release.
-    #
-    # === Proxy Mode
-    # By default, +legacy_mode+ is +false+, meaning that any object returned
-    # from a \Python function call will be wrapped in a Ruby-Python proxy
-    # (an instance of +RubyPyProxy+ or one of its subclasses). This allows
-    # \Python method calls to be forwarded to the \Python object, even if it
-    # would otherwise be a native Ruby object.
-    #
-    #   RubyPython.session do
-    #     string = RubyPython.import 'string'
-    #     ascii_letters = string.ascii_letters
-    #     puts ascii_letters.isalpha # => True
-    #     puts ascii_letters.rubify.isalpha # throws NoMethodError
-    #   end
-    #
-    # === Legacy Mode
-    # If +legacy_mode+ is +true+, RubyPython automatically tries to convert
-    # returned objects to native Ruby object types. If there is no such
-    # conversion, the object remains wrapped in +RubyPyProxy+. This
-    # behaviour is the same as RubyPython 0.2 and earlier. This mode is
-    # deprecated as of RubyPython 0.6 and will be removed.
-    #
-    #   RubyPython.legacy_mode = true
-    #   RubyPython.session do
-    #     string = RubyPython.import 'string'
-    #     ascii_letters = string.ascii_letters
-    #     puts ascii_letters.isalpha # throws NoMethodError
-    #   end
-    def legacy_mode=(value)
-      warn_legacy_mode_deprecation unless defined? @legacy_mode
-      @legacy_mode = value
-    end
-
-    def legacy_mode
-      unless defined? @legacy_mode
-        warn_legacy_mode_deprecation
-        @legacy_mode = nil
-      end
-      @legacy_mode
-    end
-
-    def legacy_mode?
-      @legacy_mode = nil unless defined? @legacy_mode
-      @legacy_mode
-    end
-    private :legacy_mode?
-
-    def warn_legacy_mode_deprecation
-      warn "RubyPython's Legacy Mode is deprecated and will be removed after version #{VERSION}."
-    end
-    private :warn_legacy_mode_deprecation
-
     ## Starts the \Python interpreter. One of +RubyPython.start+,
     # RubyPython.session+, or +RubyPython.run+ must be run before using any
     # \Python code. Returns +true+ if the interpreter was started; +false+

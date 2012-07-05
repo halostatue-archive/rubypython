@@ -52,13 +52,17 @@ RSpec.configure do |config|
     end
   end
 
-  config.before(:all, :self_start => nil) do
+  config.before(:all) do
     RubyPython.start
 
     @sys = RubyPython.import 'sys'
     @sys.path.append File.join(dir, 'python_helpers')
     @objects = RubyPython.import 'objects'
     @basics = RubyPython.import 'basics'
+  end
+
+  config.before(:all, :self_start => true) do 
+    RubyPython.stop
   end
 
   config.after(:all) do

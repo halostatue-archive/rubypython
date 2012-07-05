@@ -56,9 +56,9 @@ class RubyPython::PythonError < RuntimeError
   # with three PyObject instances, representing the Type, the Value, and the
   # stack trace of the Python error.
   def self.fetch
-    typePointer = FFI::MemoryPointer.new :pointer
-    valuePointer = FFI::MemoryPointer.new :pointer
-    tracebackPointer = FFI::MemoryPointer.new :pointer
+    typePointer = ::FFI::MemoryPointer.new :pointer
+    valuePointer = ::FFI::MemoryPointer.new :pointer
+    tracebackPointer = ::FFI::MemoryPointer.new :pointer
 
     RubyPython::Python.PyErr_Fetch typePointer, valuePointer, tracebackPointer
 

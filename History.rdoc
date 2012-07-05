@@ -1,4 +1,13 @@
-=== 0.6 / 2011-MM-DD
+=== 0.6.2 / 2012-05-24
+* Bug Fixes:
+  * Fixed a possible namespace collision bug with the FFI library. [Akzhan]
+
+=== 0.6.1 / 2012-05-18
+* Bug Fixes:
+  * Widened the library naming schemes that RubyPython will search for the Python library. [Akzhan]
+  * Better handling of 64-bit systems which also have 32-bit libraries. [Akzhan]
+
+=== 0.6 / 2012-04-17
 * Major Enhancements:
   * Previous versions of RubyPython theoretically allowed the loading of
     different Python interpreters during a single Ruby session. Because of the

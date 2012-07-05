@@ -11,7 +11,7 @@ class RubyPython::PyObject # :nodoc: all
   # This class wraps C <tt>Py…Object</tt>s so that the RubyPython::Python
   # reference count is automatically decreased when the Ruby object
   # referencing them goes out of scope.
-  class AutoPyPointer < FFI::AutoPointer # :nodoc:
+  class AutoPyPointer < ::FFI::AutoPointer # :nodoc:
     class << self
       # Keeps track of which objects are associated with the currently
       # running RubyPython::Python interpreter, so that RubyPython knows not
@@ -57,11 +57,11 @@ class RubyPython::PyObject # :nodoc: all
   # and wrapped in an AutoPyPointer. The conversion is done with
   # +RubyPython::Conversion.rtopObject+.
   def initialize(rObject)
-    if rObject.kind_of? FFI::AutoPointer
-      new_pointer = FFI::Pointer.new rObject
+    if rObject.kind_of? ::FFI::AutoPointer
+      new_pointer = ::FFI::Pointer.new rObject
       @pointer = AutoPyPointer.new new_pointer
       xIncref
-    elsif rObject.kind_of? FFI::Pointer
+    elsif rObject.kind_of? ::FFI::Pointer
       @pointer = AutoPyPointer.new rObject
     else
       @pointer = AutoPyPointer.new RubyPython::Conversion.rtopObject(rObject)

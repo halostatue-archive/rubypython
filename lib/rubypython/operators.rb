@@ -9,9 +9,7 @@ module RubyPython::Operators
     @@operator ||= RubyPython.import('operator')
   end
 
-  # Creates a method to delegate a binary operation. The result of the
-  # operation will follow the conversion rules appropriate to the current
-  # mode of operation as set by {RubyPython.legacy_mode}.
+  # Creates a method to delegate a binary operation.
   # [rname] The name of the Ruby method for this operation. Can be either a
   # Symbol or a String.
   # [pname] The name of the \Python magic method to which this method should
@@ -37,10 +35,8 @@ module RubyPython::Operators
     end
   end
 
-  # Creates a method to delegate a relational operator. The result of the
-  # operation will follow the conversion rules appropriate to the current
-  # mode of operation as set by {RubyPython.legacy_mode}. These methods are
-  # implemented with calls the _operator_ module.
+  # Creates a method to delegate a relational operator. 
+  # These methods are implemented with calls the _operator_ module.
   # [rname] The name of the Ruby method for this operation. Can be a Symbol
   # or a String.
   # [pname] The name of the \Python magic method to which this method should

@@ -95,7 +95,7 @@ module RubyPython::Conversion
   # Convert a Ruby Proc to a \Python Function. Returns an FFI::Pointer to a
   # PyCFunction.
   def self.rtopFunction(rObj)
-    proc = FFI::Function.new(:pointer, [:pointer, :pointer]) do |p_self, p_args|
+    proc = ::FFI::Function.new(:pointer, [:pointer, :pointer]) do |p_self, p_args|
       retval = rObj.call(*ptorTuple(p_args))
       pObject = retval.is_a?(RubyPython::RubyPyProxy) ? retval.pObject : RubyPython::PyObject.new(retval)
 
@@ -105,7 +105,7 @@ module RubyPython::Conversion
     end
 
     defn = RubyPython::Python::PyMethodDef.new
-    defn[:ml_name] = FFI::MemoryPointer.from_string("RubyPython::Proc::%s" % rObj.object_id)
+    defn[:ml_name] = ::FFI::MemoryPointer.from_string("RubyPython::Proc::%s" % rObj.object_id)
     defn[:ml_meth] = proc
     defn[:ml_flags] = RubyPython::Python::METH_VARARGS
     defn[:ml_doc] = nil
@@ -151,11 +151,6 @@ module RubyPython::Conversion
     when Symbol
       rtopSymbol rObj
     when Proc, Method
-      if RubyPython.legacy_mode
-        raise UnsupportedConversion.new("Callbacks are not supported in Legacy Mode.")
-      end
-      rtopFunction rObj
-    when Method
       rtopFunction rObj
     when nil
       rtopNone
@@ -169,17 +164,17 @@ module RubyPython::Conversion
   # Convert an FFI::Pointer to a \Python String (PyStringObject) to a Ruby
   # String.
   def self.ptorString(pString)
-    strPtr  = FFI::MemoryPointer.new(:pointer)
-    sizePtr = FFI::MemoryPointer.new(:ssize_t)
+    strPtr  = ::FFI::MemoryPointer.new(:pointer)
+    sizePtr = ::FFI::MemoryPointer.new(:ssize_t)
 
     RubyPython::Python.PyString_AsStringAndSize(pString, strPtr, sizePtr)
 
-    size = case FFI.find_type(:ssize_t)
-           when FFI.find_type(:long)
+    size = case ::FFI.find_type(:ssize_t)
+           when ::FFI.find_type(:long)
              sizePtr.read_long
-           when FFI.find_type(:int)
+           when ::FFI.find_type(:int)
              sizePtr.read_int
-           when FFI.find_type(:long_long)
+           when ::FFI.find_type(:long_long)
              sizePtr.read_long_long
            else
              nil
@@ -237,10 +232,10 @@ module RubyPython::Conversion
   def self.ptorDict(pDict)
     rb_hash = {}
 
-    pos = FFI::MemoryPointer.new :ssize_t
+    pos = ::FFI::MemoryPointer.new :ssize_t
     pos.write_int 0
-    key = FFI::MemoryPointer.new :pointer
-    val = FFI::MemoryPointer.new :pointer
+    key = ::FFI::MemoryPointer.new :pointer
+    val = ::FFI::MemoryPointer.new :pointer
 
     while RubyPython::Python.PyDict_Next(pDict, pos, key, val) != 0
       pKey = key.read_pointer

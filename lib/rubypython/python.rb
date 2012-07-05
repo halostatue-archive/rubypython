@@ -1,10 +1,11 @@
 require 'ffi'
-require 'thread'
+require 'monitor'
 require 'rubypython/interpreter'
 
 module RubyPython
   # This module will hold the loaded RubyPython interpreter.
   module Python #:nodoc: all
+    extend MonitorMixin
   end
 end
 
@@ -13,12 +14,12 @@ class RubyPython::Interpreter
   # has been infected, the #infect! method is removed from
   # RubyPython::Interpreter.
   def infect!(mod)
-    Mutex.new.synchronize do
+    RubyPython::Python.synchronize do
       self.class.class_eval do
         undef :infect!
       end
 
-      mod.extend FFI::Library
+      mod.extend ::FFI::Library
       # FFI::DynamicLibrary::RTLD_LAZY | FFI::DynamicLibrary::RTLD_GLOBAL
       mod.ffi_lib_flags :lazy, :global
       mod.ffi_lib self.library
@@ -26,7 +27,7 @@ class RubyPython::Interpreter
       # This class is a little bit of a hack to extract the address of
       # global structs. If someone knows a better way please let me know.
       mod.module_eval do
-        self.const_set :DummyStruct, Class.new(FFI::Struct)
+        self.const_set :DummyStruct, Class.new(::FFI::Struct)
         self::DummyStruct.layout :dummy_var, :int
 
         self.const_set(:PY_FILE_INPUT, 257)
@@ -177,12 +178,12 @@ class RubyPython::Interpreter
         # struct. The C struct is actually much larger, but since we only access
         # the first two data members via FFI and always deal with struct
         # pointers there is no need to mess around with the rest of the object.
-        self.const_set :PyObjectStruct, Class.new(FFI::Struct)
+        self.const_set :PyObjectStruct, Class.new(::FFI::Struct)
         self::PyObjectStruct.layout :ob_refcnt, :ssize_t,
           :ob_type, :pointer
 
         # This struct is used when defining Python methods.
-        self.const_set :PyMethodDef, Class.new(FFI::Struct)
+        self.const_set :PyMethodDef, Class.new(::FFI::Struct)
         self::PyMethodDef.layout :ml_name, :pointer,
           :ml_meth, :PyCFunction,
           :ml_flags, :int,

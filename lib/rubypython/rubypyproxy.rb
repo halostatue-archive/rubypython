@@ -88,16 +88,10 @@ module RubyPython
     end
 
     # Handles the job of wrapping up anything returned by a RubyPyProxy
-    # instance. The behavior differs depending on the value of
-    # +RubyPython.legacy_mode+. If legacy mode is inactive, every returned
-    # object is wrapped by an instance of +RubyPyProxy+. If legacy mode is
-    # active, RubyPython first attempts to convert the returned object to a
-    # native Ruby type, and then only wraps the object if this fails.
+    # instance. Every returned # object is wrapped by an instance of +RubyPyProxy+
     def _wrap(pyobject)
       if pyobject.class?
         RubyPyClass.new(pyobject)
-      elsif RubyPython.__send__ :legacy_mode?
-        pyobject.rubify
       else
         RubyPyProxy.new(pyobject)
       end
@@ -136,7 +130,6 @@ module RubyPython
     #    attempting to call a method with keyword arguments.
     # 4. The Python method or value will be called, if it's callable.
     # 5. RubyPython will wrap the return value in a RubyPyProxy object
-    #    (unless legacy_mode has been turned on).
     # 6. If a block has been provided, the wrapped return value will be
     #    passed into the block.
     def method_missing(name, *args, &block)

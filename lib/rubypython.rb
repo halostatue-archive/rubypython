@@ -15,7 +15,7 @@
 #   puts cPickle.dumps("RubyPython is awesome!").rubify
 #   RubyPython.stop
 module RubyPython
-  VERSION = '0.6'
+  VERSION = '0.6.2'
 end
 
 require 'rubypython/blankobject'
@@ -31,63 +31,6 @@ require 'thread'
 
 module RubyPython
   class << self
-    ##
-    # :attr_accessor:
-    # Controls whether RubyPython is operating in <em>Proxy Mode</em> or
-    # <em>Legacy Mode</em>. This behavioural difference is deprecated as of
-    # RubyPython 0.6 and will be removed in a subsequent release.
-    #
-    # === Proxy Mode
-    # By default, +legacy_mode+ is +false+, meaning that any object returned
-    # from a \Python function call will be wrapped in a Ruby-Python proxy
-    # (an instance of +RubyPyProxy+ or one of its subclasses). This allows
-    # \Python method calls to be forwarded to the \Python object, even if it
-    # would otherwise be a native Ruby object.
-    #
-    #   RubyPython.session do
-    #     string = RubyPython.import 'string'
-    #     ascii_letters = string.ascii_letters
-    #     puts ascii_letters.isalpha # => True
-    #     puts ascii_letters.rubify.isalpha # throws NoMethodError
-    #   end
-    #
-    # === Legacy Mode
-    # If +legacy_mode+ is +true+, RubyPython automatically tries to convert
-    # returned objects to native Ruby object types. If there is no such
-    # conversion, the object remains wrapped in +RubyPyProxy+. This
-    # behaviour is the same as RubyPython 0.2 and earlier. This mode is
-    # deprecated as of RubyPython 0.6 and will be removed.
-    #
-    #   RubyPython.legacy_mode = true
-    #   RubyPython.session do
-    #     string = RubyPython.import 'string'
-    #     ascii_letters = string.ascii_letters
-    #     puts ascii_letters.isalpha # throws NoMethodError
-    #   end
-    def legacy_mode=(value)
-      warn_legacy_mode_deprecation unless defined? @legacy_mode
-      @legacy_mode = value
-    end
-
-    def legacy_mode
-      unless defined? @legacy_mode
-        warn_legacy_mode_deprecation
-        @legacy_mode = nil
-      end
-      @legacy_mode
-    end
-
-    def legacy_mode?
-      @legacy_mode = nil unless defined? @legacy_mode
-      @legacy_mode
-    end
-    private :legacy_mode?
-
-    def warn_legacy_mode_deprecation
-      warn "RubyPython's Legacy Mode is deprecated and will be removed after version #{VERSION}."
-    end
-    private :warn_legacy_mode_deprecation
-
     ## Starts the \Python interpreter. One of +RubyPython.start+,
     # RubyPython.session+, or +RubyPython.run+ must be run before using any
     # \Python code. Returns +true+ if the interpreter was started; +false+
@@ -108,7 +51,7 @@ module RubyPython
     #   p sys.version # => "2.7.1"
     #   RubyPython.stop
     def start(options = {})
-      Mutex.new.synchronize do
+      RubyPython::Python.synchronize do
         # Has the Runtime interpreter been defined?
         if self.const_defined?(:Runtime)
           # If this constant is defined, then yes it is. Since it is, let's
@@ -124,16 +67,16 @@ module RubyPython
             raise RubyPython::InvalidInterpreter, "An invalid interpreter was specified."
           end
         end
-
+        
         unless defined? RubyPython::Python.ffi_libraries
           Runtime.__send__(:infect!, RubyPython::Python)
         end
-      end
 
-      return false if RubyPython::Python.Py_IsInitialized != 0
-      RubyPython::Python.Py_Initialize
-      notify :start
-      true
+        return false if RubyPython::Python.Py_IsInitialized != 0
+        RubyPython::Python.Py_Initialize
+        notify :start
+        true
+      end
     end
 
     # Stops the \Python interpreter if it is running. Returns +true+ if the
@@ -141,12 +84,14 @@ module RubyPython
     # invocation of this method. If you need the values within the \Python
     # proxy objects, be sure to call +RubyPyProxy#rubify+ on them.
     def stop
-      if defined? Python.Py_IsInitialized and Python.Py_IsInitialized != 0
-        Python.Py_Finalize
-        notify :stop
-        true
-      else
-        false
+      RubyPython::Python.synchronize do
+        if defined? Python.Py_IsInitialized and Python.Py_IsInitialized != 0
+          Python.Py_Finalize
+          notify :stop
+          true
+        else
+          false
+        end
       end
     end
 

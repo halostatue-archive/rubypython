@@ -6,106 +6,100 @@ body {
   padding: 1.6em 0 0 0;
   color: #333;
 }
+
 h1, h2, h3, h4, h5, h6 {
+  font-family: 'Cabin', sans-serif;
   color: #444;
 }
-h1 { 
-  font-family: sans-serif;
+
+#header h1 { 
   font-weight: normal;
   font-size: 4em;
   line-height: 0.8em;
-  letter-spacing: -0.1ex;
+  letter-spacing: -0.05em;
 	margin: 5px;
 }
+
+#toc {
+  line-height: 1.2em;
+  font-size: 0.9em;
+}
+
+#toc li {
+  line-height: 1.15em;
+}
+
+ul {
+  list-style-type: square;
+}
+
 li {
   padding: 0;
   margin: 0;
-  list-style-type: square;
 }
+
 a {
   color: #5E5AFF;
-	background-color: #DAC;
   font-weight: normal;
   text-decoration: underline;
 }
-blockquote {
-  font-size: 90%;
-  font-style: italic;
-  border-left: 1px solid #111;
-  padding-left: 1em;
-}
-.caps {
-  font-size: 80%;
-}
 
-#main {
-  width: 45em;
-  padding: 0;
-  margin: 0 auto;
-}
 .coda {
   text-align: right;
   color: #77f;
   font-size: smaller;
 }
 
-table {
-  font-size: 90%;
-  line-height: 1.4em;
-  color: #ff8;
-  background-color: #111;
-  padding: 2px 10px 2px 10px;
-	border-style: dashed;
-}
-
-th {
-	color: #fff;
-}
-
-td {
-  padding: 2px 10px 2px 10px;
-}
-
-.success {
-	color: #0CC52B;
-}
-
-.failed {
-	color: #E90A1B;
-}
-
-.unknown {
-	color: #995000;
-}
 pre, code {
-  font-family: monospace;
+  font-family: 'Inconsolata', monospace;
   font-size: 90%;
   line-height: 1.4em;
   color: #ff8;
   background-color: #111;
   padding: 2px 10px 2px 10px;
 }
-.comment { color: #aaa; font-style: italic; }
-.keyword { color: #eff; font-weight: bold; }
-.punct { color: #eee; font-weight: bold; }
-.symbol { color: #0bb; }
-.string { color: #6b4; }
-.ident { color: #ff8; }
-.constant { color: #66f; }
-.regex { color: #ec6; }
-.number { color: #F99; }
-.expr { color: #227; }
+
+.teardrop-corners {
+  behavior: url(stylesheets/border-radius.htc);
+  /*
+   * -moz-border-radius: 10px;
+   * -webkit-border-radius: 10px;
+   * -khtml-border-radius: 10px;
+   * border-radius: 10px;
+   */
+  -webkit-border-top-left-radius: 50px;
+  -webkit-border-bottom-right-radius: 50px;
+  -moz-border-radius-topleft: 50px;
+  -moz-border-radius-bottomright: 50px;
+  border-top-left-radius: 50px;
+  border-bottom-right-radius: 50px;
+}
+
+#toc {
+  border: 3px solid #141331;
+  line-height: 1.2em !important;
+  font-size: 0.8em !important;
+  padding: 0;
+}
+
+#toc h1 {
+  margin-left: 1em;
+}
+
+#toc li {
+  line-height: 1.2em;
+}
 
 #version {
-  float: right;
   text-align: right;
-  font-family: sans-serif;
+  font-family: 'Cabin', sans-serif;
   font-weight: normal;
   background-color: #B3ABFF;
   color: #141331;
-  padding: 15px 20px 10px 20px;
+  padding: 10px 20px 10px 20px;
   margin: 0 auto;
 	margin-top: 15px;
+  margin-bottom: 15px;
   border: 3px solid #141331;
 }
 
@@ -113,7 +107,7 @@ pre, code {
   display: block;
   font-size: 4em;
   line-height: 0.8em;
-  letter-spacing: -0.1ex;
+  letter-spacing: -0.2ex;
 	margin-bottom: 15px;
 }
 

@@ -1,0 +1,10 @@
+== Contributors
+
+RubyPython has a growing list of contributors.
+
+* Zach Raines (raineszm)
+  * The creator of RubyPython.
+* Steeve Morin (steeve)
+* Austin Ziegler (halostatue)
+* Aman Gupta (tmm1)
+* Ben Doerr (bendoerr)

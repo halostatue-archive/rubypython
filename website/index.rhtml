@@ -1,0 +1,36 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="stylesheets/960.css" type="text/css" media="screen">
+    <link rel="stylesheet" href="stylesheets/screen.css" type="text/css" media="screen">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Cabin' rel='stylesheet' type='text/css'>
+    <title><%= title %></title>
+  </head>
+  <body>
+    <div id="header" class="container_24">
+      <h1 id="title" class="grid_16"><%= title %></h1>
+      <div id="version" class="grid_4 push_3 clickable teardrop-corners" onclick='document.location="<%= download %>"; return false'>
+        <p>Get Version</p>
+        <a href="<%= download %>" class="numbers"><%= version %></a>
+      </div>
+    </div>
+    <div id="content" class="container_24">
+      <div id="toc" class="grid_7 push_16">
+        <h1>contents</h1>
+        <%= toc %>
+      </div>
+      <div id="body" class="grid_16 pull_7">
+        <%= body %>
+      </div>
+    </div>
+    <div id="footer" class="container_24">
+      <p class="coda push_18 grid_8">
+        <a href="mailto:achatesavc+rubypython@gmail.com">Zach Raines</a>,
+        <%= modified %><br>
+        Theme extended from <a href="http://rb2js.rubyforge.org/">Paul Battley</a>
+      </p>
+    </div>
+    <!-- insert site tracking codes here, like Google Urchin -->
+  </body>
+</html>

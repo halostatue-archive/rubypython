@@ -1,8 +1,16 @@
+RubyPython version 0.3 and higher are different than RubyPython through
+version 0.2.x. If you're upgrading from such an earlier version, make sure you
+read the documents for instructions on how your code needs to change to work
+with modern RubyPython.
 
-For more information on RubyPython, see http://rubypython.rubyforge.org
+For more information on RubyPython, see: http://rubypython.rubyforge.org/
 
-If you find a bug, or have any suggestions, email me at: raineszm+rubypython@gmail.com
+If you find a bug, or have any suggestions, please feel free to enter them on
+the tracker:
 
-If you would like to help develop RubyPython, also send me an email.
+  https://bitbucket.org/raineszm/rubypython/issues?status=new&status=open
 
+If you would like to help develop RubyPython, please check out the source on
+Bitbucket:
 
+  https://bitbucket.org/raineszm/rubypython/

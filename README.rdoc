@@ -1,0 +1,272 @@
+= rubypython
+
+== Description
+
+RubyPython is a bridge between the Ruby and Python interpreters. It embeds a
+running Python interpreter in the Ruby application's process using FFI and
+provides a means for wrapping, converting, and calling Python objects and
+methods.
+
+RubyPython uses FFI to marshal the data between the Ruby and Python VMs and
+make Python calls. You can:
+
+* Inherit from Python classes.
+* Configure callbacks from Python.
+* Run Python generators (on Ruby 1.9.2 or later).
+
+== Where
+
+* {RubyForge}[http://rubypython.rubyforge.org/]
+* {RubyGems}[http://rubygems.org/gems/rubypython]
+* {Bitbucket}[http://raineszm.bitbucket.org/rubypython/]
+* {GitHub}[https://github.com/halostatue/rubypython]
+
+The RubyPython homepage, project description, and main downloads can be found
+on {RubyForge}[http://rubypython.rubyforge.org/].
+
+Source is kept in sync between
+{Bitbucket}[http://raineszm.bitbucket.org/rubypython/] and
+{GitHub}[https://github.com/halostatue/rubypython], but the Bitbucket
+repository is the canonical repository and where the {issue
+tracker}[https://bitbucket.org/raineszm/rubypython/issues?status=new&status=open]
+resides. We use {Hg-Git}[http://hg-git.github.com/] to keep the two
+repositories in sync.
+
+== Synopsis
+
+RubyPython is fairly easy to start using; there are three phases to its use:
+
+1. Start the Python interpreter (+RubyPython.start+).
+2. Import and use Python code (+RubyPython.import+).
+3. Stop the Python interpreter (+RubyPython.stop+).
+
+There are also two methods, +RubyPython.session+ and +RubyPython.run+ that will
+start before running the code provided in the block and stop it afterwards.
+
+=== Basic Usage
+
+  require "rubypython"
+
+  RubyPython.start # start the Python interpreter
+
+  cPickle = RubyPython.import("cPickle")
+  p cPickle.dumps("Testing RubyPython.").rubify
+
+  RubyPython.stop # stop the Python interpreter
+
+=== Specific Python Version
+
+  require "rubypython"
+
+  RubyPython.start(:python_exe => "python2.7") # Can also be a full path
+
+  cPickle = RubyPython.import("cPickle")
+  p cPickle.dumps("Testing RubyPython.").rubify
+
+  RubyPython.stop # stop the Python interpreter
+
+=== VirtualEnv
+
+  # Easy
+  RubyPython.start_from_virtualenv("/path/to/virtualenv")
+
+  # Or verbose
+  RubyPython.start(:python_exe => "/path/to/virtualenv/bin/python")
+  RubyPython.activate
+
+=== Iterator support
+
+  # Python
+  def readfile():
+    for line in open("/some/file"):
+      yield line
+
+  # Ruby
+  readfile.to_enum.each do |line|
+    puts line
+  end
+
+  # Python
+  def iterate_list():
+    for item in [ 1, 2, 3 ]:
+      yield item
+
+  # Ruby
+  items = []
+  iterate_list.to_enum.each { |item| items << item }
+  puts items == [ 1, 2, 3 ] # => true
+
+=== Python to Ruby callbacks
+
+  # Python
+  def simple_callback(callback, value):
+    return callback(value)
+
+  # Ruby
+  simple_callback(lambda { |v| v * v }, 4) # => 16
+
+  def triple(v)
+    v * 3
+  end
+
+  simple_callback(method(:triple), 4) # => 12
+
+=== Python-style Generators
+
+  # Python
+  def test_generator(callback):
+    for i in callback():
+      print "Got %d" % i
+
+  # Ruby 1.9.2 or later
+  test_generator(RubyPython.generator do
+    (0..10).each { |i| RubyPython.yield i }
+  end)
+
+=== Python named arguments (Experimental)
+
+This format is experimental and may be changed.
+
+  # Python
+  def foo(arg1, arg2):
+    pass
+
+  # Ruby
+  foo!(:arg2 => "bar2", :arg1 => "bar1")
+
+  # with Ruby 1.9
+  foo!(arg2: "bar2", arg1: "bar1")
+
+== Features / Problems
+
+=== Features
+
+* Simple two-way conversion of built-in types between Ruby and Python.
+* Python module import and arbitrary method execution.
+* Python objects can be treated as Ruby objects.
+* Python's standard library available from within Ruby.
+* Pass Ruby methods and procs as callbacks and call them from within Python
+  code.
+* Specify the Python executable to be loaded, including using virtualenv.
+
+==== Experimental Features
+
+* Calling Python methods or functions that expect keyword arguments, or call
+  any Python method or function with named parameters.
+
+    # Python
+    def func(a, b, c):
+      pass
+
+    # Ruby
+    func!(:b => 2, :c => 3, :a => 1) # => [ 1, 2, 3 ]
+
+  While we are committed to keeping this feature in place, we have not yet
+  determined that the form (+method!+) is the best way to achieve this
+  functionality.
+
+  This mechanism is experimental because the use of the bang at the end of the
+  method to indicate the use of keyword arguments may not be the best use of
+  that feature of Ruby naming.
+
+* Changing Python interpreters in a single Ruby program. Under some
+  circumstances, this will partially work. If a native Python extension has
+  been imported (such as +cPickle+), there is a very high likelihood that there
+  will be a segmentation fault because the newly loaded DLL will still refer to
+  the other version's loaded extension. This is not a recommended workflow.
+
+=== Known Problems
+
+* Built-in Python methods requiring a top-level frame object (such as eval(),
+  dir(), and the like) do not work properly at present.
+* There is no support for passing complicated (non-basic) Ruby types to Python.
+
+== What's planned
+There are features that are not currently supported in RubyPython that may be
+considered for future releases, dependent on need, interest, and solutions.
+
+=== Python 3
+We do plan on working this, but as none of the projects any of us are working
+on require Python 3 as of yet, this is not yet started.
+
+=== Simpler Imports
+It might be nice to have some nice import helpers provided by RubyPython to
+make the interface more seamless and provide advanced import features:
+
+==== Import Aliasing
+
+  # Python
+  from mod2.mod1 import sym as mysym
+
+  # Ruby
+  py :from => "mod2.mod1", :import => "sym", :as => "mysym"
+  py :from => "mod2.mod1", :import => :sym, :as => :mysym
+  py :from => [ :mod2, :mod1 ], :import => :sym, :as => :mysym
+
+  # Python
+  import mod1 as mymod
+
+  # Ruby
+  py :import => "mod1", :as => "mymod"
+  py :import => :mod1, :as => :mymod
+
+  # Python
+  from mod2.mod1 import *
+
+  # Ruby
+  py :from => "mod2.mod1", :import => :*
+  pyrequire "mod2/mod1" # ruby style imports
+
+=== Catch Exceptions from Ruby
+
+  # Python
+  class MyFirstException(Exception):
+    pass
+
+  class MySecondException(MyFirstException):
+    pass
+
+  def test():
+    raise MySecondException
+
+  # Ruby
+  begin
+    test
+  rescue MyFirstException => e
+    # We may need to work out name collisions
+    puts e.message
+  end
+
+== Requirements
+
+* Python >= 2.4, < 3.0
+* Ruby >= 1.8.6, or JRuby >= 1.6.0
+* You must either have the ability to build the Ruby
+  {FFI}[https://github.com/ffi/ffi] gem, version 1.0.7 or better in your
+  environment or have a pre-built one that you can install.
+
+=== Python Support
+RubyPython has been tested with the C-based Python interpreter (cpython),
+versions 2.4 through 2.7. Work is planned to enable Python 3 support, but has
+not yet been started. If you're interested in helping us enable Python 3
+support, please let us know.
+
+=== Ruby Support
+* Ruby 1.8.7 and 1.9.2 (MRI)
+* JRuby 1.6.0
+
+It should work with other implementations that support the Ruby FFI gem with no
+modification.
+
+=== OS Support
+RubyPython has been extensively tested on Mac OS 10.5 and 10.6, and Ubuntu
+10.10 (64-bit Intel). If your platform has a DLL or shared object version of
+Python and supports the FFI gem, it should work. Feedback on other platforms is
+always welcome.
+
+== Install
+  gem install rubypython
+
+:include: Contributors.rdoc
+
+:include: License.rdoc

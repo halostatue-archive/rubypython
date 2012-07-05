@@ -1,0 +1,192 @@
+=== 0.6 / 2011-MM-DD
+* Major Enhancements:
+  * Previous versions of RubyPython theoretically allowed the loading of
+    different Python interpreters during a single Ruby session. Because of the
+    likelihood of crashes, this functionality has been removed. Now, if you
+    attempt to start RubyPython more than once while specifying different
+    Python interpreters, RubyPython will print a warning and continue working
+    with the already loaded interpreter.
+  * The Python interpreter DLL will only be loaded once. It is configured with
+    a self-removing method, Interpreter#infect! instead of require/load reload
+    hacks.
+  * Removed RubyPython.configure; since the interpreter can only be configured
+    once, independent configuration no longer makes sense.
+* Minor Enhancements:
+  * RubyPython interpreter initialization is done with a Mutex synchronization
+    to ensure that only one Python interpreter DLL is loaded.
+  * Added RubyPython::Tuple, a simple subclass of ::Array that will correctly
+    be converted to a Python tuple object such that isinstance(x, tuple)
+    returns True.
+  * Renamed RubyPython::PythonExec to RubyPython::Interpreter. Added some
+    helper methods to assist with comparison. Construction is with an options
+    hash.
+  * The #update methods on Python interpreter observers are now private. This
+    is an implementation detail, not a public interface. (The methods have also
+    been renamed to #python_interpreter_update.)
+* Deprecation:
+  * RubyPython's legacy mode (automatic unboxing of Python proxy objects where
+    possible) has been deprecated and will be removed in the next non-bugfix
+    release after this version. Introduced a new private method
+    (RubyPython.legacy_mode?) to check if legacy mode is turned on so that the
+    deprecation warning is not printed in all uses of RubyPython.
+
+=== 0.5.3 / 2011-10-22
+* Bug Fixes:
+  * Improved 64-bit Python detection on Unixes with Linux-like semantics (e.g.,
+    .../lib64). Resolves issue #7 on bitbucket.
+
+=== 0.5.2 / 2011-10-21
+* Minor Enhancements:
+  * The traceback for Python exceptions is now returned usefully. [raineszm]
+* Bug Fixes:
+  * Improved the robustness of Windows DLL detection. Based on work by
+    bendoerr, raineszm, and halostatue.
+
+=== 0.5.1 / 2011-03-17
+* Major Enhancements:
+  * Procs and methods can be passed to Python. [raineszm]
+  * Python to Ruby inheritance: A Ruby class can inherit from a Python class
+    (EXPERIMENTAL). [steeve]
+  * The Python library can now be reloaded (EXPERIMENTAL). There is a good
+    chance of a segfault if this is used with a native extension. [raineszm]
+  * Python functions and methods can be called with a terminal exclamation
+    point to enable keyword argument processing in Python (EXPERIMENTAL). [tmm1]
+* Minor Enhancements:
+  * Improved Python generator support. [steeve]
+  * PythonError now inherits from RuntimeError. [halostatue]
+  * Added a Py_REFCNT macro for debugging reference counting. [tmm1]
+* Changes:
+  * Moved to RSpec2. [halostatue]
+  * Moved Rakefile to hoe; added autotest. [halostatue]
+* Bug Fixes:
+  * Fixed a reference counting bug that could crash the Python VM. [steeve]
+  * Fixed a memory leak/reference counting bug related to method invocation
+    (when turning the argument list into a tuple, PyList_SetItem steals
+    references). Depends on FFI 1.0.7 (or higher) with modifications to
+    aggressively free temporary Python objects created. [tmm1]
+  * Restored Ruby 1.8.7 compatibility where possible. [halostatue]
+  * Fixed FFI loader to be more robust and do more through FFI. [halostatue]
+  * Fixed documentation errors. [halostatue]
+* Project Management:
+  * Rupy has been merged back into RubyPython.
+  * Made the project website on RubyForge generatable from the readme and a
+    template. Adopted the 960 grid system and modern CSS techniques.
+  * Added a contributors document.
+
+=== 0.4.1 / / 2011-01-10
+* Rupy was created as an active fork of Zach Raines's RubyPython and released
+  indepdently.
+* Major Enhancements:
+  * Python/Ruby callbacks [steeve]
+  * Virtualenv support [steeve]
+  * Python-style generators with Ruby (generators only work on Ruby 1.9).
+    [steeve]
+
+=== 0.3.2 / 2011-02-02
+* Major Enhancements
+  * Allow procs and methods to be passed to Ruby.
+  * Allow configuration of the loaded Python library.
+
+=== 0.3.1 / 2011-01-19
+* Compatability Updates
+  * Cleanup of code which finds Python library thanks to Austin Ziegler.
+
+=== 0.3.0 / 2010-09-06
+* Major Enhancements
+  * Version 0.3.0 represents an almost complete rewrite of the RubyPython
+    codebase.
+  * A native C extension is no longer required. RubyPython uses the 'ffi' gem.
+  * RubyPython by default now returns proxy instances for all Ruby objects. See
+    the documentation for more information.
+* Compatibility Updates
+  * Version 0.3.0 was created with the goal of being compatible with as many
+    Ruby versions as possible. It should at the very least run on MRI 1.8.6 -
+    1.9.1.
+  * A legacy mode option has been added to provide partial compatibility with
+    version 0.2.x.
+
+=== 0.2.11 / 2010-07-12
+* Bug Fixes
+  * Fixed some issues with building the extension under ruby 1.9. Should now be
+    truly 1.9 compatible.
+
+=== 0.2.10 / 2010-07-08
+* Bug Fixes
+  * Made some changes to how the native extension is configured and build.
+
+=== 0.2.9 / 2009-10-19
+* Minor Enhancements
+  * Updated the C code to make it cleaner, more readable, and more
+    maintainable.
+
+=== 0.2.8 / 2009-10-05
+* Bug Fixes
+  * Some test files were improperly formatted (minor bug fix).
+
+=== 0.2.7 / 2009-3-30
+* Bug Fixes
+  * Fixed some bugs which caused rubypython to be unable to determine python
+    version correctly.
+
+=== 0.2.6 / 2009-3-19
+* Bug Fixes
+  * Further updates to increase compatibility with 1.9.
+
+=== 0.2.5 / 2009-3-18
+* Bug Fixes
+  * Updated to build and run under Ruby 1.9.
+
+=== 0.2.4 / 2008-10-24
+* Major Enhancements
+  * Provided setter methods for object attributes. Python object attributes can
+    now be set from within ruby.
+  * Made wrapper classes a subclass of custom made blank object class to try to
+    avoid name collisions.
+* Bug Fix
+  * Changed part of extconf.rb file that would not work under windows.
+
+=== 0.2.3 / 2008-08-29
+* 2 Major Enhancements
+  * Introduced PyMain object as a singleton wrapper for the Python __main__ and
+    __builtin__ modules.
+  * Introduced block functionality for PyMain object.
+* Compatibility Updates
+  * Changed some declarations in the C code to make RubyPython more compatible
+    with the style conventions of the Ruby C API.
+  * Update how RubyPython locates the Python headers and library.
+* 1 Bug Fix
+  * Fixed an error in ptor.c that might have prevented RubyPython from building
+    correctly on certain systems.
+
+=== 0.2.2 / 2008-08-07
+* Major Enhancements
+  * Wrapped classes and instances should now behave as expected.
+  * Gave RubyPyClasses a "new" method for creating instances.
+  * Callable class can now be called provided that at least one argument is
+    given.
+  * A wrapped object's respond_to? method now has some relation to its actual
+    methods.
+* Bug fixes
+  * Fixed bug with inspect method of RubyPyObject that caused a bus error when
+    inspecting certain objects
+
+=== 0.2.1 / 2008-08-02
+* 1 Bug Fix
+  * Incorrect require fixed
+
+=== 0.2.0 / 2008-08-02
+* 3 major enhancements
+  * RubyPython can now effectively convert or wrap most types from Python.
+  * Errors in the Python interpreter are relayed to Ruby errors.
+  * Less seg faults by mass.
+* Bug Fixes
+  * RubyPython.run did not work correctly. This is fixed now.
+  * Cleanup in RubyPython.stop fixes some issues in RubyPythonBridge.stop
+
+=== 0.1.0 / 2008-08-01
+* A lot of major enhancements
+  * Too many to name. Hey I'm still developing
+
+=== 0.0.1 / 2008-07-30
+* 1 major enhancement:
+  * Initial release

@@ -8,3 +8,4 @@ RubyPython has a growing list of contributors.
 * Austin Ziegler (halostatue)
 * Aman Gupta (tmm1)
 * Ben Doerr (bendoerr)
+* Akzhan Abdulin (azkhan)

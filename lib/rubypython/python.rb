@@ -90,7 +90,7 @@ class RubyPython::Interpreter
 
         # Tuple Methods
         attach_function :PySequence_List, [:pointer], :pointer
-        attach_function :PySequence_Tuple, [:pointer], :pointer
+        attach_function :PyList_AsTuple, [:pointer], :pointer
         attach_function :PyTuple_Pack, [:int, :varargs], :pointer
 
         # Dict/Hash Methods

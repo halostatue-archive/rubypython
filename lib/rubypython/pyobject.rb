@@ -119,8 +119,7 @@ class RubyPython::PyObject # :nodoc: all
   # Decrease the reference count of the wrapped object.
   def xDecref
     AutoPyPointer.release(@pointer)
-    @pointer.free
-    nil
+    @pointer = nil
   end
 
   # Increase the reference count of the wrapped object

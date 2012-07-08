@@ -168,6 +168,8 @@ module RubyPython
           end
 
           orig_args = args
+          #Convert will create a new reference to any python object that is not
+          #alreay wrapped. We will need to DecRef these when we are done
           args = PyObject.convert(*args)
           pTuple = PyObject.buildArgTuple(*args)
           pReturn = if pKeywords

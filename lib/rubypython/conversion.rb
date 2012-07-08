@@ -11,12 +11,18 @@ module RubyPython::Conversion
   # Raised when RubyPython does not know how to convert an object from
   # \Python to Ruby or vice versa.
   class UnsupportedConversion < Exception; end
+  class ConversionError < RuntimeError; end
 
   # Convert a Ruby string to a \Python string. Returns an FFI::Pointer to
   # a PyStringObject.
   def self.rtopString(rString)
     size = rString.respond_to?(:bytesize) ? rString.bytesize : rString.size
-    RubyPython::Python.PyString_FromStringAndSize(rString, size)
+    ptr = RubyPython::Python.PyString_FromStringAndSize(rString, size)
+    if ptr.null?
+      raise ConversionError.new "Python failed to create a string with contents #{rString}"
+    else
+      ptr
+    end
   end
 
   # Convert a Ruby Array to \Python List. Returns an FFI::Pointer to
@@ -24,8 +30,17 @@ module RubyPython::Conversion
   def self.rtopArrayToList(rArray)
     size = rArray.length
     pList = RubyPython::Python.PyList_New size
+    if pList.null?
+      raise ConversionError.new "Python failed to create list of size #{size}"
+    end
     rArray.each_with_index do |el, i|
-      RubyPython::Python.PyList_SetItem pList, i, rtopObject(el)
+      #Set Item steals a reference. For objects created on demand this doesn't matter,
+      #but if one of our objects is already in the python interpreter we need to incref it here.
+      if el.kind_of? RubyPython::PyObject
+        el.xIncref
+      end
+      ret = RubyPython::Python.PyList_SetItem pList, i, rtopObject(el)
+      raise ConversionError.new "Failed to set item #{el} in array conversion" if ret == -1
     end
     pList
   end
@@ -34,8 +49,11 @@ module RubyPython::Conversion
   # \Python \tuple. Returns an FFI::Pointer to a PyTupleObject.
   def self.rtopArrayToTuple(rArray)
     pList = rtopArrayToList(rArray)
-    pTuple = RubyPython::Python.PySequence_Tuple(pList)
+    pTuple = RubyPython::Python.PyList_AsTuple(pList)
     RubyPython::Python.Py_DecRef(pList)
+    if pTuple.null?
+      raise Conversion.new "Python failed to convert an intermediate list of #{rArray} to a tuple"
+    end
     pTuple
   end
 
@@ -43,9 +61,29 @@ module RubyPython::Conversion
   # PyDictObject.
   def self.rtopHash(rHash)
     pDict = RubyPython::Python.PyDict_New
+    if pDict.null?
+      raise ConversionError.new "Python failed to create new dict"
+    end
     rHash.each do |k,v|
-      RubyPython::Python.PyDict_SetItem pDict, rtopObject(k, key = true),
-        rtopObject(v)
+      key = rtopObject(k, :key => true)
+      value = rtopObject(v)
+
+      #PyDict_SetItem INCREFS both the key and the value passed to it.
+      #This makes sense for objects that we ant to hold on to, but for
+      #intermediates that we create here, we decref the them after they have
+      #been set in the dict.
+      if RubyPython::Python.PyDict_SetItem(pDict, key, value) == -1
+        raise ConversionError.new "Python failed to set #{key}, #{value} in dict conversion"
+      end
+
+      if not key.kind_of? RubyPython::PyObject
+        RubyPython::Python.Py_DecRef key
+      end
+
+      if not value.kind_of? RubyPython::PyObject
+        RubyPython::Python.Py_DecRef value
+      end
+
     end
     pDict
   end
@@ -53,19 +91,25 @@ module RubyPython::Conversion
   # Convert a Ruby Fixnum to a \Python Int. Returns an FFI::Pointer to a
   # PyIntObject.
   def self.rtopFixnum(rNum)
-    RubyPython::Python.PyInt_FromLong(rNum)
+    num = RubyPython::Python.PyInt_FromLong(rNum)
+    raise ConversionError.new "Failed to convert #{rNum}" if num.null?
+    num
   end
 
   # Convert a Ruby Bignum to a \Python Long. Returns an FFI::Pointer to a
   # PyLongObject.
   def self.rtopBigNum(rNum)
-    RubyPython::Python.PyLong_FromLong(rNum)
+    num = RubyPython::Python.PyLong_FromLong(rNum)
+    raise ConversionError.new "Failed to convert #{rNum}" if num.null?
+    num
   end
 
   # Convert a Ruby float to a \Python Float. Returns an FFI::Pointer to a
   # PyFloatObject.
   def self.rtopFloat(rNum)
-    RubyPython::Python.PyFloat_FromDouble(rNum)
+    num = RubyPython::Python.PyFloat_FromDouble(rNum)
+    raise ConversionError.new "Failed to convert #{rNum}" if num.null?
+    num
   end
 
   # Returns a \Python False value (equivalent to Ruby's +false+). Returns an
@@ -89,7 +133,7 @@ module RubyPython::Conversion
   # Convert a Ruby Symbol to a \Python String. Returns an FFI::Pointer to a
   # PyStringObject.
   def self.rtopSymbol(rSymbol)
-    RubyPython::Python.PyString_FromString rSymbol.to_s
+    rtopString rSymbol.to_s
   end
 
   # Convert a Ruby Proc to a \Python Function. Returns an FFI::Pointer to a
@@ -115,7 +159,7 @@ module RubyPython::Conversion
 
   # This will attempt to convert a Ruby object to an equivalent \Python
   # native type. Returns an FFI::Pointer to a \Python object (the
-  # appropriate Py…Object C structure). If the conversion is unsuccessful,
+  # appropriate Py_Object C structure). If the conversion is unsuccessful,
   # will raise UnsupportedConversion.
   #
   # [rObj]    A native Ruby object.
@@ -164,6 +208,9 @@ module RubyPython::Conversion
   # Convert an FFI::Pointer to a \Python String (PyStringObject) to a Ruby
   # String.
   def self.ptorString(pString)
+    #strPtr is a pointer to a pointer to the internal character array.
+    #FFI will free strPtr when we are done but the internal array MUST
+    #not be modified
     strPtr  = ::FFI::MemoryPointer.new(:pointer)
     sizePtr = ::FFI::MemoryPointer.new(:ssize_t)
 
@@ -221,6 +268,8 @@ module RubyPython::Conversion
   # Convert an FFI::Pointer to a \Python Tuple (PyTupleObject) to an
   # instance of RubyPython::Tuple, a subclass of the Ruby Array class.
   def self.ptorTuple(pTuple)
+    #PySequence_List returns a new list. Since we are only using it as a temporary
+    #here, we will have to DecRef it once we are done.
     pList = RubyPython::Python.PySequence_List pTuple
     rArray = ptorList pList
     RubyPython::Python.Py_DecRef pList
@@ -238,10 +287,16 @@ module RubyPython::Conversion
     val = ::FFI::MemoryPointer.new :pointer
 
     while RubyPython::Python.PyDict_Next(pDict, pos, key, val) != 0
+      #PyDict_Next sets key and val to borrowed references. We do not care
+      #if we are able to convert them to native ruby types, but if we wind up
+      #wrapping either in a proxy we better IncRef it to make sure it stays
+      #around.
       pKey = key.read_pointer
       pVal = val.read_pointer
       rKey = ptorObject(pKey)
       rVal = ptorObject(pVal)
+      RubyPython.Py_IncRef pKey if rKey.kind_of? ::FFI::Pointer
+      RubyPython.Py_IncRef pVal if rVal.kind_of? ::FFI::Pointer
       rb_hash[rKey] = rVal
     end
 

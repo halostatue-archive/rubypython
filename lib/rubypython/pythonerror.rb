@@ -41,7 +41,7 @@ class RubyPython::PythonError < RuntimeError
 
     # Decrease the reference count. This will happen anyway when they go out
     # of scope but might as well.
-    rbValue.xDecref
+    rbValue.xDecref if not rbValue.null?
     pyName = rbType.getAttr("__name__")
 
     rbType.xDecref

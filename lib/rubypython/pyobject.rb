@@ -174,37 +174,6 @@ class RubyPython::PyObject # :nodoc: all
     check != 0
   end
 
-  # Manipulates the supplied PyObject instance such that it is suitable to
-  # passed to #callObject or #callObjectKeywords. If +rbObject+ is a tuple
-  # then the argument passed in is returned. If it is a list then the list
-  # is converted to a tuple. Otherwise returns a tuple with one element:
-  # +rbObject+.
-  # [rbObject]  The argument to be turned into a Tuple.
-  def self.makeTuple(rbObject)
-    pTuple = nil
-
-    if RubyPython::Macros.PyObject_TypeCheck(rbObject.pointer, RubyPython::Python.PyList_Type.to_ptr) != 0
-      pTuple = RubyPython::Python.PySequence_Tuple(rbObject.pointer)
-    elsif RubyPython::Macros.PyObject_TypeCheck(rbObject.pointer, RubyPython::Python.PyTuple_Type.to_ptr) != 0
-      pTuple = rbObject.pointer
-    else
-      pTuple = RubyPython::Python.PyTuple_Pack(1, :pointer, rbObject.pointer)
-    end
-
-    self.new pTuple
-  end
-
-  # Wraps up the supplied arguments in a \Python List.
-  def self.newList(*args)
-    rbList = self.new RubyPython::Python.PyList_New(args.length)
-
-    args.each_with_index do |el, i|
-      el.xIncref # PyList_SetItem steals references!
-      RubyPython::Python.PyList_SetItem rbList.pointer, i, el.pointer
-    end
-
-    rbList
-  end
 
   # Converts the supplied arguments to PyObject instances.
   def self.convert(*args)
@@ -224,9 +193,6 @@ class RubyPython::PyObject # :nodoc: all
   # [args] An array of PyObjects; the arguments to be inserted into the
   # Tuple.
   def self.buildArgTuple(*args)
-    pList = newList(*args)
-    pTuple = makeTuple(pList)
-    pList.xDecref
-    pTuple
+    self.new RubyPython::Conversion.rtopArrayToTuple(args)
   end
 end

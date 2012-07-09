@@ -120,24 +120,6 @@ describe RubyPython::PyObject do
     end
   end
 
-  describe "#makeTuple" do
-    it "should wrap single arguments in a tuple" do
-      arg = described_class.new AString
-      described_class.makeTuple(arg).rubify.should == [AString]
-    end
-
-    it "should turn a Python list into a tuple" do
-      arg = @objects.a_list.pObject
-      converted = described_class.makeTuple(arg)
-      converted.rubify.should == AnArray
-    end
-
-    it "should return the given argument if it is a tuple" do
-      arg = @objects.a_tuple.pObject
-      converted = described_class.makeTuple(arg)
-      converted.pointer.address.should == arg.pointer.address
-    end
-  end
 
   describe "#callObject" do
     #Expand coverage types
@@ -148,15 +130,6 @@ describe RubyPython::PyObject do
       builtin = @builtin.pObject
       stringClass = builtin.getAttr "str"
       stringClass.callObject(argt).rubify.should == AnInt.to_s
-    end
-  end
-
-  describe "#newList" do
-    it "should wrap supplied args in a Python list" do
-      args = AnArray.map do |obj|
-        described_class.new obj
-      end
-      described_class.newList(*args).rubify.should == AnArray
     end
   end
 

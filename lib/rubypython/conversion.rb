@@ -34,11 +34,9 @@ module RubyPython::Conversion
       raise ConversionError.new "Python failed to create list of size #{size}"
     end
     rArray.each_with_index do |el, i|
-      #Set Item steals a reference. For objects created on demand this doesn't matter,
-      #but if one of our objects is already in the python interpreter we need to incref it here.
-      if el.kind_of? RubyPython::PyObject
-        el.xIncref
-      end
+      # PyList_SetItem steals a reference, but rtopObject creates a new reference
+      # So we wind up with giving a new reference to the Python interpreter for every
+      # object
       ret = RubyPython::Python.PyList_SetItem pList, i, rtopObject(el)
       raise ConversionError.new "Failed to set item #{el} in array conversion" if ret == -1
     end
@@ -68,23 +66,17 @@ module RubyPython::Conversion
       key = rtopObject(k, :key => true)
       value = rtopObject(v)
 
-      #PyDict_SetItem INCREFS both the key and the value passed to it.
-      #This makes sense for objects that we ant to hold on to, but for
-      #intermediates that we create here, we decref the them after they have
-      #been set in the dict.
+      # PyDict_SetItem INCREFS both the key and the value passed to it.
+      # Since rtopObject already gives us a new reference, this is not necessary.
+      # Thus, we decref the passed in objects to balancy things out
       if RubyPython::Python.PyDict_SetItem(pDict, key, value) == -1
         raise ConversionError.new "Python failed to set #{key}, #{value} in dict conversion"
       end
 
-      if not key.kind_of? RubyPython::PyObject
-        RubyPython::Python.Py_DecRef key
-      end
-
-      if not value.kind_of? RubyPython::PyObject
-        RubyPython::Python.Py_DecRef value
-      end
-
+      RubyPython::Python.Py_DecRef key
+      RubyPython::Python.Py_DecRef value
     end
+
     pDict
   end
 
@@ -199,6 +191,7 @@ module RubyPython::Conversion
     when nil
       rtopNone
     when RubyPython::PyObject
+      rObj.xIncref
       rObj.pointer
     else
       raise UnsupportedConversion.new("Unsupported type #{rObj.class} for conversion.")
@@ -238,8 +231,10 @@ module RubyPython::Conversion
 
     list_size.times do |i|
       element = RubyPython::Python.PyList_GetItem(pList, i)
-      # PyList_GetItem returns borrowed ref
-      RubyPython::Python.Py_IncRef element
+      # PyList_GetItem returns borrowed ref. We don't care if we are able to convert
+      # to a native ruby type. But if we are going to wrap this element, we need
+      # to IncRef it
+      RubyPython::Python.Py_IncRef element if element.kind_of? ::FFI::Pointer
       rObject = ptorObject(element)
       rb_array.push rObject
     end

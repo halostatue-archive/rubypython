@@ -166,31 +166,8 @@ module RubyPython
           if kwargs and args.last.is_a?(Hash)
             pKeywords = PyObject.convert(args.pop).first
           end
-
-          orig_args = args
-          #Convert will create a new reference to any python object that is not
-          #alreay wrapped. We will need to DecRef these when we are done
-          args = PyObject.convert(*args)
-          pTuple = PyObject.buildArgTuple(*args)
-          pReturn = if pKeywords
-            pFunc.callObjectKeywords(pTuple, pKeywords)
-          else
-            pFunc.callObject(pTuple)
-          end
-
-          # Clean up unused Python vars instead of waiting on Ruby's GC to
-          # do it.
+          pReturn = _method_call(pFunc, args, pKeywords)
           pFunc.xDecref
-          pTuple.xDecref
-          pKeywords.xDecref if pKeywords
-          orig_args.each_with_index do |arg, i|
-            # Only decref objects that were created in PyObject.convert.
-            if !arg.kind_of?(RubyPython::PyObject) and !arg.kind_of?(RubyPython::RubyPyProxy)
-              args[i].xDecref
-            end
-          end
-
-          raise PythonError.handle_error if PythonError.error?
         end
       else
         pReturn = pFunc
@@ -204,6 +181,29 @@ module RubyPython
         result
       end
     end
+
+    #Handles the of calling a wrapped callable Python object at a higher level
+    #than +PyObject#callObject+. For internal use only.
+    def _method_call(pFunc, args, pKeywords)
+      orig_args = args
+      #Convert will create a new reference to any python object that is not
+      #alreay wrapped. We will need to DecRef these when we are done
+      args = PyObject.convert(*args)
+      pTuple = PyObject.buildArgTuple(*args)
+      pReturn = if pKeywords
+        pFunc.callObjectKeywords(pTuple, pKeywords)
+      else
+        pFunc.callObject(pTuple)
+      end
+
+      # Clean up unused Python vars instead of waiting on Ruby's GC to
+      # do it.
+      pTuple.xDecref
+      pKeywords.xDecref if pKeywords
+      raise PythonError.handle_error if PythonError.error?
+      pReturn
+    end
+    private :_method_call
 
     # RubyPython will attempt to translate the wrapped object into a native
     # Ruby object. This will only succeed for simple built-in type.
@@ -300,10 +300,7 @@ module RubyPython
     # Create an instance of the wrapped class. This is a workaround for the
     # fact that \Python classes are meant to be callable.
     def new(*args)
-      args = PyObject.convert(*args)
-      pTuple = PyObject.buildArgTuple(*args)
-      pReturn = @pObject.callObject(pTuple)
-      raise PythonError.handle_error if PythonError.error?
+      pReturn =  _method_call(@pObject, args, nil)
       RubyPyInstance.new pReturn
     end
   end

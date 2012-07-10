@@ -27,6 +27,9 @@ class RubyPython::PyObject # :nodoc: all
       def release(pointer)
         obj_id = pointer.object_id
         deleted = @current_pointers.delete(obj_id)
+        if pointer.null?
+          puts "Warning: Trying to DecRef NULL pointer" if RubyPython::Python.Py_IsInitialized != 0
+        end
         if deleted and (RubyPython::Python.Py_IsInitialized != 0)
           RubyPython::Python.Py_DecRef pointer
         end
@@ -95,6 +98,7 @@ class RubyPython::PyObject # :nodoc: all
   # [rbPyAttr] A PyObject wrapper around the value that we wish to set the
   # attribute to.
   def setAttr(attrName, rbPyAttr)
+    #SetAttrString should incref whatever gets passed to it.
     RubyPython::Python.PyObject_SetAttrString(@pointer, attrName, rbPyAttr.pointer) != -1
   end
 

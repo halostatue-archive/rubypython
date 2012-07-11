@@ -193,6 +193,8 @@ module RubyPython::Conversion
     when RubyPython::PyObject
       rObj.xIncref
       rObj.pointer
+    when RubyPython::RubyPyProxy
+      rtopObject(rObj.pObject, is_key)
     else
       raise UnsupportedConversion.new("Unsupported type #{rObj.class} for conversion.")
     end
@@ -231,10 +233,6 @@ module RubyPython::Conversion
 
     list_size.times do |i|
       element = RubyPython::Python.PyList_GetItem(pList, i)
-      # PyList_GetItem returns borrowed ref. We don't care if we are able to convert
-      # to a native ruby type. But if we are going to wrap this element, we need
-      # to IncRef it
-      RubyPython::Python.Py_IncRef element if element.kind_of? ::FFI::Pointer
       rObject = ptorObject(element)
       rb_array.push rObject
     end
@@ -325,6 +323,7 @@ module RubyPython::Conversion
     elsif pObj == RubyPython::Macros.Py_None
       nil
     else
+      RubyPython::Python.Py_IncRef pObj
       pObj
     end
   end

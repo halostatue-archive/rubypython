@@ -149,7 +149,7 @@ module RubyPython
 
       if name =~ /=$/
         return @pObject.setAttr(name.chomp('='),
-                                PyObject.convert(*args).first)
+                                PyObject.new(args.pop))
       elsif name =~ /!$/
         kwargs = true
         name.chomp! "!"
@@ -164,7 +164,7 @@ module RubyPython
           pReturn = pFunc
         else
           if kwargs and args.last.is_a?(Hash)
-            pKeywords = PyObject.convert(args.pop).first
+            pKeywords = PyObject.new args.pop
           end
           pReturn = _method_call(pFunc, args, pKeywords)
           pFunc.xDecref
@@ -185,10 +185,6 @@ module RubyPython
     #Handles the of calling a wrapped callable Python object at a higher level
     #than +PyObject#callObject+. For internal use only.
     def _method_call(pFunc, args, pKeywords)
-      orig_args = args
-      #Convert will create a new reference to any python object that is not
-      #alreay wrapped. We will need to DecRef these when we are done
-      args = PyObject.convert(*args)
       pTuple = PyObject.buildArgTuple(*args)
       pReturn = if pKeywords
         pFunc.callObjectKeywords(pTuple, pKeywords)

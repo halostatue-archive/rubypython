@@ -199,21 +199,4 @@ describe RubyPython::PyObject do
 
   end
 
-  describe ".convert" do
-    it "should not modify PyObjects passed to it" do
-      args = AnArray.map { |x| described_class.new(x) }
-      described_class.convert(*args).should == args
-    end
-
-    it "should pull PyObjects out of RubyPyProxy instances" do
-      args = @objects.an_array.to_a
-      described_class.convert(*args).should == args.map {|x| x.pObject}
-    end
-
-    it "should create new PyObject instances of simple Ruby types" do
-      described_class.convert(*AnArray).each do |x|
-        x.should be_a_kind_of described_class
-      end
-    end
-  end
 end

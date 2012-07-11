@@ -178,22 +178,9 @@ class RubyPython::PyObject # :nodoc: all
   end
 
 
-  # Converts the supplied arguments to PyObject instances.
-  def self.convert(*args)
-    args.map do |arg|
-      if arg.kind_of? RubyPython::PyObject
-        arg
-      elsif arg.kind_of? RubyPython::RubyPyProxy
-        arg.pObject
-      else
-        RubyPython::PyObject.new arg
-      end
-    end
-  end
-
-  # Takes an array of wrapped \Python objects and wraps them in a Tuple such
-  # that they may be passed to #callObject.
-  # [args] An array of PyObjects; the arguments to be inserted into the
+  # Takes an array of objects, converting them to \Python objects if necessary,
+  # and wraps them in a Tuple such that they may be passed to #callObject.
+  # [args] An array; the arguments to be inserted into the
   # Tuple.
   def self.buildArgTuple(*args)
     self.new RubyPython::Conversion.rtopArrayToTuple(args)

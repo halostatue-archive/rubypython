@@ -204,7 +204,11 @@ module RubyPython
     # RubyPython will attempt to translate the wrapped object into a native
     # Ruby object. This will only succeed for simple built-in type.
     def rubify
-      @pObject.rubify
+      converted = @pObject.rubify
+      if converted.kind_of? ::FFI::Pointer
+        converted = self.class.new converted
+      end
+      converted
     end
 
     # Returns the String representation of the wrapped object via a call to

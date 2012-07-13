@@ -323,7 +323,6 @@ module RubyPython::Conversion
     elsif pObj == RubyPython::Macros.Py_None
       nil
     else
-      RubyPython::Python.Py_IncRef pObj
       pObj
     end
   end

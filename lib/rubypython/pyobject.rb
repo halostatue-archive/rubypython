@@ -29,6 +29,7 @@ class RubyPython::PyObject # :nodoc: all
         deleted = @current_pointers.delete(obj_id)
         if pointer.null?
           puts "Warning: Trying to DecRef NULL pointer" if RubyPython::Python.Py_IsInitialized != 0
+          return
         end
         if deleted and (RubyPython::Python.Py_IsInitialized != 0)
           RubyPython::Python.Py_DecRef pointer

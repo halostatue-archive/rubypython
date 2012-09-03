@@ -8,7 +8,7 @@ describe "RubyPython" do
     string = cPickle.dumps("Testing RubyPython.")
     string.should_not be_a_kind_of String
     string.rubify.should be_a_kind_of String
-    string.rubify.should == "S'Testing RubyPython.'\np1\n."
+    string.rubify.should ~ /S'Testing RubyPython.'\n/
   end
 
   it "can import and use a pure Python extension like pickle" do
@@ -16,7 +16,7 @@ describe "RubyPython" do
     string = pickle.dumps("Testing RubyPython.")
     string.should_not be_a_kind_of String
     string.rubify.should be_a_kind_of String
-    string.rubify.should == "S'Testing RubyPython.'\np0\n."
+    string.rubify.should ~ /S'Testing RubyPython.'\n/
   end
 
   it "can use iterators from Python" do

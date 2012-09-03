@@ -27,6 +27,10 @@ class RubyPython::PyObject # :nodoc: all
       def release(pointer)
         obj_id = pointer.object_id
         deleted = @current_pointers.delete(obj_id)
+        if pointer.null?
+          puts "Warning: Trying to DecRef NULL pointer" if RubyPython::Python.Py_IsInitialized != 0
+          return
+        end
         if deleted and (RubyPython::Python.Py_IsInitialized != 0)
           RubyPython::Python.Py_DecRef pointer
         end
@@ -95,6 +99,7 @@ class RubyPython::PyObject # :nodoc: all
   # [rbPyAttr] A PyObject wrapper around the value that we wish to set the
   # attribute to.
   def setAttr(attrName, rbPyAttr)
+    #SetAttrString should incref whatever gets passed to it.
     RubyPython::Python.PyObject_SetAttrString(@pointer, attrName, rbPyAttr.pointer) != -1
   end
 
@@ -119,8 +124,7 @@ class RubyPython::PyObject # :nodoc: all
   # Decrease the reference count of the wrapped object.
   def xDecref
     AutoPyPointer.release(@pointer)
-    @pointer.free
-    nil
+    @pointer = nil
   end
 
   # Increase the reference count of the wrapped object
@@ -174,59 +178,12 @@ class RubyPython::PyObject # :nodoc: all
     check != 0
   end
 
-  # Manipulates the supplied PyObject instance such that it is suitable to
-  # passed to #callObject or #callObjectKeywords. If +rbObject+ is a tuple
-  # then the argument passed in is returned. If it is a list then the list
-  # is converted to a tuple. Otherwise returns a tuple with one element:
-  # +rbObject+.
-  # [rbObject]  The argument to be turned into a Tuple.
-  def self.makeTuple(rbObject)
-    pTuple = nil
 
-    if RubyPython::Macros.PyObject_TypeCheck(rbObject.pointer, RubyPython::Python.PyList_Type.to_ptr) != 0
-      pTuple = RubyPython::Python.PySequence_Tuple(rbObject.pointer)
-    elsif RubyPython::Macros.PyObject_TypeCheck(rbObject.pointer, RubyPython::Python.PyTuple_Type.to_ptr) != 0
-      pTuple = rbObject.pointer
-    else
-      pTuple = RubyPython::Python.PyTuple_Pack(1, :pointer, rbObject.pointer)
-    end
-
-    self.new pTuple
-  end
-
-  # Wraps up the supplied arguments in a \Python List.
-  def self.newList(*args)
-    rbList = self.new RubyPython::Python.PyList_New(args.length)
-
-    args.each_with_index do |el, i|
-      el.xIncref # PyList_SetItem steals references!
-      RubyPython::Python.PyList_SetItem rbList.pointer, i, el.pointer
-    end
-
-    rbList
-  end
-
-  # Converts the supplied arguments to PyObject instances.
-  def self.convert(*args)
-    args.map do |arg|
-      if arg.kind_of? RubyPython::PyObject
-        arg
-      elsif arg.kind_of? RubyPython::RubyPyProxy
-        arg.pObject
-      else
-        RubyPython::PyObject.new arg
-      end
-    end
-  end
-
-  # Takes an array of wrapped \Python objects and wraps them in a Tuple such
-  # that they may be passed to #callObject.
-  # [args] An array of PyObjects; the arguments to be inserted into the
+  # Takes an array of objects, converting them to \Python objects if necessary,
+  # and wraps them in a Tuple such that they may be passed to #callObject.
+  # [args] An array; the arguments to be inserted into the
   # Tuple.
   def self.buildArgTuple(*args)
-    pList = newList(*args)
-    pTuple = makeTuple(pList)
-    pList.xDecref
-    pTuple
+    self.new RubyPython::Conversion.rtopArrayToTuple(args)
   end
 end

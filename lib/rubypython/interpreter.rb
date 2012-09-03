@@ -40,6 +40,14 @@ class RubyPython::Interpreter
     @python_exe = options[:python_exe]
     # Windows: 'C:\\Python27\python.exe'
     # Mac OS X: '/usr/bin/
+
+    # The default interpreter might be python3 on some systems
+    rc, majorversion = runpy "import sys; print(sys.version_info[0])"
+    if majorversion == "3"
+      warn "The python interpreter is python 3, switching to python2"
+      @python_exe = "python2"
+    end
+
     rc, @python     = runpy "import sys; print sys.executable"
     if rc.exitstatus.nonzero?
       raise RubyPython::InvalidInterpreter, "An invalid interpreter was specified."
@@ -58,9 +66,10 @@ class RubyPython::Interpreter
       end
     else
       basename = File.basename(@python)
-
       if basename =~ /#{@version}/
         @version_name = basename
+      elsif basename.end_with?("2")
+        @version_name = "#{basename[0..-2]}#{@version}"
       else
         @version_name = "#{basename}#{@version}"
       end

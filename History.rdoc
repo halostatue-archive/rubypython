@@ -1,3 +1,12 @@
+=== 0.6.3 / 2012-09-25
+* Major Enhancements
+  * Legacy Mode removed
+* Minor Enhancements
+  * Depend on newer versions of FFI
+  * Make RubyPython correctly detect python on archlinux. [madjar]
+* Bug Fixes:
+  * Fixed some memory leaks, but still looking for others.
+
 === 0.6.2 / 2012-05-24
 * Bug Fixes:
   * Fixed a possible namespace collision bug with the FFI library. [Akzhan]

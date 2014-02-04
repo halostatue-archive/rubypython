@@ -40,6 +40,14 @@ class RubyPython::Interpreter
     @python_exe = options[:python_exe]
     # Windows: 'C:\\Python27\python.exe'
     # Mac OS X: '/usr/bin/
+
+    # The default interpreter might be python3 on some systems
+    rc, majorversion = runpy "import sys; print(sys.version_info[0])"
+    if majorversion == "3"
+      warn "The python interpreter is python 3, switching to python2"
+      @python_exe = "python2"
+    end
+
     rc, @python     = runpy "import sys; print sys.executable"
     if rc.exitstatus.nonzero?
       raise RubyPython::InvalidInterpreter, "An invalid interpreter was specified."
@@ -47,7 +55,7 @@ class RubyPython::Interpreter
     rc, @version    = runpy "import sys; print '%d.%d' % sys.version_info[:2]"
     rc, @sys_prefix = runpy "import sys; print sys.prefix"
 
-    if FFI::Platform.windows?
+    if ::FFI::Platform.windows?
       flat_version  = @version.tr('.', '')
       basename      = File.basename(@python, '.exe')
 
@@ -58,9 +66,10 @@ class RubyPython::Interpreter
       end
     else
       basename = File.basename(@python)
-
       if basename =~ /#{@version}/
         @version_name = basename
+      elsif basename.end_with?("2")
+        @version_name = "#{basename[0..-2]}#{@version}"
       else
         @version_name = "#{basename}#{@version}"
       end
@@ -72,15 +81,15 @@ class RubyPython::Interpreter
   def find_python_lib
     # By default, the library name will be something like
     # libpython2.6.so, but that won't always work.
-    @libbase = "#{FFI::Platform::LIBPREFIX}#{@version_name}"
-    @libext = FFI::Platform::LIBSUFFIX
+    @libbase = "#{::FFI::Platform::LIBPREFIX}#{@version_name}"
+    @libext = ::FFI::Platform::LIBSUFFIX
     @libname = "#{@libbase}.#{@libext}"
 
     # We may need to look in multiple locations for Python, so let's
     # build this as an array.
     @locations = [ File.join(@sys_prefix, "lib", @libname) ]
 
-    if FFI::Platform.mac?
+    if ::FFI::Platform.mac?
       # On the Mac, let's add a special case that has even a different
       # @libname. This may not be fully useful on future versions of OS
       # X, but it should work on 10.5 and 10.6. Even if it doesn't, the
@@ -92,23 +101,25 @@ class RubyPython::Interpreter
       File.join(@sys_prefix, "lib", "#{@realname}", "config", @libname)
     end
 
-    if FFI::Platform.unix?
+    if ::FFI::Platform.unix?
       # On Unixes, let's look in some standard alternative places, too.
       # Just in case. Some Unixes don't include a .so symlink when they
-      # should, so let's look for the base case of .so.1, too.
-      [ @libname, "#{@libname}.1" ].each do |name|
+      # should, so let's look for the base cases of .so.1 and .so.1.0, too.
+      [ @libname, "#{@libname}.1", "#{@libname}.1.0" ].each do |name|
+        if ::FFI::Platform::ARCH != 'i386'
+          @locations << File.join("/opt/local/lib64", name)
+          @locations << File.join("/opt/lib64", name)
+          @locations << File.join("/usr/local/lib64", name)
+          @locations << File.join("/usr/lib64", name)
+        end
         @locations << File.join("/opt/local/lib", name)
         @locations << File.join("/opt/lib", name)
         @locations << File.join("/usr/local/lib", name)
         @locations << File.join("/usr/lib", name)
-        @locations << File.join("/opt/local/lib64", name)
-        @locations << File.join("/opt/lib64", name)
-        @locations << File.join("/usr/local/lib64", name)
-        @locations << File.join("/usr/lib64", name)
       end
     end
 
-    if FFI::Platform.windows?
+    if ::FFI::Platform.windows?
       # On Windows, the appropriate DLL is usually be found in
       # %SYSTEMROOT%\system or %SYSTEMROOT%\system32; as a fallback we'll
       # use C:\Windows\system{,32} as well as the install directory and the
@@ -120,6 +131,8 @@ class RubyPython::Interpreter
       @locations << File.join("C:/WINDOWS", "System32", @libname)
       @locations << File.join(sys_prefix, @libname)
       @locations << File.join(sys_prefix, 'libs', @libname)
+      @locations << File.join(system_root, "SysWOW64", @libname)
+      @locations << File.join("C:/WINDOWS", "SysWOW64", @libname)
     end
 
     # Let's add alternative extensions; again, just in case.
@@ -186,7 +199,7 @@ class RubyPython::Interpreter
   # Run a Python command-line command.
   def runpy(command)
     i = @python || @python_exe || 'python'
-    if FFI::Platform.windows?
+    if ::FFI::Platform.windows?
       o = %x(#{i} -c "#{command}" 2> NUL:)
     else
       o = %x(#{i} -c "#{command}" 2> /dev/null)
@@ -208,9 +221,9 @@ class RubyPython::Interpreter
 
   def debug_s(format = nil)
     system = ""
-    system << "windows " if FFI::Platform.windows?
-    system << "mac " if FFI::Platform.mac?
-    system << "unix " if FFI::Platform.unix?
+    system << "windows " if ::FFI::Platform.windows?
+    system << "mac " if ::FFI::Platform.mac?
+    system << "unix " if ::FFI::Platform.unix?
     system << "unknown " if system.empty?
 
     case format

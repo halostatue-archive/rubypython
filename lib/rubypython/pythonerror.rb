@@ -41,7 +41,7 @@ class RubyPython::PythonError < RuntimeError
 
     # Decrease the reference count. This will happen anyway when they go out
     # of scope but might as well.
-    rbValue.xDecref
+    rbValue.xDecref if not rbValue.null?
     pyName = rbType.getAttr("__name__")
 
     rbType.xDecref
@@ -56,9 +56,9 @@ class RubyPython::PythonError < RuntimeError
   # with three PyObject instances, representing the Type, the Value, and the
   # stack trace of the Python error.
   def self.fetch
-    typePointer = FFI::MemoryPointer.new :pointer
-    valuePointer = FFI::MemoryPointer.new :pointer
-    tracebackPointer = FFI::MemoryPointer.new :pointer
+    typePointer = ::FFI::MemoryPointer.new :pointer
+    valuePointer = ::FFI::MemoryPointer.new :pointer
+    tracebackPointer = ::FFI::MemoryPointer.new :pointer
 
     RubyPython::Python.PyErr_Fetch typePointer, valuePointer, tracebackPointer
 

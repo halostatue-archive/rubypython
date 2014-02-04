@@ -8,8 +8,7 @@ def get_refcnt(pobject)
   elsif pobject.kind_of? RubyPython::PyObject
     pobject = pobject.pointer
   end
-  struct = RubyPython::Python::PyObjectStruct.new pobject
-  struct[:ob_refcnt]
+  RubyPython::Macros.Py_REFCNT pobject
 end
 
 include TestConstants
@@ -56,6 +55,43 @@ describe 'Reference Counting' do
         pointer = pyObj.pObject.pointer
         pyObj.pObject.xDecref
         get_refcnt(pointer).should == refcnt - 1
+      end
+    end
+  end
+
+  describe RubyPython::Conversion do
+    describe ".rtopArrayToList" do
+      it "should incref any wrapped objects in the array" do
+        int = RubyPython::PyObject.new AnInt
+        refcnt = get_refcnt(int)
+        arr = [int]
+        pyArr = subject.rtopArrayToList(arr)
+        get_refcnt(int).should == refcnt + 1
+      end
+
+    end
+
+    describe ".rtopObject" do
+      [
+        ["string", AString],
+        ["float", AFloat],
+        ["array", AnArray],
+        #["symbol", ASym],
+        ["hash", AHash]
+      ].each do |arr|
+        type, input = arr
+
+        it "should return a refcnt of 1 for newly created #{type}" do
+          pyObj = subject.rtopObject(input)
+          get_refcnt(pyObj).should == 1
+        end
+
+        it "should increment the refcnt each time the same #{type} is passed in" do
+          pyObj = RubyPython::PyObject.new subject.rtopObject(input)
+          refcnt = get_refcnt(pyObj)
+          pyObj2 = subject.rtopObject(pyObj)
+          get_refcnt(pyObj2).should == refcnt + 1
+        end
       end
     end
   end

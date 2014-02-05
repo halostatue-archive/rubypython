@@ -124,14 +124,15 @@ class RubyPython::Interpreter
       # use C:\Windows\system{,32} as well as the install directory and the
       # install directory + libs.
       system_root = File.expand_path(ENV['SYSTEMROOT']).gsub(/\\/, '/')
+      windows_root = File.expand_path(ENV['WINDIR']).gsub(/\\/, '/')
       @locations << File.join(system_root, 'system', @libname)
       @locations << File.join(system_root, 'system32', @libname)
-      @locations << File.join("C:/WINDOWS", "System", @libname)
-      @locations << File.join("C:/WINDOWS", "System32", @libname)
+      @locations << File.join(windows_root, "System", @libname)
+      @locations << File.join(windows_root, "System32", @libname)
       @locations << File.join(sys_prefix, @libname)
       @locations << File.join(sys_prefix, 'libs', @libname)
       @locations << File.join(system_root, "SysWOW64", @libname)
-      @locations << File.join("C:/WINDOWS", "SysWOW64", @libname)
+      @locations << File.join(windows_root, "SysWOW64", @libname)
     end
 
     # Let's add alternative extensions; again, just in case.

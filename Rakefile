@@ -42,6 +42,10 @@ Hoe.spec 'rubypython' do
   self.spec_extras[:requirements]  = [ "Python, ~> 2.4" ]
 end
 
+unless Rake::Task.task_defined? :test
+  task :test => :spec
+end
+
 namespace :website do
   desc "Build the website files."
   task :build => [ "website/index.html" ]

@@ -1,53 +1,57 @@
-require File.dirname(__FILE__) + '/spec_helper.rb'
+# -*- ruby encoding: utf-8 -*-
 
-include TestConstants
+require 'spec_helper'
 
 describe 'Callbacks' do
   {
-    'procs' => AProc,
-    'methods' => AMethod,
+    'procs'   => RPTest::AProc,
+    'methods' => RPTest::AMethod,
   }.each do |rb_type, rb_object|
-    it "accepts #{rb_type} as functions" do
+    specify "accept #{rb_type} as functions" do
       [
         [2, 2],
         ["a", "Word"],
         [ [1, 2], [3, 4] ]
       ].each do |args|
-        @objects.apply_callback(rb_object, args).should == rb_object.call(*args)
+        @objects.apply_callback(rb_object, args)
+
+        expect(@objects.apply_callback(rb_object, args)).to \
+          eq rb_object.call(*args)
       end
     end
   end
 
   [
-    ["an int", AnInt],
-    ["a float", AFloat],
-    ["a string", AString],
-    ["a string with nulls", AStringWithNULLs],
-    ["an array", AnArray],
-    ["an array", AnArray],
-    ["a hash", AConvertedHash],
+    ["an int", RPTest::AnInt],
+    ["a float", RPTest::AFloat],
+    ["a string", RPTest::AString],
+    ["a string with nulls", RPTest::AStringWithNULLs],
+    ["an array", RPTest::AnArray],
+    ["an array", RPTest::AnArray],
+    ["a hash", RPTest::AConvertedHash],
     ["true", true],
     ["false", false],
     ["nil", nil]
   ].each do |rb_type, rb_value|
     it "is able to return #{rb_type}" do
-      callback = Proc.new do 
+      callback = Proc.new do
         rb_value
       end
 
-      @objects.apply_callback(callback, []).should == rb_value
+      expect(@objects.apply_callback(callback, [])).to eq rb_value
     end
   end
 
   it "is able to be stored by python variables" do
     mockObject = @objects.RubyPythonMockObject.new
-    mockObject.callback = AProc
+    expect {
+      mockObject.callback = RPTest::AProc
+    }.not_to raise_error
   end
 
   it "is callable as a python instance variable" do
     mockObject = @objects.RubyPythonMockObject.new
-    mockObject.callback = AProc
-    mockObject.callback(2, 2).rubify.should == 4
+    mockObject.callback = RPTest::AProc
+    expect(mockObject.callback(2, 2).rubify).to eq 4
   end
-
 end

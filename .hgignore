@@ -10,6 +10,7 @@ syntax:glob
 .rake_tasks~
 .rvmrc
 .yardoc/*
+.vagrant/*
 coverage.info
 coverage/*
 doc/*

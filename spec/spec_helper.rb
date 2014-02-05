@@ -1,16 +1,7 @@
-begin
-  require 'rspec'
-rescue LoadError
-  require 'rubygems' unless ENV['NO_RUBYGEMS']
-  require 'rspec'
-end
-
-dir = File.dirname(__FILE__)
-
-$:.unshift(File.join(dir, '..', 'lib'))
+require 'rspec'
 require 'rubypython'
 
-module TestConstants
+module RPTest
   AString = "STRING"
   AStringWithNULLs = "STRING\0WITH\0NULLS"
   AnInt = 1
@@ -35,10 +26,23 @@ module TestConstants
     a1 + a2
   end
   AMethod = method(:a_method)
+
+  Helpers = File.join(File.dirname(__FILE__), 'python_helpers')
 end
 
 def run_python_command(cmd)
   %x(python -c '#{cmd}').chomp
+end
+
+def get_refcnt(pobject)
+  raise 'Cannot work with a nil object' if pobject.nil?
+
+  if pobject.kind_of? RubyPython::RubyPyProxy
+    pobject = pobject.pObject.pointer
+  elsif pobject.kind_of? RubyPython::PyObject
+    pobject = pobject.pointer
+  end
+  RubyPython::Macros.Py_REFCNT pobject
 end
 
 RSpec.configure do |config|
@@ -48,7 +52,7 @@ RSpec.configure do |config|
 
   config.before(:all) do
     class RubyPython::RubyPyProxy
-      [:should, :should_not, :class].each { |m| reveal(m) }
+      [:class].each { |m| reveal(m) }
     end
   end
 
@@ -56,12 +60,12 @@ RSpec.configure do |config|
     RubyPython.start
 
     @sys = RubyPython.import 'sys'
-    @sys.path.append File.join(dir, 'python_helpers')
+    @sys.path.append RPTest::Helpers
     @objects = RubyPython.import 'objects'
     @basics = RubyPython.import 'basics'
   end
 
-  config.before(:all, :self_start => true) do 
+  config.before(:all, :self_start => true) do
     RubyPython.stop
   end
 

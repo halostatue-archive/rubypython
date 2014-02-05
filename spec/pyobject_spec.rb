@@ -1,6 +1,6 @@
-require File.dirname(__FILE__) + '/spec_helper.rb'
+# -*- ruby encoding: utf-8 -*-
 
-include TestConstants
+require 'spec_helper'
 
 describe RubyPython::PyObject do
   before do
@@ -8,21 +8,23 @@ describe RubyPython::PyObject do
     @urllib2 = RubyPython.import('urllib2').pObject
     @builtin = RubyPython.import("__builtin__")
     sys = RubyPython.import 'sys'
-    sys.path.append './spec/python_helpers/'
+    sys.path.append RPTest::Helpers
     @objects = RubyPython.import('objects')
   end
 
   describe ".new" do
     [
-      ["a string", AString],
-      ["an int", AnInt],
-      ["a float", AFloat],
-      ["an array", AnArray],
-      ["a symbol", ASym],
-      ["a hash", AHash]
+      ["a string", RPTest::AString],
+      ["an int", RPTest::AnInt],
+      ["a float", RPTest::AFloat],
+      ["an array", RPTest::AnArray],
+      ["a symbol", RPTest::ASym],
+      ["a hash", RPTest::AHash]
     ].each do |title, obj|
-      it "should wrap #{title}" do
-        lambda { described_class.new(obj) }.should_not raise_exception
+      it "wraps #{title}" do
+        expect {
+          described_class.new(obj)
+        }.not_to raise_exception
       end
     end
 
@@ -33,66 +35,68 @@ describe RubyPython::PyObject do
       "a dict",
       "a tuple"
     ].each do |title|
-      it "should take #{title} from a Python pointer" do
-        lambda do
+      it "takes #{title} from a Python pointer" do
+        expect {
           py_obj = @objects.__send__(title.gsub(' ','_')).pObject.pointer
           described_class.new(py_obj)
-        end.should_not raise_exception
+        }.not_to raise_exception
       end
     end
-  end #new
+  end
 
   describe "#rubify" do
     [
-      ["a string", AString],
-      ["an int", AnInt],
-      ["a float", AFloat],
-      ["an array", AnArray],
-      ["a symbol", ASym, ASym.to_s],
-      ["a hash", AHash, AConvertedHash]
+      ["a string", RPTest::AString],
+      ["an int", RPTest::AnInt],
+      ["a float", RPTest::AFloat],
+      ["an array", RPTest::AnArray],
+      ["a symbol", RPTest::ASym, RPTest::ASym.to_s],
+      ["a hash", RPTest::AHash, RPTest::AConvertedHash]
     ].each do |arr|
       type, input, output = arr
       output ||= input
 
-      it "should faithfully unwrap #{type}" do
-        described_class.new(input).rubify.should == output
+      it "faithfully unwraps #{type}" do
+        expect(described_class.new(input).rubify).to eq output
       end
     end
-  end #rubify
+  end
 
   describe "#hasAttr" do
-    it "should return true when object has the requested attribute" do
-      @string.hasAttr("ascii_letters").should be_true
+    it "returns true when object has the requested attribute" do
+      expect(@string.hasAttr("ascii_letters")).to eq true
     end
 
-    it "should return false when object does not have the requested attribute" do
-      @string.hasAttr("nonExistentThing").should be_false
+    it "returns false when object is missing the requested attribute" do
+      expect(@string.hasAttr("nonExistentThing")).to eq false
     end
   end
 
   describe "#getAttr" do
-    it "should fetch requested object attribute" do 
+    it "fetches requested object attribute" do
       ascii_letters = @string.getAttr "ascii_letters"
-      ascii_letters.rubify.should == "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      expect(ascii_letters.rubify).to \
+        eq "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
     end
 
-    it "should return a PyObject instance" do
+    it "returns a PyObject instance" do
       ascii_letters = @string.getAttr "ascii_letters"
-      ascii_letters.should be_kind_of(described_class)
+      expect(ascii_letters).to be_instance_of described_class
     end
   end
 
-  describe "#setAttr" do 
-    it "should modify the specified attribute of the object" do
+  describe "#setAttr" do
+    it "modifies the specified attribute of the object" do
       pyNewLetters = described_class.new "RbPy"
       @string.setAttr "ascii_letters", pyNewLetters
-      @string.getAttr("ascii_letters").rubify.should == pyNewLetters.rubify
+      expect(@string.getAttr("ascii_letters").rubify).to \
+        eq pyNewLetters.rubify
     end
 
-    it "should create the requested attribute if it doesn't exist" do 
+    it "creates the requested attribute if it doesn't exist" do
       pyNewString = described_class.new "python"
       @string.setAttr "ruby", pyNewString
-      @string.getAttr("ruby").rubify.should == pyNewString.rubify
+      expect(@string.getAttr("ruby").rubify).to eq pyNewString.rubify
     end
   end
 
@@ -103,100 +107,102 @@ describe RubyPython::PyObject do
       @less_dup = described_class.new 5
     end
 
-    it "should return 0 when objects are equal" do
-      @less.cmp(@less_dup).should == 0
+    it "returns 0 when objects are equal" do
+      expect(@less.cmp(@less_dup)).to eq 0
     end
 
-    it "should change sign under interchange of arguments" do 
-      @less.cmp(@greater).should == -@greater.cmp(@less)
+    it "changes sign under interchange of arguments" do
+      expect(@less.cmp(@greater)).to eq -@greater.cmp(@less)
     end
 
-    it "should return -1 when first object is less than the second" do
-      @less.cmp(@greater).should == -1
+    it "returns -1 when first object is less than the second" do
+      expect(@less.cmp(@greater)).to eq -1
     end
 
-    it "should return 1 when first object is greater than the second" do
-      @greater.cmp(@less).should == 1
+    it "returns 1 when first object is greater than the second" do
+      expect(@greater.cmp(@less)).to eq 1
     end
   end
 
-
   describe "#callObject" do
-    #Expand coverage types
-    it "should execute wrapped object with supplied arguments" do
-      arg = described_class.new AnInt
+    # Expand coverage types
+    it "executes the wrapped object with supplied arguments" do
+      arg = described_class.new RPTest::AnInt
       argt = described_class.buildArgTuple arg
 
       builtin = @builtin.pObject
       stringClass = builtin.getAttr "str"
-      stringClass.callObject(argt).rubify.should == AnInt.to_s
+      expect(stringClass.callObject(argt).rubify).to eq RPTest::AnInt.to_s
     end
   end
 
   describe "#function_or_method?" do
-    it "should be true given a method" do
+    it "returns true given a method" do
       mockObjClass = @objects.RubyPythonMockObject.pObject
-      mockObjClass.getAttr('square_elements').should be_a_function_or_method
+      expect(mockObjClass.getAttr('square_elements')).to \
+        be_a_function_or_method
     end
 
-    it "should be true given a function" do
-      @objects.pObject.getAttr('identity').should be_a_function_or_method
+    it "returns be true given a function" do
+      expect(@objects.pObject.getAttr('identity')).to \
+        be_a_function_or_method
     end
 
-    it "should return true given a builtin function" do
+    it "returns true given a builtin function" do
       any = @builtin.pObject.getAttr('any')
-      any.should be_a_function_or_method
+      expect(any).to be_a_function_or_method
     end
 
-    it "should return false given a class" do
-      @objects.RubyPythonMockObject.pObject.should_not be_a_function_or_method
+    it "returns false given a class" do
+      expect(@objects.RubyPythonMockObject.pObject).not_to \
+        be_a_function_or_method
     end
   end
 
   describe "#class?" do
-    it "should return true if wrapped object is an old style class" do
-      @objects.RubyPythonMockObject.pObject.should be_a_class
+    it "returns true if wrapped object is an old style class" do
+      expect(@objects.RubyPythonMockObject.pObject).to be_a_class
     end
 
-    it "should return true if wrapped object is an new style class" do
-      @objects.NewStyleClass.pObject.should be_a_class
+    it "returns true if wrapped object is an new style class" do
+      expect(@objects.NewStyleClass.pObject).to be_a_class
     end
 
-    it "should return true if wrapped object is a builtin class" do
+    it "returns true if wrapped object is a builtin class" do
       strClass = @builtin.pObject.getAttr('str')
-      strClass.should be_a_class
+      expect(strClass).to be_a_class
     end
 
-    it "should return false given an object instance" do
-      @objects.RubyPythonMockObject.new.pObject.should_not be_a_class
+    it "returns false given an object instance" do
+      expect(@objects.RubyPythonMockObject.new.pObject).not_to be_a_class
     end
   end
 
   describe "#callable?" do
-    it "should be true given a method" do
+    it "returns true given a method" do
       mockObjClass = @objects.RubyPythonMockObject.pObject
-      mockObjClass.getAttr('square_elements').should be_callable
+      expect(mockObjClass.getAttr('square_elements')).to be_callable
     end
 
-    it "should be true given a function" do
-      @objects.pObject.getAttr('identity').should be_callable
+    it "returns true given a function" do
+      expect(@objects.pObject.getAttr('identity')).to be_callable
     end
 
-    it "should return true given a builtin function" do
+    it "returns true given a builtin function" do
       any = @builtin.pObject.getAttr('any')
-      any.should be_callable
+      expect(any).to be_callable
     end
 
-    it "should return true given a class" do
-      @objects.RubyPythonMockObject.pObject.should be_callable
+    it "returns true given a class" do
+      expect(@objects.RubyPythonMockObject.pObject).to be_callable
     end
 
-    it "should return false given a non-callable instance" do
-      @objects.RubyPythonMockObject.new.pObject.should_not be_callable
+    it "returns false given a non-callable instance" do
+      expect(@objects.RubyPythonMockObject.new.pObject).not_to be_callable
     end
 
-    specify { described_class.new(6).should_not be_callable }
-
+    it "returns false given a non-callable value" do
+      expect(described_class.new(6)).not_to be_callable
+    end
   end
-
 end

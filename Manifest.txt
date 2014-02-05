@@ -1,4 +1,7 @@
 .autotest
+.gitignore
+.hgignore
+.hgtags
 .rspec
 Contributors.rdoc
 History.rdoc
@@ -36,3 +39,8 @@ spec/rubypyclass_spec.rb
 spec/rubypyproxy_spec.rb
 spec/rubypython_spec.rb
 spec/spec_helper.rb
+website/index.rhtml
+website/robots.txt
+website/stylesheets/960.css
+website/stylesheets/border-radius.htc
+website/stylesheets/screen.css

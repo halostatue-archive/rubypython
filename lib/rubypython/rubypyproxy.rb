@@ -182,8 +182,8 @@ module RubyPython
       end
     end
 
-    #Handles the of calling a wrapped callable Python object at a higher level
-    #than +PyObject#callObject+. For internal use only.
+    # Handles the of calling a wrapped callable Python object at a higher
+    # level than +PyObject#callObject+. For internal use only.
     def _method_call(pFunc, args, pKeywords)
       pTuple = PyObject.buildArgTuple(*args)
       pReturn = if pKeywords

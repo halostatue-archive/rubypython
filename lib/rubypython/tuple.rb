@@ -7,4 +7,9 @@ module RubyPython
       value
     end
   end
+
+  # A conversion method.
+  def self.Tuple(array)
+    ::RubyPython::Tuple.tuple(array)
+  end
 end

@@ -1,4 +1,6 @@
-require File.dirname(__FILE__) + '/spec_helper.rb'
+# -*- ruby encoding: utf-8 -*-
+
+require 'spec_helper'
 
 describe RubyPython::PythonError do
   def cause_error
@@ -6,38 +8,40 @@ describe RubyPython::PythonError do
   end
 
   describe "#error?" do
-    it "should return false when no error has occured" do
-      described_class.error?.should be_false
+    it "returns false when no error has occured" do
+      expect(described_class.error?).to eq false
     end
 
-    it "should return true when an error has occured" do
+    it "returns true when an error has occured" do
       cause_error
-      described_class.error?.should be_true
+      expect(described_class.error?).to eq true
     end
   end
 
   describe "#clear" do
-    it "should reset the Python error flag" do
+    it "resets the Python error flag" do
       cause_error
       described_class.clear
-      described_class.error?.should be_false
+      expect(described_class.error?).to eq false
     end
 
-    it "should not barf when there is no error" do
-      lambda {described_class.clear}.should_not raise_exception
+    it "does not barf when there is no error" do
+      expect {
+        described_class.clear
+      }.not_to raise_exception
     end
   end
 
   describe "#fetch" do
-    it "should make availible Python error type" do
+    it "makes available the Python error type" do
       cause_error
       rbType, rbValue, rbTraceback = described_class.fetch
-      rbType.getAttr("__name__").rubify.should == "ImportError"
+      expect(rbType.getAttr("__name__").rubify).to eq "ImportError"
     end
   end
 
   describe ".last_traceback" do
-    it "should make availble the Python traceback of the last error" do
+    it "makes available the Python traceback of the last error" do
       traceback = RubyPython.import 'traceback'
       errors = RubyPython.import 'errors'
       begin
@@ -45,7 +49,7 @@ describe RubyPython::PythonError do
       rescue RubyPython::PythonError => exc
         tb = exc.traceback
         list = traceback.format_tb(tb)
-        list.rubify[0].should =~ /1 \/ 0/
+        expect(list.rubify[0]).to match %r{1 / 0}
       end
     end
   end

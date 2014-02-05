@@ -117,7 +117,8 @@ class RubyPython::PyObject # :nodoc: all
   # PyObject wrapper around the returned object, which may be +NULL+.
   # [rbPyArgs]  A PyObject wrapping a Tuple of the supplied arguments.
   def callObject(rbPyArgs)
-    pyReturn = RubyPython::Python.PyObject_CallObject(@pointer, rbPyArgs.pointer)
+    pyReturn =
+      RubyPython::Python.PyObject_CallObject(@pointer, rbPyArgs.pointer)
     self.class.new pyReturn
   end
 

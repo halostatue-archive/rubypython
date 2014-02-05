@@ -14,7 +14,6 @@ end
 # interpreter (from +RubyPython.python+), but should not directly
 # instantiate this class.
 class RubyPython::Interpreter
-
   ##
   # Compare the current Interpreter to the provided Interpreter or
   # configuration hash. A configuration hash will be converted to an
@@ -39,7 +38,7 @@ class RubyPython::Interpreter
   def initialize(options = {})
     @python_exe = options[:python_exe]
     # Windows: 'C:\\Python27\python.exe'
-    # Mac OS X: '/usr/bin/
+    # Mac OS X: '/usr/bin/'
 
     # The default interpreter might be python3 on some systems
     rc, majorversion = runpy "import sys; print(sys.version_info[0])"
@@ -102,9 +101,9 @@ class RubyPython::Interpreter
     end
 
     if ::FFI::Platform.unix?
-      # On Unixes, let's look in some standard alternative places, too.
-      # Just in case. Some Unixes don't include a .so symlink when they
-      # should, so let's look for the base cases of .so.1 and .so.1.0, too.
+      # On Unixes, let's look in some standard alternative places, too. Just
+      # in case. Some Unixes don't include a .so symlink when they should,
+      # so let's look for the base cases of .so.1 and .so.1.0, too.
       [ @libname, "#{@libname}.1", "#{@libname}.1.0" ].each do |name|
         if ::FFI::Platform::ARCH != 'i386'
           @locations << File.join("/opt/local/lib64", name)

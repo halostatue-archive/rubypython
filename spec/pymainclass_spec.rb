@@ -1,24 +1,25 @@
-require File.dirname(__FILE__) + '/spec_helper.rb'
+# -*- ruby encoding: utf-8 -*-
 
-include TestConstants
+require 'spec_helper'
 
 describe RubyPython::PyMainClass do
   subject { RubyPython::PyMain }
 
-  it "should delegate to builtins" do
-    subject.float(AnInt).rubify.should == AnInt.to_f
+  it "delegates to builtins" do
+    expect(subject.float(RPTest::AnInt).rubify).to eq RPTest::AnInt.to_f
   end
 
-  it "should handle block syntax" do
-    subject.float(AnInt) {|f| f.rubify*2}.should == (AnInt.to_f * 2)
+  it "handles block syntax" do
+    expect(subject.float(RPTest::AnInt) { |f| f.rubify*2 }).to \
+      eq (RPTest::AnInt.to_f * 2)
   end
 
-  it "should allow attribute access" do
-    subject.main.__name__.rubify.should == '__main__'
+  it "allows attribute access" do
+    expect(subject.main.__name__.rubify).to eq '__main__'
   end
 
-  it "should allow global variable setting" do
+  it "allows global variable setting" do
     subject.x = 2
-    subject.x.rubify.should == 2
+    expect(subject.x.rubify).to eq 2
   end
 end

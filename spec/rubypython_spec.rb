@@ -1,59 +1,65 @@
-require File.dirname(__FILE__) + '/spec_helper.rb'
+# -*- ruby encoding: utf-8 -*-
+
+require 'spec_helper'
 
 describe RubyPython do
   describe "#import" do
-    it "should handle multiple imports" do
-      lambda do
+    it "handles multiple imports" do
+      expect {
         RubyPython.import 'cPickle'
         RubyPython.import 'urllib'
-      end.should_not raise_exception
+      }.not_to raise_exception
     end
 
-    it "should propagate Python errors" do
-      lambda do
+    it "propagates Python errors" do
+      expect {
         RubyPython.import 'nonExistentModule'
-      end.should raise_exception(RubyPython::PythonError)
+      }.to raise_exception(RubyPython::PythonError)
     end
 
-    it "should return a RubyPyModule" do
-      RubyPython.import('urllib2').should be_a(RubyPython::RubyPyModule)
+    it "returns a RubyPyModule" do
+      expect(RubyPython.import('urllib2')).to be_a(RubyPython::RubyPyModule)
     end
   end
 end
 
 describe RubyPython, :self_start => true do
+  let(:pickled) { "(dp1\nS'a'\nS'n'\ns(I1\nS'2'\ntp2\nI4\ns." }
+  let(:unpickled) { { "a" => "n", [ 1, "2" ] => 4 } }
 
   describe "#session" do
-    it "should start interpreter" do
+    it "starts the interpreter" do
       RubyPython.session do
         cPickle = RubyPython.import "cPickle"
-        cPickle.loads("(dp1\nS'a'\nS'n'\ns(I1\nS'2'\ntp2\nI4\ns.").rubify.should == {"a"=>"n", [1, "2"]=>4}
+        expect(cPickle.loads(pickled).rubify).to eq unpickled
       end
     end
 
-    it "should stop the interpreter" do
+    it "stops the interpreter" do
       RubyPython.session do
         cPickle = RubyPython.import "cPickle"
       end
 
-      RubyPython.stop.should be_false
+      expect(RubyPython.stop).to eq false
     end
   end
 
   describe "#run" do
-    it "should start interpreter" do
-      RubyPython.run do
+    it "starts the interpreter" do
+      RubyPython::PICKLED = pickled
+      result = RubyPython.run do
         cPickle = import "cPickle"
-        cPickle.loads("(dp1\nS'a'\nS'n'\ns(I1\nS'2'\ntp2\nI4\ns.").rubify.should == {"a"=>"n", [1, "2"]=>4}
+        cPickle.loads(RubyPython::PICKLED).rubify
       end
+      expect(result).to eq unpickled
     end
 
-    it "should stop the interpreter" do
+    it "stops the interpreter" do
       RubyPython.run do
         cPickle = import "cPickle"
       end
 
-      RubyPython.stop.should be_false
+      expect(RubyPython.stop).to eq false
     end
   end
 end

@@ -70,10 +70,14 @@ class RubyPython::Interpreter
       ### Python To Ruby Conversion
       # String Methods
       #attach_function :PyString_AsString, [:pointer], :string
+      attach_function :PyBytes_AsString, [:pointer], :string
+      attach_function :PyBytes_AsStringAndSize, [:pointer, :pointer, :pointer], :int      
       attach_function :PyUnicode_AsUTF8String, [:pointer], :string
       attach_function :PyUnicode_FromString, [:string], :pointer
-      attach_function :PyUnicode_AsUTF8AndSize, [:pointer, :pointer, :pointer], :int
+      attach_function :PyUnicode_AsUTF8AndSize, [:pointer, :pointer], :pointer
       attach_function :PyUnicode_FromStringAndSize, [:buffer_in, :ssize_t], :pointer
+      attach_function :PyUnicode_AsLatin1String, [:pointer], :pointer
+      attach_function :PyUnicode_AsASCIIString, [:pointer], :pointer
 
       # List Methods
       attach_function :PyList_GetItem, [:pointer, :int], :pointer

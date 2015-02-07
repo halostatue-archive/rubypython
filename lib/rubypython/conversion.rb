@@ -209,7 +209,8 @@ module RubyPython::Conversion
     strPtr  = ::FFI::MemoryPointer.new(:pointer)
     sizePtr = ::FFI::MemoryPointer.new(:ssize_t)
 
-    RubyPython::Python.PyUnicode_AsUTF8AndSize(pString, strPtr, sizePtr)
+    b = RubyPython::Python::PyUnicode_AsLatin1String(pString)
+    RubyPython::Python.PyBytes_AsStringAndSize(b, strPtr, sizePtr)
 
     size = case ::FFI.find_type(:ssize_t)
            when ::FFI.find_type(:long)

@@ -60,18 +60,20 @@ class RubyPython::Interpreter
       attach_function :PyObject_SetAttrString, [:pointer, :string, :pointer], :int
       attach_function :PyObject_Dir, [:pointer], :pointer
 
-      attach_function :PyObject_Compare, [:pointer, :pointer], :int
-
+      #attach_function :PyObject_Compare, [:pointer, :pointer], :int
+      attach_function :PyObject_RichCompareBool, [:pointer, :pointer, :int], :int
+      
       attach_function :PyObject_Call, [:pointer, :pointer, :pointer], :pointer
       attach_function :PyObject_CallObject, [:pointer, :pointer], :pointer
       attach_function :PyCallable_Check, [:pointer], :int
 
       ### Python To Ruby Conversion
       # String Methods
-      attach_function :PyString_AsString, [:pointer], :string
-      attach_function :PyString_FromString, [:string], :pointer
-      attach_function :PyString_AsStringAndSize, [:pointer, :pointer, :pointer], :int
-      attach_function :PyString_FromStringAndSize, [:buffer_in, :ssize_t], :pointer
+      #attach_function :PyString_AsString, [:pointer], :string
+      attach_function :PyUnicode_AsUTF8String, [:pointer], :string
+      attach_function :PyUnicode_FromString, [:string], :pointer
+      attach_function :PyUnicode_AsUTF8AndSize, [:pointer, :pointer, :pointer], :int
+      attach_function :PyUnicode_FromStringAndSize, [:buffer_in, :ssize_t], :pointer
 
       # List Methods
       attach_function :PyList_GetItem, [:pointer, :int], :pointer
@@ -80,8 +82,8 @@ class RubyPython::Interpreter
       attach_function :PyList_SetItem, [:pointer, :int, :pointer], :void
 
       # Integer Methods
-      attach_function :PyInt_AsLong, [:pointer], :long
-      attach_function :PyInt_FromLong, [:long], :pointer
+      #attach_function :PyLong_AsLong, [:pointer], :long
+      #attach_function :PyLong_FromLong, [:long], :pointer
 
       attach_function :PyLong_AsLong, [:pointer], :long
       attach_function :PyLong_FromLong, [:pointer], :long
@@ -127,7 +129,8 @@ class RubyPython::Interpreter
       # attach_variable :PyCapsule_Type, self::DummyStruct.by_value
       # attach_variable :PyCell_Type, self::DummyStruct.by_value
       # attach_variable :PyClassMethod_Type, self::DummyStruct.by_value
-      attach_variable :PyClass_Type, self::DummyStruct.by_value
+      # attach_variable :PyClass_Type, self::DummyStruct.by_value
+      attach_variable :PyInstanceMethod_Type, self::DummyStruct.by_value
       # attach_variable :PyCode_Type, self::DummyStruct.by_value
       # attach_variable :PyComplex_Type, self::DummyStruct.by_value
       # attach_variable :PyDictItems_Type, self::DummyStruct.by_value
@@ -148,7 +151,7 @@ class RubyPython::Interpreter
       # attach_variable :PyGen_Type, self::DummyStruct.by_value
       # attach_variable :PyGetSetDescr_Type, self::DummyStruct.by_value
       # attach_variable :PyInstance_Type, self::DummyStruct.by_value
-      attach_variable :PyInt_Type, self::DummyStruct.by_value
+      # attach_variable :PyInt_Type, self::DummyStruct.by_value
       attach_variable :PyList_Type, self::DummyStruct.by_value
       attach_variable :PyLong_Type, self::DummyStruct.by_value
       # attach_variable :PyMemberDescr_Type, self::DummyStruct.by_value
@@ -164,7 +167,7 @@ class RubyPython::Interpreter
       # attach_variable :PySet_Type, self::DummyStruct.by_value
       # attach_variable :PySlice_Type, self::DummyStruct.by_value
       # attach_variable :PyStaticMethod_Type, self::DummyStruct.by_value
-      attach_variable :PyString_Type, self::DummyStruct.by_value
+      attach_variable :PyUnicode_Type, self::DummyStruct.by_value
       # attach_variable :PySuper_Type, self::DummyStruct.by_value # built-in 'super' 
       # attach_variable :PyTraceBack_Type, self::DummyStruct.by_value
       attach_variable :PyTuple_Type, self::DummyStruct.by_value
@@ -173,7 +176,7 @@ class RubyPython::Interpreter
       # attach_variable :PyWrapperDescr_Type, self::DummyStruct.by_value
 
       attach_variable :Py_TrueStruct, :_Py_TrueStruct, self::DummyStruct.by_value
-      attach_variable :Py_ZeroStruct, :_Py_ZeroStruct, self::DummyStruct.by_value
+      #attach_variable :Py_ZeroStruct, :_Py_ZeroStruct, self::DummyStruct.by_value
       attach_variable :Py_NoneStruct, :_Py_NoneStruct, self::DummyStruct.by_value
 
       # This is an implementation of the basic structure of a Python PyObject

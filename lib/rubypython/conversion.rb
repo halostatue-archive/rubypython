@@ -83,7 +83,7 @@ module RubyPython::Conversion
   # Convert a Ruby Fixnum to a \Python Int. Returns an FFI::Pointer to a
   # PyIntObject.
   def self.rtopFixnum(rNum)
-    num = RubyPython::Python.PyInt_FromLong(rNum)
+    num = RubyPython::Python.PyLong_FromLong(rNum)
     raise ConversionError.new "Failed to convert #{rNum}" if num.null?
     num
   end
@@ -243,7 +243,7 @@ module RubyPython::Conversion
 
   # Convert an FFI::Pointer to a \Python Int (PyIntObject) to a Ruby Fixnum.
   def self.ptorInt(pNum)
-    RubyPython::Python.PyInt_AsLong(pNum)
+    RubyPython::Python.PyLong_AsLong(pNum)
   end
 
   # Convert an FFI::Pointer to a \Python Long (PyLongObject) to a Ruby

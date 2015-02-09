@@ -86,8 +86,8 @@ class RubyPython::Interpreter
       attach_function :PyList_SetItem, [:pointer, :int, :pointer], :void
 
       # Integer Methods
-      #attach_function :PyLong_AsLong, [:pointer], :long
-      #attach_function :PyLong_FromLong, [:long], :pointer
+      #attach_function :PyInt_AsLong, [:pointer], :long
+      #attach_function :PyInt_FromLong, [:long], :pointer
 
       attach_function :PyLong_AsLong, [:pointer], :long
       attach_function :PyLong_FromLong, [:pointer], :long

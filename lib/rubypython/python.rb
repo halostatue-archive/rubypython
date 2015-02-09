@@ -88,6 +88,7 @@ class RubyPython::Interpreter
       # Integer Methods
       #attach_function :PyInt_AsLong, [:pointer], :long
       #attach_function :PyInt_FromLong, [:long], :pointer
+      attach_function :PyLong_FromSize_t, [:long], :pointer
 
       attach_function :PyLong_AsLong, [:pointer], :long
       attach_function :PyLong_FromLong, [:pointer], :long

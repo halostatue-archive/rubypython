@@ -88,6 +88,7 @@ class RubyPython::Interpreter
       # Integer Methods
       #attach_function :PyInt_AsLong, [:pointer], :long
       #attach_function :PyInt_FromLong, [:long], :pointer
+      attach_function :PyLong_AsSize_t, [:pointer], :long
       attach_function :PyLong_FromSize_t, [:long], :pointer
 
       attach_function :PyLong_AsLong, [:pointer], :long
@@ -181,6 +182,7 @@ class RubyPython::Interpreter
       # attach_variable :PyWrapperDescr_Type, self::DummyStruct.by_value
 
       attach_variable :Py_TrueStruct, :_Py_TrueStruct, self::DummyStruct.by_value
+      attach_variable :Py_FalseStruct, :_Py_FalseStruct, self::DummyStruct.by_value
       #attach_variable :Py_ZeroStruct, :_Py_ZeroStruct, self::DummyStruct.by_value
       attach_variable :Py_NoneStruct, :_Py_NoneStruct, self::DummyStruct.by_value
 

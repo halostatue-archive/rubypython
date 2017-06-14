@@ -91,7 +91,7 @@ module RubyPython::Conversion
   # Convert a Ruby Bignum to a \Python Long. Returns an FFI::Pointer to a
   # PyLongObject.
   def self.rtopBigNum(rNum)
-    num = RubyPython::Python.PyLong_FromLong(rNum)
+    num = RubyPython::Python.PyLong_FromLongLong(rNum)
     raise ConversionError.new "Failed to convert #{rNum}" if num.null?
     num
   end

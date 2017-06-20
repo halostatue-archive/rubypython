@@ -15,7 +15,7 @@
 #   puts cPickle.dumps("RubyPython is awesome!").rubify
 #   RubyPython.stop
 module RubyPython
-  VERSION = '0.6.3'
+  VERSION = '0.6.4'
 end
 
 require 'rubypython/blankobject'

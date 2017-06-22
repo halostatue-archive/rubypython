@@ -6,6 +6,7 @@ module RubyPython
   # This module will hold the loaded RubyPython interpreter.
   module Python #:nodoc: all
     @lock = Mutex.new
+
     def self.synchronize(&block)
       @lock.synchronize(&block)
     end
@@ -84,7 +85,7 @@ class RubyPython::Interpreter
       attach_function :PyInt_FromLong, [:long], :pointer
 
       attach_function :PyLong_AsLong, [:pointer], :long
-      attach_function :PyLong_FromLong, [:pointer], :long
+      attach_function :PyLong_FromLongLong, [:long_long], :pointer
 
       # Float Methods
       attach_function :PyFloat_AsDouble, [:pointer], :double
@@ -182,16 +183,17 @@ class RubyPython::Interpreter
       # pointers there is no need to mess around with the rest of the object.
       self.const_set :PyObjectStruct, Class.new(::FFI::Struct)
       self::PyObjectStruct.layout :ob_refcnt, :ssize_t,
-        :ob_type, :pointer
+                                  :ob_type, :pointer
 
       # This struct is used when defining Python methods.
       self.const_set :PyMethodDef, Class.new(::FFI::Struct)
       self::PyMethodDef.layout :ml_name, :pointer,
-        :ml_meth, :PyCFunction,
-        :ml_flags, :int,
-        :ml_doc, :pointer
+                               :ml_meth, :PyCFunction,
+                               :ml_flags, :int,
+                               :ml_doc, :pointer
     end
 
   end
+
   private :infect!
 end

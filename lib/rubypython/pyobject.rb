@@ -1,3 +1,4 @@
+# coding: utf-8
 require 'rubypython/python'
 require 'rubypython/macros'
 require 'rubypython/conversion'
@@ -172,7 +173,8 @@ class RubyPython::PyObject # :nodoc: all
   # and old style).
   def class?
     check = RubyPython::Macros.PyObject_TypeCheck(@pointer, [
-                                                  RubyPython::Python.PyClass_Type.to_ptr,
+                                                      #RubyPython::Python.PyClass_Type.to_ptr,
+                                                      RubyPython::Python.PyInstanceMethod_Type.to_ptr,
                                                   RubyPython::Python.PyType_Type.to_ptr
     ])
     check != 0

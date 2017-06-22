@@ -17,7 +17,7 @@ module RubyPython::Conversion
   # a PyStringObject.
   def self.rtopString(rString)
     size = rString.respond_to?(:bytesize) ? rString.bytesize : rString.size
-    ptr = RubyPython::Python.PyString_FromStringAndSize(rString, size)
+    ptr = RubyPython::Python.PyUnicode_FromStringAndSize(rString, size)
     if ptr.null?
       raise ConversionError.new "Python failed to create a string with contents #{rString}"
     else
@@ -83,7 +83,7 @@ module RubyPython::Conversion
   # Convert a Ruby Fixnum to a \Python Int. Returns an FFI::Pointer to a
   # PyIntObject.
   def self.rtopFixnum(rNum)
-    num = RubyPython::Python.PyInt_FromLong(rNum)
+    num = RubyPython::Python.PyLong_FromSize_t(rNum)
     raise ConversionError.new "Failed to convert #{rNum}" if num.null?
     num
   end
@@ -209,7 +209,8 @@ module RubyPython::Conversion
     strPtr  = ::FFI::MemoryPointer.new(:pointer)
     sizePtr = ::FFI::MemoryPointer.new(:ssize_t)
 
-    RubyPython::Python.PyString_AsStringAndSize(pString, strPtr, sizePtr)
+    b = RubyPython::Python::PyUnicode_AsLatin1String(pString)
+    RubyPython::Python.PyBytes_AsStringAndSize(b, strPtr, sizePtr)
 
     size = case ::FFI.find_type(:ssize_t)
            when ::FFI.find_type(:long)
@@ -242,7 +243,7 @@ module RubyPython::Conversion
 
   # Convert an FFI::Pointer to a \Python Int (PyIntObject) to a Ruby Fixnum.
   def self.ptorInt(pNum)
-    RubyPython::Python.PyInt_AsLong(pNum)
+    RubyPython::Python.PyLong_AsLong(pNum)
   end
 
   # Convert an FFI::Pointer to a \Python Long (PyLongObject) to a Ruby
@@ -302,11 +303,11 @@ module RubyPython::Conversion
   #
   # [pObj]  An FFI::Pointer to a \Python object.
   def self.ptorObject(pObj)
-    if RubyPython::Macros.PyObject_TypeCheck(pObj, RubyPython::Python.PyString_Type.to_ptr) != 0
+    if RubyPython::Macros.PyObject_TypeCheck(pObj, RubyPython::Python.PyUnicode_Type.to_ptr) != 0
       ptorString pObj
     elsif RubyPython::Macros.PyObject_TypeCheck(pObj, RubyPython::Python.PyList_Type.to_ptr) != 0
       ptorList pObj
-    elsif RubyPython::Macros.PyObject_TypeCheck(pObj, RubyPython::Python.PyInt_Type.to_ptr) != 0
+    elsif RubyPython::Macros.PyObject_TypeCheck(pObj, RubyPython::Python.PyLong_Type.to_ptr) != 0
       ptorInt pObj
     elsif RubyPython::Macros.PyObject_TypeCheck(pObj, RubyPython::Python.PyLong_Type.to_ptr) != 0
       ptorLong pObj

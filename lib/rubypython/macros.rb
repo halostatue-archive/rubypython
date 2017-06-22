@@ -32,7 +32,8 @@ module RubyPython::Macros #:nodoc:
   end
 
   def self.Py_False
-    RubyPython::Python.Py_ZeroStruct.to_ptr
+    #RubyPython::Python.Py_ZeroStruct.to_ptr
+    RubyPython::Python.Py_FalseStruct.to_ptr
   end
 
   def self.Py_None

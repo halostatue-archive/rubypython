@@ -44,16 +44,17 @@ class RubyPython::Interpreter
     # The default interpreter might be python3 on some systems
     rc, majorversion = runpy "import sys; print(sys.version_info[0])"
     if majorversion == "3"
-      warn "The python interpreter is python 3, switching to python2"
-      @python_exe = "python2"
+      #warn "The python interpreter is python 3, switching to python2"
+      #@python_exe = "python2"
     end
 
-    rc, @python     = runpy "import sys; print sys.executable"
+    rc, @python     = runpy "import sys; print(sys.executable)"
     if rc.exitstatus.nonzero?
       raise RubyPython::InvalidInterpreter, "An invalid interpreter was specified."
     end
-    rc, @version    = runpy "import sys; print '%d.%d' % sys.version_info[:2]"
-    rc, @sys_prefix = runpy "import sys; print sys.prefix"
+
+    rc, @version    = runpy "import sys; print('%d.%d' % sys.version_info[:2])"
+    rc, @sys_prefix = runpy "import sys; print(sys.prefix)"
 
     if ::FFI::Platform.windows?
       flat_version  = @version.tr('.', '')
@@ -76,6 +77,7 @@ class RubyPython::Interpreter
     end
 
     @library = find_python_lib
+
   end
 
   def find_python_lib
@@ -83,7 +85,7 @@ class RubyPython::Interpreter
     # libpython2.6.so, but that won't always work.
     @libbase = "#{::FFI::Platform::LIBPREFIX}#{@version_name}"
     @libext = ::FFI::Platform::LIBSUFFIX
-    @libname = "#{@libbase}.#{@libext}"
+    @libname = "#{@libbase}m.#{@libext}"
 
     # We may need to look in multiple locations for Python, so let's
     # build this as an array.

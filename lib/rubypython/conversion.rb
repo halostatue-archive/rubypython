@@ -304,6 +304,8 @@ module RubyPython::Conversion
   def self.ptorObject(pObj)
     if RubyPython::Macros.PyObject_TypeCheck(pObj, RubyPython::Python.PyString_Type.to_ptr) != 0
       ptorString pObj
+    elsif RubyPython::Macros.PyObject_TypeCheck(pObj, RubyPython::Python.PyUnicode_Type.to_ptr) != 0
+      ptorString pObj
     elsif RubyPython::Macros.PyObject_TypeCheck(pObj, RubyPython::Python.PyList_Type.to_ptr) != 0
       ptorList pObj
     elsif RubyPython::Macros.PyObject_TypeCheck(pObj, RubyPython::Python.PyInt_Type.to_ptr) != 0
